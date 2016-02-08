@@ -8,12 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		6B38268E1C6940CB005F2567 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6B38268D1C6940CB005F2567 /* main.c */; };
+		6B3826A41C694164005F2567 /* cc1101.c in Sources */ = {isa = PBXBuildFile; fileRef = 6B3826A21C694164005F2567 /* cc1101.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6B38268A1C6940CB005F2567 /* Index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Index; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B38268D1C6940CB005F2567 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		6B3826901C6940CB005F2567 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		6B3826A21C694164005F2567 /* cc1101.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cc1101.c; sourceTree = "<group>"; };
+		6B3826A31C694164005F2567 /* cc1101.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cc1101.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -38,6 +41,8 @@
 			children = (
 				6B38268D1C6940CB005F2567 /* main.c */,
 				6B38268F1C6940CB005F2567 /* Makefiles */,
+				6B3826A21C694164005F2567 /* cc1101.c */,
+				6B3826A31C694164005F2567 /* cc1101.h */,
 			);
 			path = "cc1101-2";
 			sourceTree = "<group>";
@@ -175,6 +180,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B3826A41C694164005F2567 /* cc1101.c in Sources */,
 				6B38268E1C6940CB005F2567 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
