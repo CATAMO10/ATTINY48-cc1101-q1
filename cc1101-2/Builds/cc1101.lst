@@ -1,0 +1,1294 @@
+   1               		.file	"cc1101.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 114               	.global	SpiInit
+ 116               	SpiInit:
+   1:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+   2:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #include <cc1101.h>
+   3:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+   4:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************/
+   5:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define 	WRITE_BURST     	0x40						//write burst
+   6:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define 	READ_SINGLE     	0x80						//read single
+   7:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define 	READ_BURST      	0xC0						//read burst
+   8:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define 	BYTES_IN_RXFIFO     0x7F  						//byte number in RXfifo
+   9:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  10:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************/
+  11:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define SPI_SS   PB2     // PB2 = SPI_SS
+  12:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define SPI_MOSI PB3     // PB3 = MOSI
+  13:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define SPI_MISO PB4     // PB4 = MISO
+  14:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define SPI_SCK  PB5     // PB5 = SCK
+  15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define GDO0	 PD5        // PD2 = INT0
+  16:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  17:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define PORT_SPI_MISO  PINB
+  18:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define BIT_SPI_MISO  4
+  19:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  20:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define PORT_SPI_SS  PORTB
+  21:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define BIT_SPI_SS   2
+  22:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  23:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define PORT_GDO0  PIND
+  24:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define BIT_GDO0  5
+  25:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************/
+  26:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  27:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
+  28:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define bitSet(value, bit) ((value) |= (1UL << (bit)))
+  29:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
+  30:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
+  31:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define wait_Miso()  while(bitRead(PORT_SPI_MISO, BIT_SPI_MISO))
+  32:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  33:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define getGDO0state()  bitRead(PORT_GDO0, BIT_GDO0)
+  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** // Wait until GDO0 line goes high
+  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define wait_GDO0_high()  while(!getGDO0state())
+  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** // Wait until GDO0 line goes low
+  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** #define wait_GDO0_low()  while(getGDO0state())
+  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************/
+  39:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** byte PaTabel[8] = {0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60};
+  40:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  41:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+  42:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SpiInit
+  43:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :spi communication initialization
+  44:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :none
+  45:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+  46:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+  47:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void SpiInit(void)
+  48:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 118               	.LM0:
+ 119               	.LFBB1:
+ 120               	/* prologue: function */
+ 121               	/* frame size = 0 */
+ 122               	/* stack size = 0 */
+ 123               	.L__stack_usage = 0
+  49:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, HIGH);
+  51:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<5);
+ 125               	.LM1:
+ 126 0000 2D9A      		sbi 0x5,5
+  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     // Configure SPI pins
+  53:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    pinMode(SS_PIN, OUTPUT);
+  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    pinMode(MOSI_PIN, OUTPUT);
+  55:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    pinMode(MISO_PIN, INPUT);
+  56:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    pinMode(SCK_PIN, OUTPUT);
+  57:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     DDRB = (1<<PB5)|(1<<PB3)|(1<<PB2);
+ 128               	.LM2:
+ 129 0002 8CE2      		ldi r24,lo8(44)
+ 130 0004 84B9      		out 0x4,r24
+  58:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SPCR = (1<<SPE)|(1<<MSTR);
+ 132               	.LM3:
+ 133 0006 80E5      		ldi r24,lo8(80)
+ 134 0008 8CBD      		out 0x2c,r24
+  59:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+  60:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SCK_PIN, HIGH);
+  61:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(MOSI_PIN, LOW);
+  62:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB=(1<<5) | (0<<3);
+ 136               	.LM4:
+ 137 000a 90E2      		ldi r25,lo8(32)
+ 138 000c 95B9      		out 0x5,r25
+  63:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+  64:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     // SPI speed = clk/4
+  65:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SPCR = _BV(SPE) | _BV(MSTR);
+ 140               	.LM5:
+ 141 000e 8CBD      		out 0x2c,r24
+ 142 0010 0895      		ret
+ 144               	.Lscope1:
+ 147               	.global	SpiTransfer
+ 149               	SpiTransfer:
+  66:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+  67:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //****************************************************************
+  68:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  69:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  70:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //****************************************************************
+  71:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** // *FUNCTION NAME:SpiTransfer
+  72:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** // *FUNCTION     :spi transfer
+  73:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** // *INPUT        :value: data to send
+  74:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** // *OUTPUT       :data to receive
+  75:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** // ****************************************************************
+  76:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** byte SpiTransfer(byte value)
+  77:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 151               	.LM6:
+ 152               	.LFBB2:
+ 153               	/* prologue: function */
+ 154               	/* frame size = 0 */
+ 155               	/* stack size = 0 */
+ 156               	.L__stack_usage = 0
+  78:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SPDR = value;
+ 158               	.LM7:
+ 159 0012 8EBD      		out 0x2e,r24
+ 160               	.L3:
+  79:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     while (!(SPSR & (1<<SPIF))) ;
+ 162               	.LM8:
+ 163 0014 0DB4      		in __tmp_reg__,0x2d
+ 164 0016 07FE      		sbrs __tmp_reg__,7
+ 165 0018 00C0      		rjmp .L3
+  80:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     return SPDR;
+ 167               	.LM9:
+ 168 001a 8EB5      		in r24,0x2e
+  81:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 170               	.LM10:
+ 171 001c 0895      		ret
+ 173               	.Lscope2:
+ 175               	.global	GDO_Set
+ 177               	GDO_Set:
+  82:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  83:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+  84:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME: GDO_Set()
+  85:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     : set GDO0,GDO2 pin
+  86:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        : none
+  87:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       : none
+  88:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+  89:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void GDO_Set (void)
+  90:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 179               	.LM11:
+ 180               	.LFBB3:
+ 181               	/* prologue: function */
+ 182               	/* frame size = 0 */
+ 183               	/* stack size = 0 */
+ 184               	.L__stack_usage = 0
+  91:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //pinMode(GDO0, INPUT);
+  92:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     DDRD |= (1<<5);
+ 186               	.LM12:
+ 187 001e 559A      		sbi 0xa,5
+ 188 0020 0895      		ret
+ 190               	.Lscope3:
+ 192               	.global	Reset
+ 194               	Reset:
+  93:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //pinMode(GDO2, INPUT);
+  94:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+  95:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+  96:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+  97:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:Reset
+  98:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 reset //details refer datasheet of CC1101/CC1100//
+  99:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :none
+ 100:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 101:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 102:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void Reset (void)
+ 103:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 196               	.LM13:
+ 197               	.LFBB4:
+ 198               	/* prologue: function */
+ 199               	/* frame size = 0 */
+ 200               	/* stack size = 0 */
+ 201               	.L__stack_usage = 0
+ 104:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SS_PIN, LOW);
+ 105:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1 << 2);
+ 203               	.LM14:
+ 204 0022 2A98      		cbi 0x5,2
+ 205               	.LBB6:
+ 206               	.LBB7:
+ 208               	.Ltext1:
+   1:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+   6:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+   9:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  12:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****      distribution.
+  16:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  17:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  21:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  33:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /* $Id: delay.h.in 2385 2013-05-03 13:14:20Z joerg_wunsch $ */
+  34:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  35:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  38:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #endif
+  41:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  42:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  46:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /** \file */
+  47:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     \code
+  49:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     \endcode
+  53:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  54:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     used.
+  58:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  59:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  68:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  77:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  81:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** */
+  82:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  83:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #endif
+  87:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  88:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #endif
+  93:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  94:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #endif
+  97:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+  98:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #endif
+ 103:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 104:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /**
+ 105:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 107:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 109:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 112:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 114:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 120:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 125:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 129:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 132:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 140:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****  */
+ 141:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** void
+ 142:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** {
+ 144:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	double __tmp ; 
+ 145:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 146:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 147:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 148:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 149:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 150:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 151:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 152:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 153:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 154:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 155:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 156:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 157:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 158:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	#else
+ 159:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 		//round up by default
+ 160:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 161:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	#endif
+ 162:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
+ 163:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 210               	.LM15:
+ 211 0024 87EE      		ldi r24,lo8(999)
+ 212 0026 93E0      		ldi r25,hi8(999)
+ 213 0028 0197      		1: sbiw r24,1
+ 214 002a 01F4      		brne 1b
+ 215 002c 00C0      		rjmp .
+ 216 002e 0000      		nop
+ 217               	.LBE7:
+ 218               	.LBE6:
+ 220               	.Ltext2:
+ 106:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     _delay_ms(1);
+ 107:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SS_PIN, HIGH);
+ 108:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 222               	.LM16:
+ 223 0030 2A9A      		sbi 0x5,2
+ 224               	.LBB8:
+ 225               	.LBB9:
+ 227               	.Ltext3:
+ 229               	.LM17:
+ 230 0032 87EE      		ldi r24,lo8(999)
+ 231 0034 93E0      		ldi r25,hi8(999)
+ 232 0036 0197      		1: sbiw r24,1
+ 233 0038 01F4      		brne 1b
+ 234 003a 00C0      		rjmp .
+ 235 003c 0000      		nop
+ 236               	.LBE9:
+ 237               	.LBE8:
+ 239               	.Ltext4:
+ 109:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     _delay_ms(1);
+ 110:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, LOW);
+ 111:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1 << 2);
+ 241               	.LM18:
+ 242 003e 2A98      		cbi 0x5,2
+ 243               	.L8:
+ 112:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    while(digitalRead(MISO_PIN));
+ 113:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso();
+ 245               	.LM19:
+ 246 0040 1C99      		sbic 0x3,4
+ 247 0042 00C0      		rjmp .L8
+ 114:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(CC1101_SRES);
+ 249               	.LM20:
+ 250 0044 80E3      		ldi r24,lo8(48)
+ 251 0046 00D0      		rcall SpiTransfer
+ 252               	.L9:
+ 115:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    while(digitalRead(MISO_PIN));
+ 116:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso();
+ 254               	.LM21:
+ 255 0048 1C99      		sbic 0x3,4
+ 256 004a 00C0      		rjmp .L9
+ 117:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, HIGH);
+ 118:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1 << 2);
+ 258               	.LM22:
+ 259 004c 2A98      		cbi 0x5,2
+ 260 004e 0895      		ret
+ 262               	.Lscope4:
+ 266               	.global	SpiWriteReg
+ 268               	SpiWriteReg:
+ 119:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 120:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 121:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 122:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:Init
+ 123:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 initialization
+ 124:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :none
+ 125:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 126:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 127:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void Init(void)
+ 128:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 129:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiInit();										//spi initialization
+ 130:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     GDO_Set();										//GDO set
+ 131:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SS_PIN, HIGH);
+ 132:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 133:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SCK_PIN, HIGH);
+ 134:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<5);
+ 135:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(MOSI_PIN, LOW);
+ 136:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1<<3);
+ 137:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     Reset();										//CC1101 reset
+ 138:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     RegConfigSettings();							//CC1101 register config
+ 139:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteBurstReg(CC1101_PATABLE,PaTabel,8);		//CC1101 PATABLE config
+ 140:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 141:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 142:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 143:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 144:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SpiWriteReg
+ 145:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 write data to register
+ 146:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :addr: register address; value: register value
+ 147:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 148:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 149:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void SpiWriteReg(byte addr, byte value)
+ 150:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 270               	.LM23:
+ 271               	.LFBB5:
+ 272 0050 1F93      		push r17
+ 273 0052 CF93      		push r28
+ 274 0054 DF93      		push r29
+ 275 0056 1F92      		push __zero_reg__
+ 276 0058 CDB7      		in r28,__SP_L__
+ 277 005a DEB7      		in r29,__SP_H__
+ 278               	/* prologue: function */
+ 279               	/* frame size = 1 */
+ 280               	/* stack size = 4 */
+ 281               	.L__stack_usage = 4
+ 282 005c 182F      		mov r17,r24
+ 151:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SS_PIN, LOW);
+ 152:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1<<2);
+ 284               	.LM24:
+ 285 005e 2A98      		cbi 0x5,2
+ 286               	.L13:
+ 153:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //while(digitalRead(MISO_PIN));
+ 154:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso()
+ 288               	.LM25:
+ 289 0060 1C9B      		sbis 0x3,4
+ 290 0062 00C0      		rjmp .L15
+ 155:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(addr);
+ 292               	.LM26:
+ 293 0064 812F      		mov r24,r17
+ 294 0066 6983      		std Y+1,r22
+ 295 0068 00D0      		rcall SpiTransfer
+ 296 006a 6981      		ldd r22,Y+1
+ 297 006c 00C0      		rjmp .L13
+ 298               	.L15:
+ 156:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(value);
+ 300               	.LM27:
+ 301 006e 862F      		mov r24,r22
+ 302 0070 00D0      		rcall SpiTransfer
+ 157:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SS_PIN, HIGH);
+ 158:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 304               	.LM28:
+ 305 0072 2A9A      		sbi 0x5,2
+ 306               	/* epilogue start */
+ 159:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 308               	.LM29:
+ 309 0074 0F90      		pop __tmp_reg__
+ 310 0076 DF91      		pop r29
+ 311 0078 CF91      		pop r28
+ 312 007a 1F91      		pop r17
+ 313 007c 0895      		ret
+ 315               	.Lscope5:
+ 319               	.global	SpiWriteBurstReg
+ 321               	SpiWriteBurstReg:
+ 160:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 161:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 162:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SpiWriteBurstReg
+ 163:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 write burst data to register
+ 164:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :addr: register address; buffer:register value array; num:number to write
+ 165:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 166:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 167:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void SpiWriteBurstReg(byte addr, byte *buffer, byte num)
+ 168:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 323               	.LM30:
+ 324               	.LFBB6:
+ 325 007e EF92      		push r14
+ 326 0080 FF92      		push r15
+ 327 0082 0F93      		push r16
+ 328 0084 1F93      		push r17
+ 329 0086 CF93      		push r28
+ 330 0088 DF93      		push r29
+ 331 008a 00D0      		rcall .
+ 332 008c CDB7      		in r28,__SP_L__
+ 333 008e DEB7      		in r29,__SP_H__
+ 334               	/* prologue: function */
+ 335               	/* frame size = 2 */
+ 336               	/* stack size = 8 */
+ 337               	.L__stack_usage = 8
+ 338 0090 142F      		mov r17,r20
+ 169:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     byte i, temp;
+ 170:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 171:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     temp = addr | WRITE_BURST;
+ 340               	.LM31:
+ 341 0092 8064      		ori r24,lo8(64)
+ 172:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, LOW);
+ 173:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1<<2);
+ 343               	.LM32:
+ 344 0094 2A98      		cbi 0x5,2
+ 345               	.L17:
+ 174:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    while(digitalRead(MISO_PIN));
+ 175:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso();
+ 347               	.LM33:
+ 348 0096 1C99      		sbic 0x3,4
+ 349 0098 00C0      		rjmp .L17
+ 176:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(temp);
+ 351               	.LM34:
+ 352 009a 6983      		std Y+1,r22
+ 353 009c 7A83      		std Y+2,r23
+ 354 009e 00D0      		rcall SpiTransfer
+ 355 00a0 6981      		ldd r22,Y+1
+ 356 00a2 062F      		mov r16,r22
+ 177:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     for (i = 0; i < num; i++)
+ 358               	.LM35:
+ 359 00a4 E62E      		mov r14,r22
+ 360 00a6 7A81      		ldd r23,Y+2
+ 361 00a8 F72E      		mov r15,r23
+ 362               	.L18:
+ 363 00aa 8E2D      		mov r24,r14
+ 364 00ac 801B      		sub r24,r16
+ 366               	.LM36:
+ 367 00ae 8117      		cp r24,r17
+ 368 00b0 00F4      		brsh .L21
+ 178:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     {
+ 179:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         SpiTransfer(buffer[i]);
+ 370               	.LM37:
+ 371 00b2 F701      		movw r30,r14
+ 372 00b4 8191      		ld r24,Z+
+ 373 00b6 7F01      		movw r14,r30
+ 374 00b8 00D0      		rcall SpiTransfer
+ 375 00ba 00C0      		rjmp .L18
+ 376               	.L21:
+ 180:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     }
+ 181:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, HIGH);
+ 182:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 378               	.LM38:
+ 379 00bc 2A9A      		sbi 0x5,2
+ 380               	/* epilogue start */
+ 183:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 382               	.LM39:
+ 383 00be 0F90      		pop __tmp_reg__
+ 384 00c0 0F90      		pop __tmp_reg__
+ 385 00c2 DF91      		pop r29
+ 386 00c4 CF91      		pop r28
+ 387 00c6 1F91      		pop r17
+ 388 00c8 0F91      		pop r16
+ 389 00ca FF90      		pop r15
+ 390 00cc EF90      		pop r14
+ 391 00ce 0895      		ret
+ 396               	.Lscope6:
+ 399               	.global	SpiStrobe
+ 401               	SpiStrobe:
+ 184:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 185:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 186:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SpiStrobe
+ 187:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 Strobe
+ 188:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :strobe: command; //refer define in CC1101.h//
+ 189:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 190:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 191:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void SpiStrobe(byte strobe)
+ 192:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 403               	.LM40:
+ 404               	.LFBB7:
+ 405               	/* prologue: function */
+ 406               	/* frame size = 0 */
+ 407               	/* stack size = 0 */
+ 408               	.L__stack_usage = 0
+ 193:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SS_PIN, LOW);
+ 194:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1<<2);
+ 410               	.LM41:
+ 411 00d0 2A98      		cbi 0x5,2
+ 412               	.L23:
+ 195:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //while(digitalRead(MISO_PIN));
+ 196:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso();
+ 414               	.LM42:
+ 415 00d2 1C99      		sbic 0x3,4
+ 416 00d4 00C0      		rjmp .L23
+ 197:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(strobe);
+ 418               	.LM43:
+ 419 00d6 00D0      		rcall SpiTransfer
+ 198:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, HIGH);
+ 199:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 421               	.LM44:
+ 422 00d8 2A9A      		sbi 0x5,2
+ 423 00da 0895      		ret
+ 425               	.Lscope7:
+ 428               	.global	SpiReadReg
+ 430               	SpiReadReg:
+ 200:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 201:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 202:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 203:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SpiReadReg
+ 204:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 read data from register
+ 205:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :addr: register address
+ 206:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :register value
+ 207:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 208:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** byte SpiReadReg(byte addr)
+ 209:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 432               	.LM45:
+ 433               	.LFBB8:
+ 434               	/* prologue: function */
+ 435               	/* frame size = 0 */
+ 436               	/* stack size = 0 */
+ 437               	.L__stack_usage = 0
+ 210:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     byte temp, value;
+ 211:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 212:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     temp = addr|READ_SINGLE;
+ 439               	.LM46:
+ 440 00dc 8068      		ori r24,lo8(-128)
+ 213:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, LOW);
+ 214:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1<<2);
+ 442               	.LM47:
+ 443 00de 2A98      		cbi 0x5,2
+ 444               	.L26:
+ 215:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    while(digitalRead(MISO_PIN));
+ 216:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso();
+ 446               	.LM48:
+ 447 00e0 1C99      		sbic 0x3,4
+ 448 00e2 00C0      		rjmp .L26
+ 217:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(temp);
+ 450               	.LM49:
+ 451 00e4 00D0      		rcall SpiTransfer
+ 218:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     value=SpiTransfer(0);
+ 453               	.LM50:
+ 454 00e6 80E0      		ldi r24,0
+ 455 00e8 00D0      		rcall SpiTransfer
+ 219:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, HIGH);
+ 220:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 457               	.LM51:
+ 458 00ea 2A9A      		sbi 0x5,2
+ 221:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 222:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     return value;
+ 223:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 460               	.LM52:
+ 461 00ec 0895      		ret
+ 466               	.Lscope8:
+ 470               	.global	SpiReadBurstReg
+ 472               	SpiReadBurstReg:
+ 224:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 225:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 226:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SpiReadBurstReg
+ 227:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 read burst data from register
+ 228:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :addr: register address; buffer:array to store register value; num: number to read
+ 229:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 230:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 231:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void SpiReadBurstReg(byte addr, byte *buffer, byte num)
+ 232:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 474               	.LM53:
+ 475               	.LFBB9:
+ 476 00ee EF92      		push r14
+ 477 00f0 FF92      		push r15
+ 478 00f2 0F93      		push r16
+ 479 00f4 1F93      		push r17
+ 480 00f6 CF93      		push r28
+ 481 00f8 DF93      		push r29
+ 482 00fa 00D0      		rcall .
+ 483 00fc CDB7      		in r28,__SP_L__
+ 484 00fe DEB7      		in r29,__SP_H__
+ 485               	/* prologue: function */
+ 486               	/* frame size = 2 */
+ 487               	/* stack size = 8 */
+ 488               	.L__stack_usage = 8
+ 489 0100 142F      		mov r17,r20
+ 233:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     byte i,temp;
+ 234:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 235:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     temp = addr | READ_BURST;
+ 491               	.LM54:
+ 492 0102 806C      		ori r24,lo8(-64)
+ 236:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, LOW);
+ 237:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1<<2);
+ 494               	.LM55:
+ 495 0104 2A98      		cbi 0x5,2
+ 496               	.L29:
+ 238:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    while(digitalRead(MISO_PIN));
+ 239:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso();
+ 498               	.LM56:
+ 499 0106 1C99      		sbic 0x3,4
+ 500 0108 00C0      		rjmp .L29
+ 240:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(temp);
+ 502               	.LM57:
+ 503 010a 6983      		std Y+1,r22
+ 504 010c 7A83      		std Y+2,r23
+ 505 010e 00D0      		rcall SpiTransfer
+ 506 0110 6981      		ldd r22,Y+1
+ 507 0112 062F      		mov r16,r22
+ 241:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     for(i=0;i<num;i++)
+ 509               	.LM58:
+ 510 0114 E62E      		mov r14,r22
+ 511 0116 7A81      		ldd r23,Y+2
+ 512 0118 F72E      		mov r15,r23
+ 513               	.L30:
+ 514 011a 8E2D      		mov r24,r14
+ 515 011c 801B      		sub r24,r16
+ 517               	.LM59:
+ 518 011e 8117      		cp r24,r17
+ 519 0120 00F4      		brsh .L33
+ 242:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     {
+ 243:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         buffer[i]=SpiTransfer(0);
+ 521               	.LM60:
+ 522 0122 80E0      		ldi r24,0
+ 523 0124 00D0      		rcall SpiTransfer
+ 524 0126 F701      		movw r30,r14
+ 525 0128 8193      		st Z+,r24
+ 526 012a 7F01      		movw r14,r30
+ 527 012c 00C0      		rjmp .L30
+ 528               	.L33:
+ 244:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     }
+ 245:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, HIGH);
+ 246:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 530               	.LM61:
+ 531 012e 2A9A      		sbi 0x5,2
+ 532               	/* epilogue start */
+ 247:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 534               	.LM62:
+ 535 0130 0F90      		pop __tmp_reg__
+ 536 0132 0F90      		pop __tmp_reg__
+ 537 0134 DF91      		pop r29
+ 538 0136 CF91      		pop r28
+ 539 0138 1F91      		pop r17
+ 540 013a 0F91      		pop r16
+ 541 013c FF90      		pop r15
+ 542 013e EF90      		pop r14
+ 543 0140 0895      		ret
+ 548               	.Lscope9:
+ 551               	.global	SpiReadStatus
+ 553               	SpiReadStatus:
+ 248:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 249:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 250:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SpiReadStatus
+ 251:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 read status register
+ 252:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :addr: register address
+ 253:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :status value
+ 254:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 255:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** byte SpiReadStatus(byte addr)
+ 256:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 555               	.LM63:
+ 556               	.LFBB10:
+ 557               	/* prologue: function */
+ 558               	/* frame size = 0 */
+ 559               	/* stack size = 0 */
+ 560               	.L__stack_usage = 0
+ 257:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     byte value,temp;
+ 258:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 259:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     temp = addr | READ_BURST;
+ 562               	.LM64:
+ 563 0142 806C      		ori r24,lo8(-64)
+ 260:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, LOW);
+ 261:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB &= ~(1<<2);
+ 565               	.LM65:
+ 566 0144 2A98      		cbi 0x5,2
+ 567               	.L35:
+ 262:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    while(digitalRead(MISO_PIN));
+ 263:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_Miso();
+ 569               	.LM66:
+ 570 0146 1C99      		sbic 0x3,4
+ 571 0148 00C0      		rjmp .L35
+ 264:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiTransfer(temp);
+ 573               	.LM67:
+ 574 014a 00D0      		rcall SpiTransfer
+ 265:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     value=SpiTransfer(0);
+ 576               	.LM68:
+ 577 014c 80E0      		ldi r24,0
+ 578 014e 00D0      		rcall SpiTransfer
+ 266:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** //    digitalWrite(SS_PIN, HIGH);
+ 267:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     PORTB |= (1<<2);
+ 580               	.LM69:
+ 581 0150 2A9A      		sbi 0x5,2
+ 268:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     return value;
+ 269:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 583               	.LM70:
+ 584 0152 0895      		ret
+ 589               	.Lscope10:
+ 591               	.global	RegConfigSettings
+ 593               	RegConfigSettings:
+ 270:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 271:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 272:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:RegConfigSettings
+ 273:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :CC1101 register config //details refer datasheet of CC1101/CC1100//
+ 274:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :none
+ 275:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 276:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 277:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void RegConfigSettings(void)
+ 278:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 595               	.LM71:
+ 596               	.LFBB11:
+ 597               	/* prologue: function */
+ 598               	/* frame size = 0 */
+ 599               	/* stack size = 0 */
+ 600               	.L__stack_usage = 0
+ 279:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FSCTRL1,  0x08);
+ 602               	.LM72:
+ 603 0154 68E0      		ldi r22,lo8(8)
+ 604 0156 8BE0      		ldi r24,lo8(11)
+ 605 0158 00D0      		rcall SpiWriteReg
+ 280:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FSCTRL0,  0x00);
+ 607               	.LM73:
+ 608 015a 60E0      		ldi r22,0
+ 609 015c 8CE0      		ldi r24,lo8(12)
+ 610 015e 00D0      		rcall SpiWriteReg
+ 281:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FREQ2,    0x10);
+ 612               	.LM74:
+ 613 0160 60E1      		ldi r22,lo8(16)
+ 614 0162 8DE0      		ldi r24,lo8(13)
+ 615 0164 00D0      		rcall SpiWriteReg
+ 282:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FREQ1,    0xA7);
+ 617               	.LM75:
+ 618 0166 67EA      		ldi r22,lo8(-89)
+ 619 0168 8EE0      		ldi r24,lo8(14)
+ 620 016a 00D0      		rcall SpiWriteReg
+ 283:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FREQ0,    0x62);
+ 622               	.LM76:
+ 623 016c 62E6      		ldi r22,lo8(98)
+ 624 016e 8FE0      		ldi r24,lo8(15)
+ 625 0170 00D0      		rcall SpiWriteReg
+ 284:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_MDMCFG4,  0x5B);
+ 627               	.LM77:
+ 628 0172 6BE5      		ldi r22,lo8(91)
+ 629 0174 80E1      		ldi r24,lo8(16)
+ 630 0176 00D0      		rcall SpiWriteReg
+ 285:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_MDMCFG3,  0xF8);
+ 632               	.LM78:
+ 633 0178 68EF      		ldi r22,lo8(-8)
+ 634 017a 81E1      		ldi r24,lo8(17)
+ 635 017c 00D0      		rcall SpiWriteReg
+ 286:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_MDMCFG2,  0x03);
+ 637               	.LM79:
+ 638 017e 63E0      		ldi r22,lo8(3)
+ 639 0180 82E1      		ldi r24,lo8(18)
+ 640 0182 00D0      		rcall SpiWriteReg
+ 287:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_MDMCFG1,  0x22);
+ 642               	.LM80:
+ 643 0184 62E2      		ldi r22,lo8(34)
+ 644 0186 83E1      		ldi r24,lo8(19)
+ 645 0188 00D0      		rcall SpiWriteReg
+ 288:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_MDMCFG0,  0xF8);
+ 647               	.LM81:
+ 648 018a 68EF      		ldi r22,lo8(-8)
+ 649 018c 84E1      		ldi r24,lo8(20)
+ 650 018e 00D0      		rcall SpiWriteReg
+ 289:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_CHANNR,   0x00);
+ 652               	.LM82:
+ 653 0190 60E0      		ldi r22,0
+ 654 0192 8AE0      		ldi r24,lo8(10)
+ 655 0194 00D0      		rcall SpiWriteReg
+ 290:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_DEVIATN,  0x47);
+ 657               	.LM83:
+ 658 0196 67E4      		ldi r22,lo8(71)
+ 659 0198 85E1      		ldi r24,lo8(21)
+ 660 019a 00D0      		rcall SpiWriteReg
+ 291:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FREND1,   0xB6);
+ 662               	.LM84:
+ 663 019c 66EB      		ldi r22,lo8(-74)
+ 664 019e 81E2      		ldi r24,lo8(33)
+ 665 01a0 00D0      		rcall SpiWriteReg
+ 292:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FREND0,   0x10);
+ 667               	.LM85:
+ 668 01a2 60E1      		ldi r22,lo8(16)
+ 669 01a4 82E2      		ldi r24,lo8(34)
+ 670 01a6 00D0      		rcall SpiWriteReg
+ 293:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_MCSM0 ,   0x18);
+ 672               	.LM86:
+ 673 01a8 68E1      		ldi r22,lo8(24)
+ 674 01aa 88E1      		ldi r24,lo8(24)
+ 675 01ac 00D0      		rcall SpiWriteReg
+ 294:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FOCCFG,   0x1D);
+ 677               	.LM87:
+ 678 01ae 6DE1      		ldi r22,lo8(29)
+ 679 01b0 89E1      		ldi r24,lo8(25)
+ 680 01b2 00D0      		rcall SpiWriteReg
+ 295:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_BSCFG,    0x1C);
+ 682               	.LM88:
+ 683 01b4 6CE1      		ldi r22,lo8(28)
+ 684 01b6 8AE1      		ldi r24,lo8(26)
+ 685 01b8 00D0      		rcall SpiWriteReg
+ 296:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_AGCCTRL2, 0xC7);
+ 687               	.LM89:
+ 688 01ba 67EC      		ldi r22,lo8(-57)
+ 689 01bc 8BE1      		ldi r24,lo8(27)
+ 690 01be 00D0      		rcall SpiWriteReg
+ 297:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_AGCCTRL1, 0x00);
+ 692               	.LM90:
+ 693 01c0 60E0      		ldi r22,0
+ 694 01c2 8CE1      		ldi r24,lo8(28)
+ 695 01c4 00D0      		rcall SpiWriteReg
+ 298:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_AGCCTRL0, 0xB2);
+ 697               	.LM91:
+ 698 01c6 62EB      		ldi r22,lo8(-78)
+ 699 01c8 8DE1      		ldi r24,lo8(29)
+ 700 01ca 00D0      		rcall SpiWriteReg
+ 299:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FSCAL3,   0xEA);
+ 702               	.LM92:
+ 703 01cc 6AEE      		ldi r22,lo8(-22)
+ 704 01ce 83E2      		ldi r24,lo8(35)
+ 705 01d0 00D0      		rcall SpiWriteReg
+ 300:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FSCAL2,   0x2A);
+ 707               	.LM93:
+ 708 01d2 6AE2      		ldi r22,lo8(42)
+ 709 01d4 84E2      		ldi r24,lo8(36)
+ 710 01d6 00D0      		rcall SpiWriteReg
+ 301:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FSCAL1,   0x00);
+ 712               	.LM94:
+ 713 01d8 60E0      		ldi r22,0
+ 714 01da 85E2      		ldi r24,lo8(37)
+ 715 01dc 00D0      		rcall SpiWriteReg
+ 302:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FSCAL0,   0x11);
+ 717               	.LM95:
+ 718 01de 61E1      		ldi r22,lo8(17)
+ 719 01e0 86E2      		ldi r24,lo8(38)
+ 720 01e2 00D0      		rcall SpiWriteReg
+ 303:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_FSTEST,   0x59);
+ 722               	.LM96:
+ 723 01e4 69E5      		ldi r22,lo8(89)
+ 724 01e6 89E2      		ldi r24,lo8(41)
+ 725 01e8 00D0      		rcall SpiWriteReg
+ 304:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_TEST2,    0x81);
+ 727               	.LM97:
+ 728 01ea 61E8      		ldi r22,lo8(-127)
+ 729 01ec 8CE2      		ldi r24,lo8(44)
+ 730 01ee 00D0      		rcall SpiWriteReg
+ 305:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_TEST1,    0x35);
+ 732               	.LM98:
+ 733 01f0 65E3      		ldi r22,lo8(53)
+ 734 01f2 8DE2      		ldi r24,lo8(45)
+ 735 01f4 00D0      		rcall SpiWriteReg
+ 306:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_TEST0,    0x09);
+ 737               	.LM99:
+ 738 01f6 69E0      		ldi r22,lo8(9)
+ 739 01f8 8EE2      		ldi r24,lo8(46)
+ 740 01fa 00D0      		rcall SpiWriteReg
+ 307:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_IOCFG2,   0x0B); 	//serial clock.synchronous to the data in synchronous seri
+ 742               	.LM100:
+ 743 01fc 6BE0      		ldi r22,lo8(11)
+ 744 01fe 80E0      		ldi r24,0
+ 745 0200 00D0      		rcall SpiWriteReg
+ 308:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_IOCFG0,   0x06);  	//asserts when sync word has been sent/received, and de-a
+ 747               	.LM101:
+ 748 0202 66E0      		ldi r22,lo8(6)
+ 749 0204 82E0      		ldi r24,lo8(2)
+ 750 0206 00D0      		rcall SpiWriteReg
+ 309:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_PKTCTRL1, 0x04);		//two status bytes will be appended to the payload of the 
+ 752               	.LM102:
+ 753 0208 64E0      		ldi r22,lo8(4)
+ 754 020a 87E0      		ldi r24,lo8(7)
+ 755 020c 00D0      		rcall SpiWriteReg
+ 310:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //No address check
+ 311:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_PKTCTRL0, 0x05);		//whitening off;CRC Enable£»variable length packets, pac
+ 757               	.LM103:
+ 758 020e 65E0      		ldi r22,lo8(5)
+ 759 0210 88E0      		ldi r24,lo8(8)
+ 760 0212 00D0      		rcall SpiWriteReg
+ 312:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_ADDR,     0x00);		//address used for packet filtration.
+ 762               	.LM104:
+ 763 0214 60E0      		ldi r22,0
+ 764 0216 89E0      		ldi r24,lo8(9)
+ 765 0218 00D0      		rcall SpiWriteReg
+ 313:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_PKTLEN,   0x3D); 	//61 bytes max length
+ 767               	.LM105:
+ 768 021a 6DE3      		ldi r22,lo8(61)
+ 769 021c 86E0      		ldi r24,lo8(6)
+ 770 021e 00C0      		rjmp SpiWriteReg
+ 772               	.Lscope11:
+ 774               	.global	Init
+ 776               	Init:
+ 128:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiInit();										//spi initialization
+ 778               	.LM106:
+ 779               	.LFBB12:
+ 780               	/* prologue: function */
+ 781               	/* frame size = 0 */
+ 782               	/* stack size = 0 */
+ 783               	.L__stack_usage = 0
+ 129:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     GDO_Set();										//GDO set
+ 785               	.LM107:
+ 786 0220 00D0      		rcall SpiInit
+ 130:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SS_PIN, HIGH);
+ 788               	.LM108:
+ 789 0222 00D0      		rcall GDO_Set
+ 132:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(SCK_PIN, HIGH);
+ 791               	.LM109:
+ 792 0224 2A9A      		sbi 0x5,2
+ 134:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     //digitalWrite(MOSI_PIN, LOW);
+ 794               	.LM110:
+ 795 0226 2D9A      		sbi 0x5,5
+ 136:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     Reset();										//CC1101 reset
+ 797               	.LM111:
+ 798 0228 2B98      		cbi 0x5,3
+ 137:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     RegConfigSettings();							//CC1101 register config
+ 800               	.LM112:
+ 801 022a 00D0      		rcall Reset
+ 138:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteBurstReg(CC1101_PATABLE,PaTabel,8);		//CC1101 PATABLE config
+ 803               	.LM113:
+ 804 022c 00D0      		rcall RegConfigSettings
+ 139:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 806               	.LM114:
+ 807 022e 48E0      		ldi r20,lo8(8)
+ 808 0230 60E0      		ldi r22,lo8(PaTabel)
+ 809 0232 70E0      		ldi r23,hi8(PaTabel)
+ 810 0234 8EE3      		ldi r24,lo8(62)
+ 811 0236 00C0      		rjmp SpiWriteBurstReg
+ 813               	.Lscope12:
+ 817               	.global	SendData
+ 819               	SendData:
+ 314:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 315:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 316:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 317:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SendData
+ 318:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :use CC1101 send data
+ 319:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :txBuffer: data array to send; size: number of data to send, no more than 61
+ 320:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 321:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 322:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** byte SendData(byte *txBuffer,byte size)
+ 323:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 821               	.LM115:
+ 822               	.LFBB13:
+ 823 0238 0F93      		push r16
+ 824 023a 1F93      		push r17
+ 825 023c CF93      		push r28
+ 826 023e DF93      		push r29
+ 827 0240 1F92      		push __zero_reg__
+ 828 0242 CDB7      		in r28,__SP_L__
+ 829 0244 DEB7      		in r29,__SP_H__
+ 830               	/* prologue: function */
+ 831               	/* frame size = 1 */
+ 832               	/* stack size = 5 */
+ 833               	.L__stack_usage = 5
+ 834 0246 8C01      		movw r16,r24
+ 835 0248 462F      		mov r20,r22
+ 324:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     byte res = 0x00;
+ 325:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteReg(CC1101_TXFIFO,size);
+ 837               	.LM116:
+ 838 024a 8FE3      		ldi r24,lo8(63)
+ 839 024c 4983      		std Y+1,r20
+ 840 024e 00D0      		rcall SpiWriteReg
+ 326:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiWriteBurstReg(CC1101_TXFIFO,txBuffer,size);			//write data to send
+ 842               	.LM117:
+ 843 0250 4981      		ldd r20,Y+1
+ 844 0252 B801      		movw r22,r16
+ 845 0254 8FE3      		ldi r24,lo8(63)
+ 846 0256 00D0      		rcall SpiWriteBurstReg
+ 327:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiStrobe(CC1101_STX);									//start send
+ 848               	.LM118:
+ 849 0258 85E3      		ldi r24,lo8(53)
+ 850 025a 00D0      		rcall SpiStrobe
+ 851               	.L40:
+ 328:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_GDO0_high();								// Wait for GDO0 to be set -> sync transmitted
+ 853               	.LM119:
+ 854 025c 4D9B      		sbis 0x9,5
+ 855 025e 00C0      		rjmp .L40
+ 856               	.L46:
+ 329:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     wait_GDO0_low();								// Wait for GDO0 to be cleared -> end of packet
+ 858               	.LM120:
+ 859 0260 4D99      		sbic 0x9,5
+ 860 0262 00C0      		rjmp .L46
+ 330:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 331:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
+ 862               	.LM121:
+ 863 0264 8AE3      		ldi r24,lo8(58)
+ 864 0266 00D0      		rcall SpiReadStatus
+ 865 0268 182F      		mov r17,r24
+ 332:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         res = 1;
+ 333:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 334:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 335:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiStrobe(CC1101_SFTX);									//flush TXfifo
+ 867               	.LM122:
+ 868 026a 8BE3      		ldi r24,lo8(59)
+ 869 026c 00D0      		rcall SpiStrobe
+ 331:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         res = 1;
+ 871               	.LM123:
+ 872 026e 1F77      		andi r17,lo8(127)
+ 873 0270 81E0      		ldi r24,lo8(1)
+ 874 0272 01F0      		breq .L42
+ 875 0274 80E0      		ldi r24,0
+ 876               	.L42:
+ 877               	/* epilogue start */
+ 336:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     return res;
+ 337:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 338:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 879               	.LM124:
+ 880 0276 0F90      		pop __tmp_reg__
+ 881 0278 DF91      		pop r29
+ 882 027a CF91      		pop r28
+ 883 027c 1F91      		pop r17
+ 884 027e 0F91      		pop r16
+ 885 0280 0895      		ret
+ 887               	.Lscope13:
+ 889               	.global	SetReceive
+ 891               	SetReceive:
+ 339:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 340:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 341:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:SetReceive
+ 342:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :set CC1101 to receive state
+ 343:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :none
+ 344:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :none
+ 345:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 346:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** void SetReceive(void)
+ 347:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 893               	.LM125:
+ 894               	.LFBB14:
+ 895               	/* prologue: function */
+ 896               	/* frame size = 0 */
+ 897               	/* stack size = 0 */
+ 898               	.L__stack_usage = 0
+ 348:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     SpiStrobe(CC1101_SRX);
+ 900               	.LM126:
+ 901 0282 84E3      		ldi r24,lo8(52)
+ 902 0284 00C0      		rjmp SpiStrobe
+ 904               	.Lscope14:
+ 906               	.global	CheckReceiveFlag
+ 908               	CheckReceiveFlag:
+ 349:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 350:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 351:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 352:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:CheckReceiveFlag
+ 353:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :check receive data or not
+ 354:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :none
+ 355:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :flag: 0 no data; 1 receive data
+ 356:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 357:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** byte CheckReceiveFlag(void)
+ 358:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 910               	.LM127:
+ 911               	.LFBB15:
+ 912               	/* prologue: function */
+ 913               	/* frame size = 0 */
+ 914               	/* stack size = 0 */
+ 915               	.L__stack_usage = 0
+ 359:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     if(getGDO0state())			//receive data
+ 917               	.LM128:
+ 918 0286 99B1      		in r25,0x9
+ 919 0288 95FB      		bst r25,5
+ 920 028a 8827      		clr r24
+ 921 028c 80F9      		bld r24,0
+ 922 028e 95FF      		sbrs r25,5
+ 923 0290 00C0      		rjmp .L52
+ 924               	.L56:
+ 360:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     {
+ 361:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         while (getGDO0state());
+ 926               	.LM129:
+ 927 0292 4D99      		sbic 0x9,5
+ 928 0294 00C0      		rjmp .L56
+ 362:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         return 1;
+ 930               	.LM130:
+ 931 0296 81E0      		ldi r24,lo8(1)
+ 932               	.L52:
+ 363:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     }
+ 364:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     else							// no data
+ 365:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     {
+ 366:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         return 0;
+ 367:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     }
+ 368:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 934               	.LM131:
+ 935 0298 0895      		ret
+ 937               	.Lscope15:
+ 940               	.global	ReceiveData
+ 942               	ReceiveData:
+ 369:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 370:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** 
+ 371:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** /****************************************************************
+ 372:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION NAME:ReceiveData
+ 373:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *FUNCTION     :read data received from RXfifo
+ 374:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *INPUT        :rxBuffer: buffer to store data
+ 375:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  *OUTPUT       :size of data received
+ 376:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****  ****************************************************************/
+ 377:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** byte ReceiveData(byte *rxBuffer)
+ 378:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** {
+ 944               	.LM132:
+ 945               	.LFBB16:
+ 946 029a EF92      		push r14
+ 947 029c FF92      		push r15
+ 948 029e 1F93      		push r17
+ 949 02a0 CF93      		push r28
+ 950 02a2 DF93      		push r29
+ 951 02a4 00D0      		rcall .
+ 952 02a6 CDB7      		in r28,__SP_L__
+ 953 02a8 DEB7      		in r29,__SP_H__
+ 954               	/* prologue: function */
+ 955               	/* frame size = 2 */
+ 956               	/* stack size = 7 */
+ 957               	.L__stack_usage = 7
+ 958 02aa 7C01      		movw r14,r24
+ 379:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     byte size;
+ 380:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     byte status[2];
+ 381:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 382:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     if(SpiReadStatus(CC1101_RXBYTES) & BYTES_IN_RXFIFO)
+ 960               	.LM133:
+ 961 02ac 8BE3      		ldi r24,lo8(59)
+ 962 02ae 00D0      		rcall SpiReadStatus
+ 963 02b0 182F      		mov r17,r24
+ 964 02b2 1F77      		andi r17,lo8(127)
+ 965 02b4 01F0      		breq .L60
+ 383:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     {
+ 384:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         size=SpiReadReg(CC1101_RXFIFO);
+ 967               	.LM134:
+ 968 02b6 8FE3      		ldi r24,lo8(63)
+ 969 02b8 00D0      		rcall SpiReadReg
+ 970 02ba 182F      		mov r17,r24
+ 385:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         SpiReadBurstReg(CC1101_RXFIFO,rxBuffer,size);
+ 972               	.LM135:
+ 973 02bc 482F      		mov r20,r24
+ 974 02be B701      		movw r22,r14
+ 975 02c0 8FE3      		ldi r24,lo8(63)
+ 976 02c2 00D0      		rcall SpiReadBurstReg
+ 386:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         SpiReadBurstReg(CC1101_RXFIFO,status,2);
+ 978               	.LM136:
+ 979 02c4 42E0      		ldi r20,lo8(2)
+ 980 02c6 BE01      		movw r22,r28
+ 981 02c8 6F5F      		subi r22,-1
+ 982 02ca 7F4F      		sbci r23,-1
+ 983 02cc 8FE3      		ldi r24,lo8(63)
+ 984 02ce 00D0      		rcall SpiReadBurstReg
+ 985               	.L60:
+ 387:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         SpiStrobe(CC1101_SFRX);
+ 388:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         return size;
+ 389:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     }
+ 390:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     else
+ 391:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     {
+ 392:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         SpiStrobe(CC1101_SFRX);
+ 987               	.LM137:
+ 988 02d0 8AE3      		ldi r24,lo8(58)
+ 989 02d2 00D0      		rcall SpiStrobe
+ 393:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****         return 0;
+ 394:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     }
+ 395:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c ****     
+ 396:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/cc1101.c **** }
+ 991               	.LM138:
+ 992 02d4 812F      		mov r24,r17
+ 993               	/* epilogue start */
+ 994 02d6 0F90      		pop __tmp_reg__
+ 995 02d8 0F90      		pop __tmp_reg__
+ 996 02da DF91      		pop r29
+ 997 02dc CF91      		pop r28
+ 998 02de 1F91      		pop r17
+ 999 02e0 FF90      		pop r15
+ 1000 02e2 EF90      		pop r14
+ 1001 02e4 0895      		ret
+ 1007               	.Lscope16:
+ 1008               	.global	PaTabel
+ 1009               		.data
+ 1012               	PaTabel:
+ 1013 0000 60        		.byte	96
+ 1014 0001 60        		.byte	96
+ 1015 0002 60        		.byte	96
+ 1016 0003 60        		.byte	96
+ 1017 0004 60        		.byte	96
+ 1018 0005 60        		.byte	96
+ 1019 0006 60        		.byte	96
+ 1020 0007 60        		.byte	96
+ 1022               		.text
+ 1024               	.Letext0:
+ 1025               		.ident	"GCC: (GNU) 4.9.3"
+ 1026               	.global __do_copy_data
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 cc1101.c
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:116    .text:0000000000000000 SpiInit
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:149    .text:0000000000000012 SpiTransfer
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:177    .text:000000000000001e GDO_Set
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:194    .text:0000000000000022 Reset
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:268    .text:0000000000000050 SpiWriteReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:321    .text:000000000000007e SpiWriteBurstReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:401    .text:00000000000000d0 SpiStrobe
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:430    .text:00000000000000dc SpiReadReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:472    .text:00000000000000ee SpiReadBurstReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:553    .text:0000000000000142 SpiReadStatus
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:593    .text:0000000000000154 RegConfigSettings
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:776    .text:0000000000000220 Init
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:1012   .data:0000000000000000 PaTabel
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:819    .text:0000000000000238 SendData
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:891    .text:0000000000000282 SetReceive
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:908    .text:0000000000000286 CheckReceiveFlag
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cciv667h.s:942    .text:000000000000029a ReceiveData
+
+UNDEFINED SYMBOLS
+__do_copy_data

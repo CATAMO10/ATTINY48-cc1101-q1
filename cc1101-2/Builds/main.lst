@@ -1,0 +1,60 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 112               	.global	initIO
+ 114               	initIO:
+   1:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include <stdio.h>
+   2:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include <avr/io.h>
+   3:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include <avr/interrupt.h>
+   4:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include <util/delay.h>
+   5:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include "cc1101.h"
+   6:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 
+   7:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** void initIO(void) {
+ 116               	.LM0:
+ 117               	.LFBB1:
+ 118               	/* prologue: function */
+ 119               	/* frame size = 0 */
+ 120               	/* stack size = 0 */
+ 121               	.L__stack_usage = 0
+ 122 0000 0895      		ret
+ 124               	.Lscope1:
+ 125               		.section	.text.startup,"ax",@progbits
+ 127               	.global	main
+ 129               	main:
+   8:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 	
+   9:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** }
+  10:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 
+  11:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** int main(void) {
+ 131               	.LM1:
+ 132               	.LFBB2:
+ 133               	/* prologue: function */
+ 134               	/* frame size = 0 */
+ 135               	/* stack size = 0 */
+ 136               	.L__stack_usage = 0
+ 137               	.L3:
+  12:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 	initIO();
+  13:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 
+  14:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 	while (1) {
+  15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 	}
+ 139               	.LM2:
+ 140 0000 00C0      		rjmp .L3
+ 142               	.Lscope2:
+ 143               		.text
+ 145               	.Letext0:
+ 146               		.ident	"GCC: (GNU) 4.9.3"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccLwGeUg.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccLwGeUg.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccLwGeUg.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccLwGeUg.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccLwGeUg.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccLwGeUg.s:114    .text:0000000000000000 initIO
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccLwGeUg.s:129    .text.startup:0000000000000000 main
+
+NO UNDEFINED SYMBOLS
