@@ -10,10 +10,11 @@
 #define cc1101_h
 
 #include <stdio.h>
-#include <stdio.h>
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <avr/pgmspace.h>
+#include <avr/io.h>
+#include <arduino/Arduino.h>
 
 #define byte				uint8_t
 //***************************************CC1101 define**************************************************//
@@ -108,6 +109,9 @@
 #define CC1101_TXFIFO       0x3F
 #define CC1101_RXFIFO       0x3F
 
+
+
+
 //*************************************** pins **************************************************//
 //#define SCK_PIN   PB5
 //#define MISO_PIN  PB4
@@ -115,6 +119,33 @@
 //#define SS_PIN    PB2
 //#define GDO0	PD5
 //#define GDO2	9
+#define bitRead(value, bit) (((value) >> (bit)) & 0x01)
+#define bitSet(value, bit) ((value) |= (1UL << (bit)))
+#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
+#define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
+#define wait_Miso()  while(bitRead(PORT_SPI_MISO, BIT_SPI_MISO))
+
+
+#define SPI_SS   PB2     // PB2 = SPI_SS
+#define SPI_MOSI PB3     // PB3 = MOSI
+#define SPI_MISO PB4     // PB4 = MISO
+#define SPI_SCK  PB5     // PB5 = SCK
+#define GDO0	 PD5        // PD2 = INT0
+
+#define PORT_SPI_MISO  PINB
+#define BIT_SPI_MISO  4
+
+#define PORT_SPI_SS  PORTB
+#define BIT_SPI_SS   2
+
+#define PORT_GDO0  PIND
+#define BIT_GDO0  5
+
+#define getGDO0state()  bitRead(PORT_GDO0, BIT_GDO0)
+// Wait until GDO0 line goes high
+#define wait_GDO0_high()  while(!getGDO0state())
+// Wait until GDO0 line goes low
+#define wait_GDO0_low()  while(getGDO0state())
 //************************************* class **************************************************//
 
     extern void SpiInit(void);
@@ -137,8 +168,8 @@
     extern byte ReceiveData(byte *rxBuffer);
     extern byte SpiReadReg(byte addr);
     extern byte SpiReadStatus(byte addr);
-
-
+    extern void digitalWrite(uint8_t pin, uint8_t val);
+    extern int digitalRead(uint8_t pin);
 
 #endif
 

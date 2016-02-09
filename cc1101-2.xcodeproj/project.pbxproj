@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6B38268E1C6940CB005F2567 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6B38268D1C6940CB005F2567 /* main.c */; };
 		6B3826A41C694164005F2567 /* cc1101.c in Sources */ = {isa = PBXBuildFile; fileRef = 6B3826A21C694164005F2567 /* cc1101.c */; };
+		6B3826A71C69E7EA005F2567 /* TWI_Master.c in Sources */ = {isa = PBXBuildFile; fileRef = 6B3826A51C69E7EA005F2567 /* TWI_Master.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +18,10 @@
 		6B3826901C6940CB005F2567 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		6B3826A21C694164005F2567 /* cc1101.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cc1101.c; sourceTree = "<group>"; };
 		6B3826A31C694164005F2567 /* cc1101.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cc1101.h; sourceTree = "<group>"; };
+		6B3826A51C69E7EA005F2567 /* TWI_Master.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TWI_Master.c; sourceTree = "<group>"; };
+		6B3826A61C69E7EA005F2567 /* TWI_Master.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWI_Master.h; sourceTree = "<group>"; };
+		6B3826A81C69E846005F2567 /* General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = General.h; sourceTree = "<group>"; };
+		6B3826A91C69F800005F2567 /* pins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pins.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -39,10 +44,14 @@
 		6B38268C1C6940CB005F2567 /* cc1101-2 */ = {
 			isa = PBXGroup;
 			children = (
-				6B38268D1C6940CB005F2567 /* main.c */,
-				6B38268F1C6940CB005F2567 /* Makefiles */,
+				6B3826A91C69F800005F2567 /* pins.h */,
+				6B3826A51C69E7EA005F2567 /* TWI_Master.c */,
+				6B3826A61C69E7EA005F2567 /* TWI_Master.h */,
+				6B3826A81C69E846005F2567 /* General.h */,
 				6B3826A21C694164005F2567 /* cc1101.c */,
 				6B3826A31C694164005F2567 /* cc1101.h */,
+				6B38268D1C6940CB005F2567 /* main.c */,
+				6B38268F1C6940CB005F2567 /* Makefiles */,
 			);
 			path = "cc1101-2";
 			sourceTree = "<group>";
@@ -181,6 +190,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6B3826A41C694164005F2567 /* cc1101.c in Sources */,
+				6B3826A71C69E7EA005F2567 /* TWI_Master.c in Sources */,
 				6B38268E1C6940CB005F2567 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

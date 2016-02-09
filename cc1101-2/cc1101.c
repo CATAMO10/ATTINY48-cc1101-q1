@@ -1,5 +1,6 @@
 
 #include <cc1101.h>
+#include "pins.h"
 
 /****************************************************************/
 #define 	WRITE_BURST     	0x40						//write burst
@@ -8,33 +9,16 @@
 #define 	BYTES_IN_RXFIFO     0x7F  						//byte number in RXfifo
 
 /****************************************************************/
-#define SPI_SS   PB2     // PB2 = SPI_SS
-#define SPI_MOSI PB3     // PB3 = MOSI
-#define SPI_MISO PB4     // PB4 = MISO
-#define SPI_SCK  PB5     // PB5 = SCK
-#define GDO0	 PD5        // PD2 = INT0
 
-#define PORT_SPI_MISO  PINB
-#define BIT_SPI_MISO  4
-
-#define PORT_SPI_SS  PORTB
-#define BIT_SPI_SS   2
-
-#define PORT_GDO0  PIND
-#define BIT_GDO0  5
 /****************************************************************/
 
-#define bitRead(value, bit) (((value) >> (bit)) & 0x01)
-#define bitSet(value, bit) ((value) |= (1UL << (bit)))
-#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
-#define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
-#define wait_Miso()  while(bitRead(PORT_SPI_MISO, BIT_SPI_MISO))
-
-#define getGDO0state()  bitRead(PORT_GDO0, BIT_GDO0)
-// Wait until GDO0 line goes high
-#define wait_GDO0_high()  while(!getGDO0state())
-// Wait until GDO0 line goes low
-#define wait_GDO0_low()  while(getGDO0state())
+#define digitalPinToPort(P) ( pgm_read_byte( digital_pin_to_port_PGM + (P) ) )
+#define digitalPinToBitMask(P) ( pgm_read_byte( digital_pin_to_bit_mask_PGM + (P) ) )
+#define digitalPinToTimer(P) ( pgm_read_byte( digital_pin_to_timer_PGM + (P) ) )
+#define analogInPinToBit(P) (P)
+#define portOutputRegister(P) ( (volatile uint8_t *)( pgm_read_word( port_to_output_PGM + (P))) )
+#define portInputRegister(P) ( (volatile uint8_t *)( pgm_read_word( port_to_input_PGM + (P))) )
+#define portModeRegister(P) ( (volatile uint8_t *)( pgm_read_word( port_to_mode_PGM + (P))) )
 /****************************************************************/
 byte PaTabel[8] = {0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60};
 
@@ -48,7 +32,7 @@ void SpiInit(void)
 {
     
 //    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<5);
+    PORTB |= (1<<2);
     // Configure SPI pins
 //    pinMode(SS_PIN, OUTPUT);
 //    pinMode(MOSI_PIN, OUTPUT);
@@ -59,8 +43,8 @@ void SpiInit(void)
     
 //    digitalWrite(SCK_PIN, HIGH);
 //    digitalWrite(MOSI_PIN, LOW);
-    PORTB=(1<<5) | (0<<3);
-    
+    PORTB |=(1<<5);
+    PORTB &=~(1<<3);
     // SPI speed = clk/4
     SPCR = _BV(SPE) | _BV(MSTR);
 }
@@ -89,7 +73,7 @@ byte SpiTransfer(byte value)
 void GDO_Set (void)
 {
     //pinMode(GDO0, INPUT);
-    DDRD |= (1<<5);
+    DDRD &= ~(1<<5);
     //pinMode(GDO2, INPUT);
 }
 
@@ -394,6 +378,7 @@ byte ReceiveData(byte *rxBuffer)
     }
     
 }
+
 
 
 
