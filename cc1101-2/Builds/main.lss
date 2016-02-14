@@ -3,25 +3,25 @@ Builds/main.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000008  00800100  000004f0  00000584  2**0
+  0 .data         00000008  00800100  000004aa  0000053e  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000004f0  00000000  00000000  00000094  2**1
+  1 .text         000004aa  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000003e  00800108  00800108  0000058c  2**0
+  2 .bss          0000003e  00800108  00800108  00000546  2**0
                   ALLOC
-  3 .stab         00001d34  00000000  00000000  0000058c  2**2
+  3 .stab         00001a94  00000000  00000000  00000548  2**2
                   CONTENTS, READONLY, DEBUGGING
-  4 .stabstr      000016c5  00000000  00000000  000022c0  2**0
+  4 .stabstr      00001427  00000000  00000000  00001fdc  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .comment      00000011  00000000  00000000  00003985  2**0
+  5 .comment      00000011  00000000  00000000  00003403  2**0
                   CONTENTS, READONLY
-  6 .debug_info   00000576  00000000  00000000  00003996  2**0
+  6 .debug_info   00000576  00000000  00000000  00003414  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 0000052b  00000000  00000000  00003f0c  2**0
+  7 .debug_abbrev 0000052b  00000000  00000000  0000398a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000001d  00000000  00000000  00004437  2**0
+  8 .debug_line   0000001d  00000000  00000000  00003eb5  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000001d9  00000000  00000000  00004454  2**0
+  9 .debug_str    000001d9  00000000  00000000  00003ed2  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -60,7 +60,7 @@ Disassembly of section .text:
   34:	11 e0       	ldi	r17, 0x01	; 1
   36:	a0 e0       	ldi	r26, 0x00	; 0
   38:	b1 e0       	ldi	r27, 0x01	; 1
-  3a:	e0 ef       	ldi	r30, 0xF0	; 240
+  3a:	ea ea       	ldi	r30, 0xAA	; 170
   3c:	f4 e0       	ldi	r31, 0x04	; 4
   3e:	02 c0       	rjmp	.+4      	; 0x44 <__SREG__+0x5>
   40:	05 90       	lpm	r0, Z+
@@ -82,8 +82,8 @@ Disassembly of section .text:
   54:	a6 34       	cpi	r26, 0x46	; 70
   56:	b1 07       	cpc	r27, r17
   58:	e1 f7       	brne	.-8      	; 0x52 <.do_clear_bss_loop>
-  5a:	df d1       	rcall	.+958    	; 0x41a <main>
-  5c:	47 c2       	rjmp	.+1166   	; 0x4ec <_exit>
+  5a:	d7 d1       	rcall	.+942    	; 0x40a <main>
+  5c:	24 c2       	rjmp	.+1096   	; 0x4a6 <_exit>
 
 0000005e <__bad_interrupt>:
   5e:	d0 cf       	rjmp	.-96     	; 0x0 <__vectors>
@@ -106,7 +106,7 @@ uint8_t TWIM_Init (uint32_t TWI_Bitrate)
   66:	79 e0       	ldi	r23, 0x09	; 9
   68:	8d e3       	ldi	r24, 0x3D	; 61
   6a:	90 e0       	ldi	r25, 0x00	; 0
-  6c:	1d d2       	rcall	.+1082   	; 0x4a8 <__udivmodsi4>
+  6c:	fa d1       	rcall	.+1012   	; 0x462 <__udivmodsi4>
   6e:	da 01       	movw	r26, r20
   70:	c9 01       	movw	r24, r18
   72:	40 97       	sbiw	r24, 0x10	; 16
@@ -287,348 +287,351 @@ uint8_t TWIM_ReadNack (void)
 void SpiInit(void)
 {
     
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 134:	2a 9a       	sbi	0x05, 2	; 5
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
+ 134:	84 e0       	ldi	r24, 0x04	; 4
+ 136:	85 b9       	out	0x05, r24	; 5
     // Configure SPI pins
-//    pinMode(SS_PIN, OUTPUT);
-//    pinMode(MOSI_PIN, OUTPUT);
-//    pinMode(MISO_PIN, INPUT);
-//    pinMode(SCK_PIN, OUTPUT);
-    DDRB = (1<<PB5)|(1<<PB3)|(1<<PB2);
- 136:	8c e2       	ldi	r24, 0x2C	; 44
- 138:	84 b9       	out	0x04, r24	; 4
-    SPCR = (1<<SPE)|(1<<MSTR);
- 13a:	80 e5       	ldi	r24, 0x50	; 80
- 13c:	8c bd       	out	0x2c, r24	; 44
+    DDRB = (1<<DDB3) | (1<<DDB5) | (1<<DDB2);
+ 138:	8c e2       	ldi	r24, 0x2C	; 44
+ 13a:	84 b9       	out	0x04, r24	; 4
+    // pinMode(SS_PIN, OUTPUT);
+    // pinMode(MOSI_PIN, OUTPUT);
+    // pinMode(MISO_PIN, INPUT);
+    // pinMode(SCK_PIN, OUTPUT);
+    PORTB = (1<<PB5);
+ 13c:	80 e2       	ldi	r24, 0x20	; 32
+ 13e:	85 b9       	out	0x05, r24	; 5
+    PORTB &= ~(1<<PB4);
+ 140:	2c 98       	cbi	0x05, 4	; 5
+    // digitalWrite(SCK_PIN, HIGH);
+    // digitalWrite(MOSI_PIN, LOW);
     
-//    digitalWrite(SCK_PIN, HIGH);
-//    digitalWrite(MOSI_PIN, LOW);
-    PORTB |=(1<<5);
- 13e:	2d 9a       	sbi	0x05, 5	; 5
-    PORTB &=~(1<<3);
- 140:	2b 98       	cbi	0x05, 3	; 5
     // SPI speed = clk/4
     SPCR = _BV(SPE) | _BV(MSTR);
- 142:	8c bd       	out	0x2c, r24	; 44
- 144:	08 95       	ret
+ 142:	80 e5       	ldi	r24, 0x50	; 80
+ 144:	8c bd       	out	0x2c, r24	; 44
+ 146:	08 95       	ret
 
-00000146 <SpiTransfer>:
-// *INPUT        :value: data to send
-// *OUTPUT       :data to receive
-// ****************************************************************
+00000148 <SpiTransfer>:
+ *INPUT        :value: data to send
+ *OUTPUT       :data to receive
+ ****************************************************************/
 byte SpiTransfer(byte value)
 {
     SPDR = value;
- 146:	8e bd       	out	0x2e, r24	; 46
+ 148:	8e bd       	out	0x2e, r24	; 46
     while (!(SPSR & (1<<SPIF))) ;
- 148:	0d b4       	in	r0, 0x2d	; 45
- 14a:	07 fe       	sbrs	r0, 7
- 14c:	fd cf       	rjmp	.-6      	; 0x148 <SpiTransfer+0x2>
+ 14a:	0d b4       	in	r0, 0x2d	; 45
+ 14c:	07 fe       	sbrs	r0, 7
+ 14e:	fd cf       	rjmp	.-6      	; 0x14a <SpiTransfer+0x2>
     return SPDR;
- 14e:	8e b5       	in	r24, 0x2e	; 46
+ 150:	8e b5       	in	r24, 0x2e	; 46
 }
- 150:	08 95       	ret
+ 152:	08 95       	ret
 
-00000152 <GDO_Set>:
- *OUTPUT       : none
+00000154 <GDO_Set>:
  ****************************************************************/
 void GDO_Set (void)
 {
-    //pinMode(GDO0, INPUT);
-    DDRD &= ~(1<<5);
- 152:	55 98       	cbi	0x0a, 5	; 10
- 154:	08 95       	ret
+    // pinMode(GDO0, INPUT);
+    // pinMode(GDO2, INPUT);
+    DDRD &= ~(1<<DDD2);
+ 154:	52 98       	cbi	0x0a, 2	; 10
+ 156:	08 95       	ret
 
-00000156 <Reset>:
+00000158 <Reset>:
  *OUTPUT       :none
  ****************************************************************/
 void Reset (void)
 {
     //digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1 << 2);
- 156:	2a 98       	cbi	0x05, 2	; 5
+    PORTB &= ~(1<<PB2);
+ 158:	2a 98       	cbi	0x05, 2	; 5
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
- 158:	87 ee       	ldi	r24, 0xE7	; 231
- 15a:	93 e0       	ldi	r25, 0x03	; 3
- 15c:	01 97       	sbiw	r24, 0x01	; 1
- 15e:	f1 f7       	brne	.-4      	; 0x15c <Reset+0x6>
- 160:	00 c0       	rjmp	.+0      	; 0x162 <Reset+0xc>
- 162:	00 00       	nop
+ 15a:	87 ee       	ldi	r24, 0xE7	; 231
+ 15c:	93 e0       	ldi	r25, 0x03	; 3
+ 15e:	01 97       	sbiw	r24, 0x01	; 1
+ 160:	f1 f7       	brne	.-4      	; 0x15e <Reset+0x6>
+ 162:	00 c0       	rjmp	.+0      	; 0x164 <Reset+0xc>
+ 164:	00 00       	nop
     _delay_ms(1);
     //digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 164:	2a 9a       	sbi	0x05, 2	; 5
- 166:	87 ee       	ldi	r24, 0xE7	; 231
- 168:	93 e0       	ldi	r25, 0x03	; 3
- 16a:	01 97       	sbiw	r24, 0x01	; 1
- 16c:	f1 f7       	brne	.-4      	; 0x16a <Reset+0x14>
- 16e:	00 c0       	rjmp	.+0      	; 0x170 <Reset+0x1a>
- 170:	00 00       	nop
+    PORTB |= (1<<PB2);
+ 166:	2a 9a       	sbi	0x05, 2	; 5
+ 168:	87 ee       	ldi	r24, 0xE7	; 231
+ 16a:	93 e0       	ldi	r25, 0x03	; 3
+ 16c:	01 97       	sbiw	r24, 0x01	; 1
+ 16e:	f1 f7       	brne	.-4      	; 0x16c <Reset+0x14>
+ 170:	00 c0       	rjmp	.+0      	; 0x172 <Reset+0x1a>
+ 172:	00 00       	nop
     _delay_ms(1);
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1 << 2);
- 172:	2a 98       	cbi	0x05, 2	; 5
-//    while(digitalRead(MISO_PIN));
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+ 174:	2a 98       	cbi	0x05, 2	; 5
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
- 174:	1c 99       	sbic	0x03, 4	; 3
- 176:	fe cf       	rjmp	.-4      	; 0x174 <Reset+0x1e>
+ 176:	1c 99       	sbic	0x03, 4	; 3
+ 178:	fe cf       	rjmp	.-4      	; 0x176 <Reset+0x1e>
     SpiTransfer(CC1101_SRES);
- 178:	80 e3       	ldi	r24, 0x30	; 48
- 17a:	e5 df       	rcall	.-54     	; 0x146 <SpiTransfer>
-//    while(digitalRead(MISO_PIN));
+ 17a:	80 e3       	ldi	r24, 0x30	; 48
+ 17c:	e5 df       	rcall	.-54     	; 0x148 <SpiTransfer>
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
- 17c:	1c 99       	sbic	0x03, 4	; 3
- 17e:	fe cf       	rjmp	.-4      	; 0x17c <Reset+0x26>
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB &= ~(1 << 2);
- 180:	2a 98       	cbi	0x05, 2	; 5
- 182:	08 95       	ret
+ 17e:	1c 99       	sbic	0x03, 4	; 3
+ 180:	fe cf       	rjmp	.-4      	; 0x17e <Reset+0x26>
+    //digitalWrite(SS_PIN, HIGH);]
+    PORTB = (1<<PB2);
+ 182:	84 e0       	ldi	r24, 0x04	; 4
+ 184:	85 b9       	out	0x05, r24	; 5
+ 186:	08 95       	ret
 
-00000184 <SpiWriteReg>:
+00000188 <SpiWriteReg>:
  *FUNCTION     :CC1101 write data to register
  *INPUT        :addr: register address; value: register value
  *OUTPUT       :none
  ****************************************************************/
 void SpiWriteReg(byte addr, byte value)
 {
- 184:	1f 93       	push	r17
- 186:	cf 93       	push	r28
- 188:	df 93       	push	r29
- 18a:	1f 92       	push	r1
- 18c:	cd b7       	in	r28, 0x3d	; 61
- 18e:	de b7       	in	r29, 0x3e	; 62
- 190:	18 2f       	mov	r17, r24
+ 188:	cf 93       	push	r28
+ 18a:	df 93       	push	r29
+ 18c:	1f 92       	push	r1
+ 18e:	cd b7       	in	r28, 0x3d	; 61
+ 190:	de b7       	in	r29, 0x3e	; 62
     //digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
+    PORTB &= ~(1<<PB2);
  192:	2a 98       	cbi	0x05, 2	; 5
     //while(digitalRead(MISO_PIN));
-    wait_Miso()
- 194:	1c 9b       	sbis	0x03, 4	; 3
- 196:	05 c0       	rjmp	.+10     	; 0x1a2 <SpiWriteReg+0x1e>
+    wait_Miso();
+ 194:	1c 99       	sbic	0x03, 4	; 3
+ 196:	fe cf       	rjmp	.-4      	; 0x194 <SpiWriteReg+0xc>
     SpiTransfer(addr);
- 198:	81 2f       	mov	r24, r17
- 19a:	69 83       	std	Y+1, r22	; 0x01
- 19c:	d4 df       	rcall	.-88     	; 0x146 <SpiTransfer>
- 19e:	69 81       	ldd	r22, Y+1	; 0x01
- 1a0:	f9 cf       	rjmp	.-14     	; 0x194 <SpiWriteReg+0x10>
+ 198:	69 83       	std	Y+1, r22	; 0x01
+ 19a:	d6 df       	rcall	.-84     	; 0x148 <SpiTransfer>
     SpiTransfer(value);
- 1a2:	86 2f       	mov	r24, r22
- 1a4:	d0 df       	rcall	.-96     	; 0x146 <SpiTransfer>
+ 19c:	69 81       	ldd	r22, Y+1	; 0x01
+ 19e:	86 2f       	mov	r24, r22
     //digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 1a6:	2a 9a       	sbi	0x05, 2	; 5
 }
- 1a8:	0f 90       	pop	r0
- 1aa:	df 91       	pop	r29
- 1ac:	cf 91       	pop	r28
- 1ae:	1f 91       	pop	r17
- 1b0:	08 95       	ret
+ 1a0:	0f 90       	pop	r0
+ 1a2:	df 91       	pop	r29
+ 1a4:	cf 91       	pop	r28
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+    //while(digitalRead(MISO_PIN));
+    wait_Miso();
+    SpiTransfer(addr);
+    SpiTransfer(value);
+ 1a6:	d0 cf       	rjmp	.-96     	; 0x148 <SpiTransfer>
 
-000001b2 <SpiWriteBurstReg>:
+000001a8 <SpiWriteBurstReg>:
  *FUNCTION     :CC1101 write burst data to register
  *INPUT        :addr: register address; buffer:register value array; num:number to write
  *OUTPUT       :none
  ****************************************************************/
 void SpiWriteBurstReg(byte addr, byte *buffer, byte num)
 {
- 1b2:	ef 92       	push	r14
- 1b4:	ff 92       	push	r15
- 1b6:	0f 93       	push	r16
- 1b8:	1f 93       	push	r17
- 1ba:	cf 93       	push	r28
- 1bc:	df 93       	push	r29
- 1be:	00 d0       	rcall	.+0      	; 0x1c0 <SpiWriteBurstReg+0xe>
- 1c0:	cd b7       	in	r28, 0x3d	; 61
- 1c2:	de b7       	in	r29, 0x3e	; 62
- 1c4:	14 2f       	mov	r17, r20
+ 1a8:	ef 92       	push	r14
+ 1aa:	ff 92       	push	r15
+ 1ac:	0f 93       	push	r16
+ 1ae:	1f 93       	push	r17
+ 1b0:	cf 93       	push	r28
+ 1b2:	df 93       	push	r29
+ 1b4:	00 d0       	rcall	.+0      	; 0x1b6 <SpiWriteBurstReg+0xe>
+ 1b6:	cd b7       	in	r28, 0x3d	; 61
+ 1b8:	de b7       	in	r29, 0x3e	; 62
+ 1ba:	14 2f       	mov	r17, r20
     byte i, temp;
     
     temp = addr | WRITE_BURST;
- 1c6:	80 64       	ori	r24, 0x40	; 64
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
- 1c8:	2a 98       	cbi	0x05, 2	; 5
-//    while(digitalRead(MISO_PIN));
+ 1bc:	80 64       	ori	r24, 0x40	; 64
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+ 1be:	2a 98       	cbi	0x05, 2	; 5
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
- 1ca:	1c 99       	sbic	0x03, 4	; 3
- 1cc:	fe cf       	rjmp	.-4      	; 0x1ca <SpiWriteBurstReg+0x18>
+ 1c0:	1c 99       	sbic	0x03, 4	; 3
+ 1c2:	fe cf       	rjmp	.-4      	; 0x1c0 <SpiWriteBurstReg+0x18>
     SpiTransfer(temp);
- 1ce:	69 83       	std	Y+1, r22	; 0x01
- 1d0:	7a 83       	std	Y+2, r23	; 0x02
- 1d2:	b9 df       	rcall	.-142    	; 0x146 <SpiTransfer>
- 1d4:	69 81       	ldd	r22, Y+1	; 0x01
- 1d6:	06 2f       	mov	r16, r22
+ 1c4:	69 83       	std	Y+1, r22	; 0x01
+ 1c6:	7a 83       	std	Y+2, r23	; 0x02
+ 1c8:	bf df       	rcall	.-130    	; 0x148 <SpiTransfer>
+ 1ca:	69 81       	ldd	r22, Y+1	; 0x01
+ 1cc:	06 2f       	mov	r16, r22
     for (i = 0; i < num; i++)
- 1d8:	e6 2e       	mov	r14, r22
- 1da:	7a 81       	ldd	r23, Y+2	; 0x02
- 1dc:	f7 2e       	mov	r15, r23
- 1de:	8e 2d       	mov	r24, r14
- 1e0:	80 1b       	sub	r24, r16
- 1e2:	81 17       	cp	r24, r17
- 1e4:	28 f4       	brcc	.+10     	; 0x1f0 <SpiWriteBurstReg+0x3e>
+ 1ce:	e6 2e       	mov	r14, r22
+ 1d0:	7a 81       	ldd	r23, Y+2	; 0x02
+ 1d2:	f7 2e       	mov	r15, r23
+ 1d4:	8e 2d       	mov	r24, r14
+ 1d6:	80 1b       	sub	r24, r16
+ 1d8:	81 17       	cp	r24, r17
+ 1da:	28 f4       	brcc	.+10     	; 0x1e6 <SpiWriteBurstReg+0x3e>
     {
         SpiTransfer(buffer[i]);
- 1e6:	f7 01       	movw	r30, r14
- 1e8:	81 91       	ld	r24, Z+
- 1ea:	7f 01       	movw	r14, r30
- 1ec:	ac df       	rcall	.-168    	; 0x146 <SpiTransfer>
- 1ee:	f7 cf       	rjmp	.-18     	; 0x1de <SpiWriteBurstReg+0x2c>
+ 1dc:	f7 01       	movw	r30, r14
+ 1de:	81 91       	ld	r24, Z+
+ 1e0:	7f 01       	movw	r14, r30
+ 1e2:	b2 df       	rcall	.-156    	; 0x148 <SpiTransfer>
+ 1e4:	f7 cf       	rjmp	.-18     	; 0x1d4 <SpiWriteBurstReg+0x2c>
     }
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 1f0:	2a 9a       	sbi	0x05, 2	; 5
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
+ 1e6:	84 e0       	ldi	r24, 0x04	; 4
+ 1e8:	85 b9       	out	0x05, r24	; 5
 }
- 1f2:	0f 90       	pop	r0
- 1f4:	0f 90       	pop	r0
- 1f6:	df 91       	pop	r29
- 1f8:	cf 91       	pop	r28
- 1fa:	1f 91       	pop	r17
- 1fc:	0f 91       	pop	r16
- 1fe:	ff 90       	pop	r15
- 200:	ef 90       	pop	r14
- 202:	08 95       	ret
+ 1ea:	0f 90       	pop	r0
+ 1ec:	0f 90       	pop	r0
+ 1ee:	df 91       	pop	r29
+ 1f0:	cf 91       	pop	r28
+ 1f2:	1f 91       	pop	r17
+ 1f4:	0f 91       	pop	r16
+ 1f6:	ff 90       	pop	r15
+ 1f8:	ef 90       	pop	r14
+ 1fa:	08 95       	ret
 
-00000204 <SpiStrobe>:
+000001fc <SpiStrobe>:
  *OUTPUT       :none
  ****************************************************************/
 void SpiStrobe(byte strobe)
 {
     //digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
- 204:	2a 98       	cbi	0x05, 2	; 5
+    PORTB &= ~(1<<PB2);
+ 1fc:	2a 98       	cbi	0x05, 2	; 5
     //while(digitalRead(MISO_PIN));
     wait_Miso();
- 206:	1c 99       	sbic	0x03, 4	; 3
- 208:	fe cf       	rjmp	.-4      	; 0x206 <SpiStrobe+0x2>
+ 1fe:	1c 99       	sbic	0x03, 4	; 3
+ 200:	fe cf       	rjmp	.-4      	; 0x1fe <SpiStrobe+0x2>
     SpiTransfer(strobe);
- 20a:	9d df       	rcall	.-198    	; 0x146 <SpiTransfer>
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 20c:	2a 9a       	sbi	0x05, 2	; 5
- 20e:	08 95       	ret
+ 202:	a2 df       	rcall	.-188    	; 0x148 <SpiTransfer>
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
+ 204:	84 e0       	ldi	r24, 0x04	; 4
+ 206:	85 b9       	out	0x05, r24	; 5
+ 208:	08 95       	ret
 
-00000210 <SpiReadReg>:
+0000020a <SpiReadReg>:
  ****************************************************************/
 byte SpiReadReg(byte addr)
 {
     byte temp, value;
     
     temp = addr|READ_SINGLE;
- 210:	80 68       	ori	r24, 0x80	; 128
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
- 212:	2a 98       	cbi	0x05, 2	; 5
-//    while(digitalRead(MISO_PIN));
+ 20a:	80 68       	ori	r24, 0x80	; 128
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+ 20c:	2a 98       	cbi	0x05, 2	; 5
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
- 214:	1c 99       	sbic	0x03, 4	; 3
- 216:	fe cf       	rjmp	.-4      	; 0x214 <SpiReadReg+0x4>
+ 20e:	1c 99       	sbic	0x03, 4	; 3
+ 210:	fe cf       	rjmp	.-4      	; 0x20e <SpiReadReg+0x4>
     SpiTransfer(temp);
- 218:	96 df       	rcall	.-212    	; 0x146 <SpiTransfer>
+ 212:	9a df       	rcall	.-204    	; 0x148 <SpiTransfer>
     value=SpiTransfer(0);
- 21a:	80 e0       	ldi	r24, 0x00	; 0
- 21c:	94 df       	rcall	.-216    	; 0x146 <SpiTransfer>
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 21e:	2a 9a       	sbi	0x05, 2	; 5
-    
+ 214:	80 e0       	ldi	r24, 0x00	; 0
+ 216:	98 df       	rcall	.-208    	; 0x148 <SpiTransfer>
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
+ 218:	94 e0       	ldi	r25, 0x04	; 4
+ 21a:	95 b9       	out	0x05, r25	; 5
     return value;
 }
- 220:	08 95       	ret
+ 21c:	08 95       	ret
 
-00000222 <SpiReadBurstReg>:
+0000021e <SpiReadBurstReg>:
  *FUNCTION     :CC1101 read burst data from register
  *INPUT        :addr: register address; buffer:array to store register value; num: number to read
  *OUTPUT       :none
  ****************************************************************/
 void SpiReadBurstReg(byte addr, byte *buffer, byte num)
 {
- 222:	ef 92       	push	r14
- 224:	ff 92       	push	r15
- 226:	0f 93       	push	r16
- 228:	1f 93       	push	r17
- 22a:	cf 93       	push	r28
- 22c:	df 93       	push	r29
- 22e:	00 d0       	rcall	.+0      	; 0x230 <SpiReadBurstReg+0xe>
- 230:	cd b7       	in	r28, 0x3d	; 61
- 232:	de b7       	in	r29, 0x3e	; 62
- 234:	14 2f       	mov	r17, r20
+ 21e:	ef 92       	push	r14
+ 220:	ff 92       	push	r15
+ 222:	0f 93       	push	r16
+ 224:	1f 93       	push	r17
+ 226:	cf 93       	push	r28
+ 228:	df 93       	push	r29
+ 22a:	00 d0       	rcall	.+0      	; 0x22c <SpiReadBurstReg+0xe>
+ 22c:	cd b7       	in	r28, 0x3d	; 61
+ 22e:	de b7       	in	r29, 0x3e	; 62
+ 230:	14 2f       	mov	r17, r20
     byte i,temp;
     
     temp = addr | READ_BURST;
- 236:	80 6c       	ori	r24, 0xC0	; 192
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
- 238:	2a 98       	cbi	0x05, 2	; 5
-//    while(digitalRead(MISO_PIN));
+ 232:	80 6c       	ori	r24, 0xC0	; 192
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+ 234:	2a 98       	cbi	0x05, 2	; 5
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
- 23a:	1c 99       	sbic	0x03, 4	; 3
- 23c:	fe cf       	rjmp	.-4      	; 0x23a <SpiReadBurstReg+0x18>
+ 236:	1c 99       	sbic	0x03, 4	; 3
+ 238:	fe cf       	rjmp	.-4      	; 0x236 <SpiReadBurstReg+0x18>
     SpiTransfer(temp);
- 23e:	69 83       	std	Y+1, r22	; 0x01
- 240:	7a 83       	std	Y+2, r23	; 0x02
- 242:	81 df       	rcall	.-254    	; 0x146 <SpiTransfer>
- 244:	69 81       	ldd	r22, Y+1	; 0x01
- 246:	06 2f       	mov	r16, r22
+ 23a:	69 83       	std	Y+1, r22	; 0x01
+ 23c:	7a 83       	std	Y+2, r23	; 0x02
+ 23e:	84 df       	rcall	.-248    	; 0x148 <SpiTransfer>
+ 240:	69 81       	ldd	r22, Y+1	; 0x01
+ 242:	06 2f       	mov	r16, r22
     for(i=0;i<num;i++)
- 248:	e6 2e       	mov	r14, r22
- 24a:	7a 81       	ldd	r23, Y+2	; 0x02
- 24c:	f7 2e       	mov	r15, r23
- 24e:	8e 2d       	mov	r24, r14
- 250:	80 1b       	sub	r24, r16
- 252:	81 17       	cp	r24, r17
- 254:	30 f4       	brcc	.+12     	; 0x262 <SpiReadBurstReg+0x40>
+ 244:	e6 2e       	mov	r14, r22
+ 246:	7a 81       	ldd	r23, Y+2	; 0x02
+ 248:	f7 2e       	mov	r15, r23
+ 24a:	8e 2d       	mov	r24, r14
+ 24c:	80 1b       	sub	r24, r16
+ 24e:	81 17       	cp	r24, r17
+ 250:	30 f4       	brcc	.+12     	; 0x25e <SpiReadBurstReg+0x40>
     {
         buffer[i]=SpiTransfer(0);
- 256:	80 e0       	ldi	r24, 0x00	; 0
- 258:	76 df       	rcall	.-276    	; 0x146 <SpiTransfer>
- 25a:	f7 01       	movw	r30, r14
- 25c:	81 93       	st	Z+, r24
- 25e:	7f 01       	movw	r14, r30
- 260:	f6 cf       	rjmp	.-20     	; 0x24e <SpiReadBurstReg+0x2c>
+ 252:	80 e0       	ldi	r24, 0x00	; 0
+ 254:	79 df       	rcall	.-270    	; 0x148 <SpiTransfer>
+ 256:	f7 01       	movw	r30, r14
+ 258:	81 93       	st	Z+, r24
+ 25a:	7f 01       	movw	r14, r30
+ 25c:	f6 cf       	rjmp	.-20     	; 0x24a <SpiReadBurstReg+0x2c>
     }
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 262:	2a 9a       	sbi	0x05, 2	; 5
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
+ 25e:	84 e0       	ldi	r24, 0x04	; 4
+ 260:	85 b9       	out	0x05, r24	; 5
 }
+ 262:	0f 90       	pop	r0
  264:	0f 90       	pop	r0
- 266:	0f 90       	pop	r0
- 268:	df 91       	pop	r29
- 26a:	cf 91       	pop	r28
- 26c:	1f 91       	pop	r17
- 26e:	0f 91       	pop	r16
- 270:	ff 90       	pop	r15
- 272:	ef 90       	pop	r14
- 274:	08 95       	ret
+ 266:	df 91       	pop	r29
+ 268:	cf 91       	pop	r28
+ 26a:	1f 91       	pop	r17
+ 26c:	0f 91       	pop	r16
+ 26e:	ff 90       	pop	r15
+ 270:	ef 90       	pop	r14
+ 272:	08 95       	ret
 
-00000276 <SpiReadStatus>:
+00000274 <SpiReadStatus>:
  ****************************************************************/
 byte SpiReadStatus(byte addr)
 {
     byte value,temp;
     
     temp = addr | READ_BURST;
- 276:	80 6c       	ori	r24, 0xC0	; 192
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
- 278:	2a 98       	cbi	0x05, 2	; 5
-//    while(digitalRead(MISO_PIN));
+ 274:	80 6c       	ori	r24, 0xC0	; 192
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+ 276:	2a 98       	cbi	0x05, 2	; 5
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
- 27a:	1c 99       	sbic	0x03, 4	; 3
- 27c:	fe cf       	rjmp	.-4      	; 0x27a <SpiReadStatus+0x4>
+ 278:	1c 99       	sbic	0x03, 4	; 3
+ 27a:	fe cf       	rjmp	.-4      	; 0x278 <SpiReadStatus+0x4>
     SpiTransfer(temp);
- 27e:	63 df       	rcall	.-314    	; 0x146 <SpiTransfer>
+ 27c:	65 df       	rcall	.-310    	; 0x148 <SpiTransfer>
     value=SpiTransfer(0);
- 280:	80 e0       	ldi	r24, 0x00	; 0
- 282:	61 df       	rcall	.-318    	; 0x146 <SpiTransfer>
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 284:	2a 9a       	sbi	0x05, 2	; 5
+ 27e:	80 e0       	ldi	r24, 0x00	; 0
+ 280:	63 df       	rcall	.-314    	; 0x148 <SpiTransfer>
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
+ 282:	94 e0       	ldi	r25, 0x04	; 4
+ 284:	95 b9       	out	0x05, r25	; 5
     return value;
 }
  286:	08 95       	ret
@@ -642,140 +645,140 @@ void RegConfigSettings(void)
     SpiWriteReg(CC1101_FSCTRL1,  0x08);
  288:	68 e0       	ldi	r22, 0x08	; 8
  28a:	8b e0       	ldi	r24, 0x0B	; 11
- 28c:	7b df       	rcall	.-266    	; 0x184 <SpiWriteReg>
+ 28c:	7d df       	rcall	.-262    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FSCTRL0,  0x00);
  28e:	60 e0       	ldi	r22, 0x00	; 0
  290:	8c e0       	ldi	r24, 0x0C	; 12
- 292:	78 df       	rcall	.-272    	; 0x184 <SpiWriteReg>
+ 292:	7a df       	rcall	.-268    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FREQ2,    0x10);
  294:	60 e1       	ldi	r22, 0x10	; 16
  296:	8d e0       	ldi	r24, 0x0D	; 13
- 298:	75 df       	rcall	.-278    	; 0x184 <SpiWriteReg>
+ 298:	77 df       	rcall	.-274    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FREQ1,    0xA7);
  29a:	67 ea       	ldi	r22, 0xA7	; 167
  29c:	8e e0       	ldi	r24, 0x0E	; 14
- 29e:	72 df       	rcall	.-284    	; 0x184 <SpiWriteReg>
+ 29e:	74 df       	rcall	.-280    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FREQ0,    0x62);
  2a0:	62 e6       	ldi	r22, 0x62	; 98
  2a2:	8f e0       	ldi	r24, 0x0F	; 15
- 2a4:	6f df       	rcall	.-290    	; 0x184 <SpiWriteReg>
+ 2a4:	71 df       	rcall	.-286    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_MDMCFG4,  0x5B);
  2a6:	6b e5       	ldi	r22, 0x5B	; 91
  2a8:	80 e1       	ldi	r24, 0x10	; 16
- 2aa:	6c df       	rcall	.-296    	; 0x184 <SpiWriteReg>
+ 2aa:	6e df       	rcall	.-292    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_MDMCFG3,  0xF8);
  2ac:	68 ef       	ldi	r22, 0xF8	; 248
  2ae:	81 e1       	ldi	r24, 0x11	; 17
- 2b0:	69 df       	rcall	.-302    	; 0x184 <SpiWriteReg>
+ 2b0:	6b df       	rcall	.-298    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_MDMCFG2,  0x03);
  2b2:	63 e0       	ldi	r22, 0x03	; 3
  2b4:	82 e1       	ldi	r24, 0x12	; 18
- 2b6:	66 df       	rcall	.-308    	; 0x184 <SpiWriteReg>
+ 2b6:	68 df       	rcall	.-304    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_MDMCFG1,  0x22);
  2b8:	62 e2       	ldi	r22, 0x22	; 34
  2ba:	83 e1       	ldi	r24, 0x13	; 19
- 2bc:	63 df       	rcall	.-314    	; 0x184 <SpiWriteReg>
+ 2bc:	65 df       	rcall	.-310    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_MDMCFG0,  0xF8);
  2be:	68 ef       	ldi	r22, 0xF8	; 248
  2c0:	84 e1       	ldi	r24, 0x14	; 20
- 2c2:	60 df       	rcall	.-320    	; 0x184 <SpiWriteReg>
+ 2c2:	62 df       	rcall	.-316    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_CHANNR,   0x00);
  2c4:	60 e0       	ldi	r22, 0x00	; 0
  2c6:	8a e0       	ldi	r24, 0x0A	; 10
- 2c8:	5d df       	rcall	.-326    	; 0x184 <SpiWriteReg>
+ 2c8:	5f df       	rcall	.-322    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_DEVIATN,  0x47);
  2ca:	67 e4       	ldi	r22, 0x47	; 71
  2cc:	85 e1       	ldi	r24, 0x15	; 21
- 2ce:	5a df       	rcall	.-332    	; 0x184 <SpiWriteReg>
+ 2ce:	5c df       	rcall	.-328    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FREND1,   0xB6);
  2d0:	66 eb       	ldi	r22, 0xB6	; 182
  2d2:	81 e2       	ldi	r24, 0x21	; 33
- 2d4:	57 df       	rcall	.-338    	; 0x184 <SpiWriteReg>
+ 2d4:	59 df       	rcall	.-334    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FREND0,   0x10);
  2d6:	60 e1       	ldi	r22, 0x10	; 16
  2d8:	82 e2       	ldi	r24, 0x22	; 34
- 2da:	54 df       	rcall	.-344    	; 0x184 <SpiWriteReg>
+ 2da:	56 df       	rcall	.-340    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_MCSM0 ,   0x18);
  2dc:	68 e1       	ldi	r22, 0x18	; 24
  2de:	88 e1       	ldi	r24, 0x18	; 24
- 2e0:	51 df       	rcall	.-350    	; 0x184 <SpiWriteReg>
+ 2e0:	53 df       	rcall	.-346    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FOCCFG,   0x1D);
  2e2:	6d e1       	ldi	r22, 0x1D	; 29
  2e4:	89 e1       	ldi	r24, 0x19	; 25
- 2e6:	4e df       	rcall	.-356    	; 0x184 <SpiWriteReg>
+ 2e6:	50 df       	rcall	.-352    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_BSCFG,    0x1C);
  2e8:	6c e1       	ldi	r22, 0x1C	; 28
  2ea:	8a e1       	ldi	r24, 0x1A	; 26
- 2ec:	4b df       	rcall	.-362    	; 0x184 <SpiWriteReg>
+ 2ec:	4d df       	rcall	.-358    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_AGCCTRL2, 0xC7);
  2ee:	67 ec       	ldi	r22, 0xC7	; 199
  2f0:	8b e1       	ldi	r24, 0x1B	; 27
- 2f2:	48 df       	rcall	.-368    	; 0x184 <SpiWriteReg>
+ 2f2:	4a df       	rcall	.-364    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_AGCCTRL1, 0x00);
  2f4:	60 e0       	ldi	r22, 0x00	; 0
  2f6:	8c e1       	ldi	r24, 0x1C	; 28
- 2f8:	45 df       	rcall	.-374    	; 0x184 <SpiWriteReg>
+ 2f8:	47 df       	rcall	.-370    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_AGCCTRL0, 0xB2);
  2fa:	62 eb       	ldi	r22, 0xB2	; 178
  2fc:	8d e1       	ldi	r24, 0x1D	; 29
- 2fe:	42 df       	rcall	.-380    	; 0x184 <SpiWriteReg>
+ 2fe:	44 df       	rcall	.-376    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FSCAL3,   0xEA);
  300:	6a ee       	ldi	r22, 0xEA	; 234
  302:	83 e2       	ldi	r24, 0x23	; 35
- 304:	3f df       	rcall	.-386    	; 0x184 <SpiWriteReg>
+ 304:	41 df       	rcall	.-382    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FSCAL2,   0x2A);
  306:	6a e2       	ldi	r22, 0x2A	; 42
  308:	84 e2       	ldi	r24, 0x24	; 36
- 30a:	3c df       	rcall	.-392    	; 0x184 <SpiWriteReg>
+ 30a:	3e df       	rcall	.-388    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FSCAL1,   0x00);
  30c:	60 e0       	ldi	r22, 0x00	; 0
  30e:	85 e2       	ldi	r24, 0x25	; 37
- 310:	39 df       	rcall	.-398    	; 0x184 <SpiWriteReg>
+ 310:	3b df       	rcall	.-394    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FSCAL0,   0x11);
  312:	61 e1       	ldi	r22, 0x11	; 17
  314:	86 e2       	ldi	r24, 0x26	; 38
- 316:	36 df       	rcall	.-404    	; 0x184 <SpiWriteReg>
+ 316:	38 df       	rcall	.-400    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_FSTEST,   0x59);
  318:	69 e5       	ldi	r22, 0x59	; 89
  31a:	89 e2       	ldi	r24, 0x29	; 41
- 31c:	33 df       	rcall	.-410    	; 0x184 <SpiWriteReg>
+ 31c:	35 df       	rcall	.-406    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_TEST2,    0x81);
  31e:	61 e8       	ldi	r22, 0x81	; 129
  320:	8c e2       	ldi	r24, 0x2C	; 44
- 322:	30 df       	rcall	.-416    	; 0x184 <SpiWriteReg>
+ 322:	32 df       	rcall	.-412    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_TEST1,    0x35);
  324:	65 e3       	ldi	r22, 0x35	; 53
  326:	8d e2       	ldi	r24, 0x2D	; 45
- 328:	2d df       	rcall	.-422    	; 0x184 <SpiWriteReg>
+ 328:	2f df       	rcall	.-418    	; 0x188 <SpiWriteReg>
     SpiWriteReg(CC1101_TEST0,    0x09);
  32a:	69 e0       	ldi	r22, 0x09	; 9
  32c:	8e e2       	ldi	r24, 0x2E	; 46
- 32e:	2a df       	rcall	.-428    	; 0x184 <SpiWriteReg>
-    SpiWriteReg(CC1101_IOCFG2,   0x0B); 	//serial clock.synchronous to the data in synchronous serial mode
+ 32e:	2c df       	rcall	.-424    	; 0x188 <SpiWriteReg>
+    SpiWriteReg(CC1101_IOCFG2,   0x0B);     //serial clock.synchronous to the data in synchronous serial mode
  330:	6b e0       	ldi	r22, 0x0B	; 11
  332:	80 e0       	ldi	r24, 0x00	; 0
- 334:	27 df       	rcall	.-434    	; 0x184 <SpiWriteReg>
-    SpiWriteReg(CC1101_IOCFG0,   0x06);  	//asserts when sync word has been sent/received, and de-asserts at the end of the packet
+ 334:	29 df       	rcall	.-430    	; 0x188 <SpiWriteReg>
+    SpiWriteReg(CC1101_IOCFG0,   0x06);     //asserts when sync word has been sent/received, and de-asserts at the end of the packet
  336:	66 e0       	ldi	r22, 0x06	; 6
  338:	82 e0       	ldi	r24, 0x02	; 2
- 33a:	24 df       	rcall	.-440    	; 0x184 <SpiWriteReg>
-    SpiWriteReg(CC1101_PKTCTRL1, 0x04);		//two status bytes will be appended to the payload of the packet,including RSSI LQI and CRC OK
+ 33a:	26 df       	rcall	.-436    	; 0x188 <SpiWriteReg>
+    SpiWriteReg(CC1101_PKTCTRL1, 0x04);     //two status bytes will be appended to the payload of the packet,including RSSI LQI and CRC OK
  33c:	64 e0       	ldi	r22, 0x04	; 4
  33e:	87 e0       	ldi	r24, 0x07	; 7
- 340:	21 df       	rcall	.-446    	; 0x184 <SpiWriteReg>
+ 340:	23 df       	rcall	.-442    	; 0x188 <SpiWriteReg>
     //No address check
-    SpiWriteReg(CC1101_PKTCTRL0, 0x05);		//whitening off;CRC Enable£»variable length packets, packet length configured by the first byte after sync word
+    SpiWriteReg(CC1101_PKTCTRL0, 0x05);     //whitening off;CRC Enable£»variable length packets, packet length configured by the first byte after sync word
  342:	65 e0       	ldi	r22, 0x05	; 5
  344:	88 e0       	ldi	r24, 0x08	; 8
- 346:	1e df       	rcall	.-452    	; 0x184 <SpiWriteReg>
-    SpiWriteReg(CC1101_ADDR,     0x00);		//address used for packet filtration.
+ 346:	20 df       	rcall	.-448    	; 0x188 <SpiWriteReg>
+    SpiWriteReg(CC1101_ADDR,     0x00);     //address used for packet filtration.
  348:	60 e0       	ldi	r22, 0x00	; 0
  34a:	89 e0       	ldi	r24, 0x09	; 9
- 34c:	1b df       	rcall	.-458    	; 0x184 <SpiWriteReg>
-    SpiWriteReg(CC1101_PKTLEN,   0x3D); 	//61 bytes max length
+ 34c:	1d df       	rcall	.-454    	; 0x188 <SpiWriteReg>
+    SpiWriteReg(CC1101_PKTLEN,   0x3D);     //61 bytes max length
  34e:	6d e3       	ldi	r22, 0x3D	; 61
  350:	86 e0       	ldi	r24, 0x06	; 6
- 352:	18 cf       	rjmp	.-464    	; 0x184 <SpiWriteReg>
+ 352:	1a cf       	rjmp	.-460    	; 0x188 <SpiWriteReg>
 
 00000354 <Init>:
  *INPUT        :none
@@ -783,373 +786,303 @@ void RegConfigSettings(void)
  ****************************************************************/
 void Init(void)
 {
-    SpiInit();										//spi initialization
+    SpiInit();                                      //spi initialization
  354:	ef de       	rcall	.-546    	; 0x134 <SpiInit>
-    GDO_Set();										//GDO set
- 356:	fd de       	rcall	.-518    	; 0x152 <GDO_Set>
+    GDO_Set();                                     //GDO set
+ 356:	fe de       	rcall	.-516    	; 0x154 <GDO_Set>
     //digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
- 358:	2a 9a       	sbi	0x05, 2	; 5
+    PORTB = (1<<PB2);
+ 358:	84 e0       	ldi	r24, 0x04	; 4
+ 35a:	85 b9       	out	0x05, r24	; 5
     //digitalWrite(SCK_PIN, HIGH);
-    PORTB |= (1<<5);
- 35a:	2d 9a       	sbi	0x05, 5	; 5
+    PORTB = (1<<PB5);
+ 35c:	80 e2       	ldi	r24, 0x20	; 32
+ 35e:	85 b9       	out	0x05, r24	; 5
     //digitalWrite(MOSI_PIN, LOW);
-    PORTB &= ~(1<<3);
- 35c:	2b 98       	cbi	0x05, 3	; 5
-    Reset();										//CC1101 reset
- 35e:	fb de       	rcall	.-522    	; 0x156 <Reset>
-    RegConfigSettings();							//CC1101 register config
- 360:	93 df       	rcall	.-218    	; 0x288 <RegConfigSettings>
-    SpiWriteBurstReg(CC1101_PATABLE,PaTabel,8);		//CC1101 PATABLE config
- 362:	48 e0       	ldi	r20, 0x08	; 8
- 364:	60 e0       	ldi	r22, 0x00	; 0
- 366:	71 e0       	ldi	r23, 0x01	; 1
- 368:	8e e3       	ldi	r24, 0x3E	; 62
- 36a:	23 cf       	rjmp	.-442    	; 0x1b2 <SpiWriteBurstReg>
+    PORTB &= ~(1<<PB3);
+ 360:	2b 98       	cbi	0x05, 3	; 5
+    Reset();                                       //CC1101 reset
+ 362:	fa de       	rcall	.-524    	; 0x158 <Reset>
+    RegConfigSettings();                           //CC1101 register config
+ 364:	91 df       	rcall	.-222    	; 0x288 <RegConfigSettings>
+    SpiWriteBurstReg(CC1101_PATABLE,PaTabel,8);        //CC1101 PATABLE config
+ 366:	48 e0       	ldi	r20, 0x08	; 8
+ 368:	60 e0       	ldi	r22, 0x00	; 0
+ 36a:	71 e0       	ldi	r23, 0x01	; 1
+ 36c:	8e e3       	ldi	r24, 0x3E	; 62
+ 36e:	1c cf       	rjmp	.-456    	; 0x1a8 <SpiWriteBurstReg>
 
-0000036c <SendData>:
+00000370 <SendData>:
  *FUNCTION     :use CC1101 send data
  *INPUT        :txBuffer: data array to send; size: number of data to send, no more than 61
  *OUTPUT       :none
  ****************************************************************/
 byte SendData(byte *txBuffer,byte size)
 {
- 36c:	0f 93       	push	r16
- 36e:	1f 93       	push	r17
- 370:	cf 93       	push	r28
- 372:	df 93       	push	r29
- 374:	1f 92       	push	r1
- 376:	cd b7       	in	r28, 0x3d	; 61
- 378:	de b7       	in	r29, 0x3e	; 62
- 37a:	8c 01       	movw	r16, r24
- 37c:	46 2f       	mov	r20, r22
+ 370:	0f 93       	push	r16
+ 372:	1f 93       	push	r17
+ 374:	cf 93       	push	r28
+ 376:	df 93       	push	r29
+ 378:	1f 92       	push	r1
+ 37a:	cd b7       	in	r28, 0x3d	; 61
+ 37c:	de b7       	in	r29, 0x3e	; 62
+ 37e:	8c 01       	movw	r16, r24
+ 380:	46 2f       	mov	r20, r22
     byte res = 0x00;
     SpiWriteReg(CC1101_TXFIFO,size);
- 37e:	8f e3       	ldi	r24, 0x3F	; 63
- 380:	49 83       	std	Y+1, r20	; 0x01
- 382:	00 df       	rcall	.-512    	; 0x184 <SpiWriteReg>
-    SpiWriteBurstReg(CC1101_TXFIFO,txBuffer,size);			//write data to send
- 384:	49 81       	ldd	r20, Y+1	; 0x01
- 386:	b8 01       	movw	r22, r16
- 388:	8f e3       	ldi	r24, 0x3F	; 63
- 38a:	13 df       	rcall	.-474    	; 0x1b2 <SpiWriteBurstReg>
-    SpiStrobe(CC1101_STX);									//start send
- 38c:	85 e3       	ldi	r24, 0x35	; 53
- 38e:	3a df       	rcall	.-396    	; 0x204 <SpiStrobe>
-    wait_GDO0_high();								// Wait for GDO0 to be set -> sync transmitted
- 390:	4d 9b       	sbis	0x09, 5	; 9
- 392:	fe cf       	rjmp	.-4      	; 0x390 <SendData+0x24>
-    wait_GDO0_low();								// Wait for GDO0 to be cleared -> end of packet
- 394:	4d 99       	sbic	0x09, 5	; 9
- 396:	fe cf       	rjmp	.-4      	; 0x394 <SendData+0x28>
-    
+ 382:	8f e3       	ldi	r24, 0x3F	; 63
+ 384:	49 83       	std	Y+1, r20	; 0x01
+ 386:	00 df       	rcall	.-512    	; 0x188 <SpiWriteReg>
+    SpiWriteBurstReg(CC1101_TXFIFO,txBuffer,size);          //write data to send
+ 388:	49 81       	ldd	r20, Y+1	; 0x01
+ 38a:	b8 01       	movw	r22, r16
+ 38c:	8f e3       	ldi	r24, 0x3F	; 63
+ 38e:	0c df       	rcall	.-488    	; 0x1a8 <SpiWriteBurstReg>
+    SpiStrobe(CC1101_STX);                                  //start send
+ 390:	85 e3       	ldi	r24, 0x35	; 53
+ 392:	34 df       	rcall	.-408    	; 0x1fc <SpiStrobe>
+    //while (!digitalRead(GDO0));                             // Wait for GDO0 to be set -> sync transmitted
+    //while (digitalRead(GDO0));                              // Wait for GDO0 to be cleared -> end of packet
+    wait_GDO0_high();
+ 394:	4d 9b       	sbis	0x09, 5	; 9
+ 396:	fe cf       	rjmp	.-4      	; 0x394 <SendData+0x24>
+    wait_GDO0_low();
+ 398:	4d 99       	sbic	0x09, 5	; 9
+ 39a:	fe cf       	rjmp	.-4      	; 0x398 <SendData+0x28>
     if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
- 398:	8a e3       	ldi	r24, 0x3A	; 58
- 39a:	6d df       	rcall	.-294    	; 0x276 <SpiReadStatus>
- 39c:	18 2f       	mov	r17, r24
+ 39c:	8a e3       	ldi	r24, 0x3A	; 58
+ 39e:	6a df       	rcall	.-300    	; 0x274 <SpiReadStatus>
+ 3a0:	18 2f       	mov	r17, r24
         res = 1;
     
     
-    SpiStrobe(CC1101_SFTX);									//flush TXfifo
- 39e:	8b e3       	ldi	r24, 0x3B	; 59
- 3a0:	31 df       	rcall	.-414    	; 0x204 <SpiStrobe>
-    SpiWriteBurstReg(CC1101_TXFIFO,txBuffer,size);			//write data to send
-    SpiStrobe(CC1101_STX);									//start send
-    wait_GDO0_high();								// Wait for GDO0 to be set -> sync transmitted
-    wait_GDO0_low();								// Wait for GDO0 to be cleared -> end of packet
-    
+    SpiStrobe(CC1101_SFTX);                                 //flush TXfifo
+ 3a2:	8b e3       	ldi	r24, 0x3B	; 59
+ 3a4:	2b df       	rcall	.-426    	; 0x1fc <SpiStrobe>
+    SpiStrobe(CC1101_STX);                                  //start send
+    //while (!digitalRead(GDO0));                             // Wait for GDO0 to be set -> sync transmitted
+    //while (digitalRead(GDO0));                              // Wait for GDO0 to be cleared -> end of packet
+    wait_GDO0_high();
+    wait_GDO0_low();
     if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
- 3a2:	1f 77       	andi	r17, 0x7F	; 127
- 3a4:	81 e0       	ldi	r24, 0x01	; 1
- 3a6:	09 f0       	breq	.+2      	; 0x3aa <SendData+0x3e>
- 3a8:	80 e0       	ldi	r24, 0x00	; 0
+ 3a6:	1f 77       	andi	r17, 0x7F	; 127
+ 3a8:	81 e0       	ldi	r24, 0x01	; 1
+ 3aa:	09 f0       	breq	.+2      	; 0x3ae <SendData+0x3e>
+ 3ac:	80 e0       	ldi	r24, 0x00	; 0
     
     
-    SpiStrobe(CC1101_SFTX);									//flush TXfifo
+    SpiStrobe(CC1101_SFTX);                                 //flush TXfifo
     return res;
     
 }
- 3aa:	0f 90       	pop	r0
- 3ac:	df 91       	pop	r29
- 3ae:	cf 91       	pop	r28
- 3b0:	1f 91       	pop	r17
- 3b2:	0f 91       	pop	r16
- 3b4:	08 95       	ret
+ 3ae:	0f 90       	pop	r0
+ 3b0:	df 91       	pop	r29
+ 3b2:	cf 91       	pop	r28
+ 3b4:	1f 91       	pop	r17
+ 3b6:	0f 91       	pop	r16
+ 3b8:	08 95       	ret
 
-000003b6 <SetReceive>:
+000003ba <SetReceive>:
  *INPUT        :none
  *OUTPUT       :none
  ****************************************************************/
 void SetReceive(void)
 {
     SpiStrobe(CC1101_SRX);
- 3b6:	84 e3       	ldi	r24, 0x34	; 52
- 3b8:	25 cf       	rjmp	.-438    	; 0x204 <SpiStrobe>
+ 3ba:	84 e3       	ldi	r24, 0x34	; 52
+ 3bc:	1f cf       	rjmp	.-450    	; 0x1fc <SpiStrobe>
 
-000003ba <CheckReceiveFlag>:
- *INPUT        :none
- *OUTPUT       :flag: 0 no data; 1 receive data
- ****************************************************************/
-byte CheckReceiveFlag(void)
-{
-    if(getGDO0state())			//receive data
- 3ba:	99 b1       	in	r25, 0x09	; 9
- 3bc:	95 fb       	bst	r25, 5
- 3be:	88 27       	eor	r24, r24
- 3c0:	80 f9       	bld	r24, 0
- 3c2:	95 ff       	sbrs	r25, 5
- 3c4:	03 c0       	rjmp	.+6      	; 0x3cc <CheckReceiveFlag+0x12>
-    {
-        while (getGDO0state());
- 3c6:	4d 99       	sbic	0x09, 5	; 9
- 3c8:	fe cf       	rjmp	.-4      	; 0x3c6 <CheckReceiveFlag+0xc>
-        return 1;
- 3ca:	81 e0       	ldi	r24, 0x01	; 1
-    }
-    else							// no data
-    {
-        return 0;
-    }
-}
- 3cc:	08 95       	ret
-
-000003ce <ReceiveData>:
+000003be <ReceiveData>:
  *FUNCTION     :read data received from RXfifo
  *INPUT        :rxBuffer: buffer to store data
  *OUTPUT       :size of data received
  ****************************************************************/
 byte ReceiveData(byte *rxBuffer)
 {
- 3ce:	ef 92       	push	r14
- 3d0:	ff 92       	push	r15
- 3d2:	1f 93       	push	r17
- 3d4:	cf 93       	push	r28
- 3d6:	df 93       	push	r29
- 3d8:	00 d0       	rcall	.+0      	; 0x3da <ReceiveData+0xc>
- 3da:	cd b7       	in	r28, 0x3d	; 61
- 3dc:	de b7       	in	r29, 0x3e	; 62
- 3de:	7c 01       	movw	r14, r24
+ 3be:	ef 92       	push	r14
+ 3c0:	ff 92       	push	r15
+ 3c2:	1f 93       	push	r17
+ 3c4:	cf 93       	push	r28
+ 3c6:	df 93       	push	r29
+ 3c8:	00 d0       	rcall	.+0      	; 0x3ca <ReceiveData+0xc>
+ 3ca:	cd b7       	in	r28, 0x3d	; 61
+ 3cc:	de b7       	in	r29, 0x3e	; 62
+ 3ce:	7c 01       	movw	r14, r24
     byte size;
     byte status[2];
     
     if(SpiReadStatus(CC1101_RXBYTES) & BYTES_IN_RXFIFO)
- 3e0:	8b e3       	ldi	r24, 0x3B	; 59
- 3e2:	49 df       	rcall	.-366    	; 0x276 <SpiReadStatus>
- 3e4:	18 2f       	mov	r17, r24
- 3e6:	1f 77       	andi	r17, 0x7F	; 127
- 3e8:	69 f0       	breq	.+26     	; 0x404 <ReceiveData+0x36>
+ 3d0:	8b e3       	ldi	r24, 0x3B	; 59
+ 3d2:	50 df       	rcall	.-352    	; 0x274 <SpiReadStatus>
+ 3d4:	18 2f       	mov	r17, r24
+ 3d6:	1f 77       	andi	r17, 0x7F	; 127
+ 3d8:	69 f0       	breq	.+26     	; 0x3f4 <ReceiveData+0x36>
     {
         size=SpiReadReg(CC1101_RXFIFO);
- 3ea:	8f e3       	ldi	r24, 0x3F	; 63
- 3ec:	11 df       	rcall	.-478    	; 0x210 <SpiReadReg>
- 3ee:	18 2f       	mov	r17, r24
+ 3da:	8f e3       	ldi	r24, 0x3F	; 63
+ 3dc:	16 df       	rcall	.-468    	; 0x20a <SpiReadReg>
+ 3de:	18 2f       	mov	r17, r24
         SpiReadBurstReg(CC1101_RXFIFO,rxBuffer,size);
- 3f0:	48 2f       	mov	r20, r24
- 3f2:	b7 01       	movw	r22, r14
- 3f4:	8f e3       	ldi	r24, 0x3F	; 63
- 3f6:	15 df       	rcall	.-470    	; 0x222 <SpiReadBurstReg>
+ 3e0:	48 2f       	mov	r20, r24
+ 3e2:	b7 01       	movw	r22, r14
+ 3e4:	8f e3       	ldi	r24, 0x3F	; 63
+ 3e6:	1b df       	rcall	.-458    	; 0x21e <SpiReadBurstReg>
         SpiReadBurstReg(CC1101_RXFIFO,status,2);
- 3f8:	42 e0       	ldi	r20, 0x02	; 2
- 3fa:	be 01       	movw	r22, r28
- 3fc:	6f 5f       	subi	r22, 0xFF	; 255
- 3fe:	7f 4f       	sbci	r23, 0xFF	; 255
- 400:	8f e3       	ldi	r24, 0x3F	; 63
- 402:	0f df       	rcall	.-482    	; 0x222 <SpiReadBurstReg>
+ 3e8:	42 e0       	ldi	r20, 0x02	; 2
+ 3ea:	be 01       	movw	r22, r28
+ 3ec:	6f 5f       	subi	r22, 0xFF	; 255
+ 3ee:	7f 4f       	sbci	r23, 0xFF	; 255
+ 3f0:	8f e3       	ldi	r24, 0x3F	; 63
+ 3f2:	15 df       	rcall	.-470    	; 0x21e <SpiReadBurstReg>
         SpiStrobe(CC1101_SFRX);
         return size;
     }
     else
     {
         SpiStrobe(CC1101_SFRX);
- 404:	8a e3       	ldi	r24, 0x3A	; 58
- 406:	fe de       	rcall	.-516    	; 0x204 <SpiStrobe>
+ 3f4:	8a e3       	ldi	r24, 0x3A	; 58
+ 3f6:	02 df       	rcall	.-508    	; 0x1fc <SpiStrobe>
         return 0;
     }
     
-}
- 408:	81 2f       	mov	r24, r17
- 40a:	0f 90       	pop	r0
- 40c:	0f 90       	pop	r0
- 40e:	df 91       	pop	r29
- 410:	cf 91       	pop	r28
- 412:	1f 91       	pop	r17
- 414:	ff 90       	pop	r15
- 416:	ef 90       	pop	r14
- 418:	08 95       	ret
+ 3f8:	81 2f       	mov	r24, r17
+ 3fa:	0f 90       	pop	r0
+ 3fc:	0f 90       	pop	r0
+ 3fe:	df 91       	pop	r29
+ 400:	cf 91       	pop	r28
+ 402:	1f 91       	pop	r17
+ 404:	ff 90       	pop	r15
+ 406:	ef 90       	pop	r14
+ 408:	08 95       	ret
 
-0000041a <main>:
+0000040a <main>:
 #define size 61
 
 byte TX_buffer[size]={0};
 byte i;
 
 int main(void) {
- 41a:	80 e0       	ldi	r24, 0x00	; 0
- 41c:	90 e0       	ldi	r25, 0x00	; 0
+ 40a:	80 e0       	ldi	r24, 0x00	; 0
+ 40c:	90 e0       	ldi	r25, 0x00	; 0
     byte version;
     for(i=0;i<size;i++)
     {
         TX_buffer[i]=i*2;
- 41e:	e8 2f       	mov	r30, r24
- 420:	f0 e0       	ldi	r31, 0x00	; 0
- 422:	e8 5f       	subi	r30, 0xF8	; 248
- 424:	fe 4f       	sbci	r31, 0xFE	; 254
- 426:	90 83       	st	Z, r25
+ 40e:	e8 2f       	mov	r30, r24
+ 410:	f0 e0       	ldi	r31, 0x00	; 0
+ 412:	e8 5f       	subi	r30, 0xF8	; 248
+ 414:	fe 4f       	sbci	r31, 0xFE	; 254
+ 416:	90 83       	st	Z, r25
 byte TX_buffer[size]={0};
 byte i;
 
 int main(void) {
     byte version;
     for(i=0;i<size;i++)
- 428:	8f 5f       	subi	r24, 0xFF	; 255
- 42a:	9e 5f       	subi	r25, 0xFE	; 254
- 42c:	8d 33       	cpi	r24, 0x3D	; 61
- 42e:	b9 f7       	brne	.-18     	; 0x41e <main+0x4>
- 430:	80 93 45 01 	sts	0x0145, r24
+ 418:	8f 5f       	subi	r24, 0xFF	; 255
+ 41a:	9e 5f       	subi	r25, 0xFE	; 254
+ 41c:	8d 33       	cpi	r24, 0x3D	; 61
+ 41e:	b9 f7       	brne	.-18     	; 0x40e <main+0x4>
+ 420:	80 93 45 01 	sts	0x0145, r24
     {
         TX_buffer[i]=i*2;
     }
     Init();
- 434:	8f df       	rcall	.-226    	; 0x354 <Init>
+ 424:	97 df       	rcall	.-210    	; 0x354 <Init>
+    //_delay_ms(200);
     version = SpiReadStatus(CC1101_VERSION);
- 436:	81 e3       	ldi	r24, 0x31	; 49
- 438:	1e df       	rcall	.-452    	; 0x276 <SpiReadStatus>
- 43a:	18 2f       	mov	r17, r24
-    if (!TWIM_Init (100000))
- 43c:	60 ea       	ldi	r22, 0xA0	; 160
- 43e:	76 e8       	ldi	r23, 0x86	; 134
- 440:	81 e0       	ldi	r24, 0x01	; 1
- 442:	90 e0       	ldi	r25, 0x00	; 0
- 444:	0d de       	rcall	.-998    	; 0x60 <TWIM_Init>
- 446:	81 11       	cpse	r24, r1
- 448:	10 c0       	rjmp	.+32     	; 0x46a <main+0x50>
-    {
-        
-        while (1);
- 44a:	ff cf       	rjmp	.-2      	; 0x44a <main+0x30>
-        byte marcstate,marcstate2;
-        SpiWriteReg(CC1101_TXFIFO,size);
-        SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
-        SpiStrobe(CC1101_STX);                  //start send
-        marcstate = SpiReadStatus(CC1101_MARCSTATE);
-        wait_GDO0_high();
- 44c:	4d 9b       	sbis	0x09, 5	; 9
- 44e:	fe cf       	rjmp	.-4      	; 0x44c <main+0x32>
-        wait_GDO0_low();
- 450:	4d 99       	sbic	0x09, 5	; 9
- 452:	fe cf       	rjmp	.-4      	; 0x450 <main+0x36>
-        marcstate2 = SpiReadStatus(CC1101_MARCSTATE);
- 454:	85 e3       	ldi	r24, 0x35	; 53
- 456:	0f df       	rcall	.-482    	; 0x276 <SpiReadStatus>
- 458:	c8 2f       	mov	r28, r24
-//        if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
-//            res = 1;
-        
-        SpiStrobe(CC1101_SFTX);
- 45a:	8b e3       	ldi	r24, 0x3B	; 59
- 45c:	d3 de       	rcall	.-602    	; 0x204 <SpiStrobe>
-        if (!TWIM_Start (slaveaddress, TWIM_WRITE))
- 45e:	60 e0       	ldi	r22, 0x00	; 0
- 460:	84 e0       	ldi	r24, 0x04	; 4
- 462:	17 de       	rcall	.-978    	; 0x92 <TWIM_Start>
- 464:	81 11       	cpse	r24, r1
- 466:	0f c0       	rjmp	.+30     	; 0x486 <main+0x6c>
-        {
-            TWIM_Stop ();
- 468:	38 de       	rcall	.-912    	; 0xda <TWIM_Stop>
-    while (1)
-    {
-        byte sent;
-        //sent = SendData(TX_buffer,size);
-        byte marcstate,marcstate2;
-        SpiWriteReg(CC1101_TXFIFO,size);
- 46a:	6d e3       	ldi	r22, 0x3D	; 61
- 46c:	8f e3       	ldi	r24, 0x3F	; 63
- 46e:	8a de       	rcall	.-748    	; 0x184 <SpiWriteReg>
-        SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
- 470:	4d e3       	ldi	r20, 0x3D	; 61
- 472:	68 e0       	ldi	r22, 0x08	; 8
- 474:	71 e0       	ldi	r23, 0x01	; 1
- 476:	8f e3       	ldi	r24, 0x3F	; 63
- 478:	9c de       	rcall	.-712    	; 0x1b2 <SpiWriteBurstReg>
-        SpiStrobe(CC1101_STX);                  //start send
- 47a:	85 e3       	ldi	r24, 0x35	; 53
- 47c:	c3 de       	rcall	.-634    	; 0x204 <SpiStrobe>
-        marcstate = SpiReadStatus(CC1101_MARCSTATE);
- 47e:	85 e3       	ldi	r24, 0x35	; 53
- 480:	fa de       	rcall	.-524    	; 0x276 <SpiReadStatus>
- 482:	d8 2f       	mov	r29, r24
-        wait_GDO0_high();
- 484:	e3 cf       	rjmp	.-58     	; 0x44c <main+0x32>
-        {
-            TWIM_Stop ();
-        }
-        else
-        {
-            TWIM_Write(version);
- 486:	81 2f       	mov	r24, r17
- 488:	30 de       	rcall	.-928    	; 0xea <TWIM_Write>
-            TWIM_Write(marcstate);
- 48a:	8d 2f       	mov	r24, r29
- 48c:	2e de       	rcall	.-932    	; 0xea <TWIM_Write>
-            TWIM_Write(marcstate2);
- 48e:	8c 2f       	mov	r24, r28
- 490:	2c de       	rcall	.-936    	; 0xea <TWIM_Write>
-            TWIM_Stop ();
- 492:	23 de       	rcall	.-954    	; 0xda <TWIM_Stop>
- 494:	2f e7       	ldi	r18, 0x7F	; 127
- 496:	89 ea       	ldi	r24, 0xA9	; 169
- 498:	93 e0       	ldi	r25, 0x03	; 3
- 49a:	21 50       	subi	r18, 0x01	; 1
- 49c:	80 40       	sbci	r24, 0x00	; 0
- 49e:	90 40       	sbci	r25, 0x00	; 0
- 4a0:	e1 f7       	brne	.-8      	; 0x49a <main+0x80>
- 4a2:	00 c0       	rjmp	.+0      	; 0x4a4 <main+0x8a>
- 4a4:	00 00       	nop
- 4a6:	e1 cf       	rjmp	.-62     	; 0x46a <main+0x50>
+ 426:	81 e3       	ldi	r24, 0x31	; 49
+ 428:	25 df       	rcall	.-438    	; 0x274 <SpiReadStatus>
+//        else
+//        {
+            //sent = SendData(TX_buffer,size);
+            byte res;
+            //TWIM_Write(version);
+            SpiWriteReg(CC1101_TXFIFO,size);
+ 42a:	6d e3       	ldi	r22, 0x3D	; 61
+ 42c:	8f e3       	ldi	r24, 0x3F	; 63
+ 42e:	ac de       	rcall	.-680    	; 0x188 <SpiWriteReg>
+            //_delay_ms(1000);
+            SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
+ 430:	4d e3       	ldi	r20, 0x3D	; 61
+ 432:	68 e0       	ldi	r22, 0x08	; 8
+ 434:	71 e0       	ldi	r23, 0x01	; 1
+ 436:	8f e3       	ldi	r24, 0x3F	; 63
+ 438:	b7 de       	rcall	.-658    	; 0x1a8 <SpiWriteBurstReg>
+            //_delay_ms(1000);
+            SpiStrobe(CC1101_STX);                  //start send
+ 43a:	85 e3       	ldi	r24, 0x35	; 53
+ 43c:	df de       	rcall	.-578    	; 0x1fc <SpiStrobe>
+            //_delay_ms(1000);
+            //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+            wait_GDO0_high();
+ 43e:	4d 9b       	sbis	0x09, 5	; 9
+ 440:	fe cf       	rjmp	.-4      	; 0x43e <main+0x34>
+            wait_GDO0_low();
+ 442:	4d 99       	sbic	0x09, 5	; 9
+ 444:	fe cf       	rjmp	.-4      	; 0x442 <main+0x38>
+            //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+            if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
+ 446:	8a e3       	ldi	r24, 0x3A	; 58
+ 448:	15 df       	rcall	.-470    	; 0x274 <SpiReadStatus>
+                res = 1;
+            
+            SpiStrobe(CC1101_SFTX);
+ 44a:	8b e3       	ldi	r24, 0x3B	; 59
+ 44c:	d7 de       	rcall	.-594    	; 0x1fc <SpiStrobe>
+ 44e:	2f ef       	ldi	r18, 0xFF	; 255
+ 450:	89 e6       	ldi	r24, 0x69	; 105
+ 452:	98 e1       	ldi	r25, 0x18	; 24
+ 454:	21 50       	subi	r18, 0x01	; 1
+ 456:	80 40       	sbci	r24, 0x00	; 0
+ 458:	90 40       	sbci	r25, 0x00	; 0
+ 45a:	e1 f7       	brne	.-8      	; 0x454 <main+0x4a>
+ 45c:	00 c0       	rjmp	.+0      	; 0x45e <main+0x54>
+ 45e:	00 00       	nop
+ 460:	e4 cf       	rjmp	.-56     	; 0x42a <main+0x20>
 
-000004a8 <__udivmodsi4>:
- 4a8:	a1 e2       	ldi	r26, 0x21	; 33
- 4aa:	1a 2e       	mov	r1, r26
- 4ac:	aa 1b       	sub	r26, r26
- 4ae:	bb 1b       	sub	r27, r27
- 4b0:	fd 01       	movw	r30, r26
- 4b2:	0d c0       	rjmp	.+26     	; 0x4ce <__udivmodsi4_ep>
+00000462 <__udivmodsi4>:
+ 462:	a1 e2       	ldi	r26, 0x21	; 33
+ 464:	1a 2e       	mov	r1, r26
+ 466:	aa 1b       	sub	r26, r26
+ 468:	bb 1b       	sub	r27, r27
+ 46a:	fd 01       	movw	r30, r26
+ 46c:	0d c0       	rjmp	.+26     	; 0x488 <__udivmodsi4_ep>
 
-000004b4 <__udivmodsi4_loop>:
- 4b4:	aa 1f       	adc	r26, r26
- 4b6:	bb 1f       	adc	r27, r27
- 4b8:	ee 1f       	adc	r30, r30
- 4ba:	ff 1f       	adc	r31, r31
- 4bc:	a2 17       	cp	r26, r18
- 4be:	b3 07       	cpc	r27, r19
- 4c0:	e4 07       	cpc	r30, r20
- 4c2:	f5 07       	cpc	r31, r21
- 4c4:	20 f0       	brcs	.+8      	; 0x4ce <__udivmodsi4_ep>
- 4c6:	a2 1b       	sub	r26, r18
- 4c8:	b3 0b       	sbc	r27, r19
- 4ca:	e4 0b       	sbc	r30, r20
- 4cc:	f5 0b       	sbc	r31, r21
+0000046e <__udivmodsi4_loop>:
+ 46e:	aa 1f       	adc	r26, r26
+ 470:	bb 1f       	adc	r27, r27
+ 472:	ee 1f       	adc	r30, r30
+ 474:	ff 1f       	adc	r31, r31
+ 476:	a2 17       	cp	r26, r18
+ 478:	b3 07       	cpc	r27, r19
+ 47a:	e4 07       	cpc	r30, r20
+ 47c:	f5 07       	cpc	r31, r21
+ 47e:	20 f0       	brcs	.+8      	; 0x488 <__udivmodsi4_ep>
+ 480:	a2 1b       	sub	r26, r18
+ 482:	b3 0b       	sbc	r27, r19
+ 484:	e4 0b       	sbc	r30, r20
+ 486:	f5 0b       	sbc	r31, r21
 
-000004ce <__udivmodsi4_ep>:
- 4ce:	66 1f       	adc	r22, r22
- 4d0:	77 1f       	adc	r23, r23
- 4d2:	88 1f       	adc	r24, r24
- 4d4:	99 1f       	adc	r25, r25
- 4d6:	1a 94       	dec	r1
- 4d8:	69 f7       	brne	.-38     	; 0x4b4 <__udivmodsi4_loop>
- 4da:	60 95       	com	r22
- 4dc:	70 95       	com	r23
- 4de:	80 95       	com	r24
- 4e0:	90 95       	com	r25
- 4e2:	9b 01       	movw	r18, r22
- 4e4:	ac 01       	movw	r20, r24
- 4e6:	bd 01       	movw	r22, r26
- 4e8:	cf 01       	movw	r24, r30
- 4ea:	08 95       	ret
+00000488 <__udivmodsi4_ep>:
+ 488:	66 1f       	adc	r22, r22
+ 48a:	77 1f       	adc	r23, r23
+ 48c:	88 1f       	adc	r24, r24
+ 48e:	99 1f       	adc	r25, r25
+ 490:	1a 94       	dec	r1
+ 492:	69 f7       	brne	.-38     	; 0x46e <__udivmodsi4_loop>
+ 494:	60 95       	com	r22
+ 496:	70 95       	com	r23
+ 498:	80 95       	com	r24
+ 49a:	90 95       	com	r25
+ 49c:	9b 01       	movw	r18, r22
+ 49e:	ac 01       	movw	r20, r24
+ 4a0:	bd 01       	movw	r22, r26
+ 4a2:	cf 01       	movw	r24, r30
+ 4a4:	08 95       	ret
 
-000004ec <_exit>:
- 4ec:	f8 94       	cli
+000004a6 <_exit>:
+ 4a6:	f8 94       	cli
 
-000004ee <__stop_program>:
- 4ee:	ff cf       	rjmp	.-2      	; 0x4ee <__stop_program>
+000004a8 <__stop_program>:
+ 4a8:	ff cf       	rjmp	.-2      	; 0x4a8 <__stop_program>

@@ -1,24 +1,12 @@
-
 #include <cc1101.h>
-#include "pins.h"
+
 
 /****************************************************************/
-#define 	WRITE_BURST     	0x40						//write burst
-#define 	READ_SINGLE     	0x80						//read single
-#define 	READ_BURST      	0xC0						//read burst
-#define 	BYTES_IN_RXFIFO     0x7F  						//byte number in RXfifo
+#define     WRITE_BURST         0x40                        //write burst
+#define     READ_SINGLE         0x80                        //read single
+#define     READ_BURST          0xC0                        //read burst
+#define     BYTES_IN_RXFIFO     0x7F                        //byte number in RXfifo
 
-/****************************************************************/
-
-/****************************************************************/
-
-#define digitalPinToPort(P) ( pgm_read_byte( digital_pin_to_port_PGM + (P) ) )
-#define digitalPinToBitMask(P) ( pgm_read_byte( digital_pin_to_bit_mask_PGM + (P) ) )
-#define digitalPinToTimer(P) ( pgm_read_byte( digital_pin_to_timer_PGM + (P) ) )
-#define analogInPinToBit(P) (P)
-#define portOutputRegister(P) ( (volatile uint8_t *)( pgm_read_word( port_to_output_PGM + (P))) )
-#define portInputRegister(P) ( (volatile uint8_t *)( pgm_read_word( port_to_input_PGM + (P))) )
-#define portModeRegister(P) ( (volatile uint8_t *)( pgm_read_word( port_to_mode_PGM + (P))) )
 /****************************************************************/
 byte PaTabel[8] = {0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60};
 
@@ -31,32 +19,29 @@ byte PaTabel[8] = {0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60};
 void SpiInit(void)
 {
     
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
     // Configure SPI pins
-//    pinMode(SS_PIN, OUTPUT);
-//    pinMode(MOSI_PIN, OUTPUT);
-//    pinMode(MISO_PIN, INPUT);
-//    pinMode(SCK_PIN, OUTPUT);
-    DDRB = (1<<PB5)|(1<<PB3)|(1<<PB2);
-    SPCR = (1<<SPE)|(1<<MSTR);
+    DDRB = (1<<DDB3) | (1<<DDB5) | (1<<DDB2);
+    // pinMode(SS_PIN, OUTPUT);
+    // pinMode(MOSI_PIN, OUTPUT);
+    // pinMode(MISO_PIN, INPUT);
+    // pinMode(SCK_PIN, OUTPUT);
+    PORTB = (1<<PB5);
+    PORTB &= ~(1<<PB4);
+    // digitalWrite(SCK_PIN, HIGH);
+    // digitalWrite(MOSI_PIN, LOW);
     
-//    digitalWrite(SCK_PIN, HIGH);
-//    digitalWrite(MOSI_PIN, LOW);
-    PORTB |=(1<<5);
-    PORTB &=~(1<<3);
     // SPI speed = clk/4
     SPCR = _BV(SPE) | _BV(MSTR);
+    // SPCR = ~_BV(SPR0) | ~_BV(SPI2X) | ~_BV(SPR1);
 }
-//****************************************************************
-
-
-//****************************************************************
-// *FUNCTION NAME:SpiTransfer
-// *FUNCTION     :spi transfer
-// *INPUT        :value: data to send
-// *OUTPUT       :data to receive
-// ****************************************************************
+/****************************************************************
+ *FUNCTION NAME:SpiTransfer
+ *FUNCTION     :spi transfer
+ *INPUT        :value: data to send
+ *OUTPUT       :data to receive
+ ****************************************************************/
 byte SpiTransfer(byte value)
 {
     SPDR = value;
@@ -72,9 +57,9 @@ byte SpiTransfer(byte value)
  ****************************************************************/
 void GDO_Set (void)
 {
-    //pinMode(GDO0, INPUT);
-    DDRD &= ~(1<<5);
-    //pinMode(GDO2, INPUT);
+    // pinMode(GDO0, INPUT);
+    // pinMode(GDO2, INPUT);
+    DDRD &= ~(1<<DDD2);
 }
 
 /****************************************************************
@@ -86,20 +71,20 @@ void GDO_Set (void)
 void Reset (void)
 {
     //digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1 << 2);
+    PORTB &= ~(1<<PB2);
     _delay_ms(1);
     //digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
+    PORTB |= (1<<PB2);
     _delay_ms(1);
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1 << 2);
-//    while(digitalRead(MISO_PIN));
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
     SpiTransfer(CC1101_SRES);
-//    while(digitalRead(MISO_PIN));
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB &= ~(1 << 2);
+    //digitalWrite(SS_PIN, HIGH);]
+    PORTB = (1<<PB2);
 }
 
 /****************************************************************
@@ -110,17 +95,17 @@ void Reset (void)
  ****************************************************************/
 void Init(void)
 {
-    SpiInit();										//spi initialization
-    GDO_Set();										//GDO set
+    SpiInit();                                      //spi initialization
+    GDO_Set();                                     //GDO set
     //digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
+    PORTB = (1<<PB2);
     //digitalWrite(SCK_PIN, HIGH);
-    PORTB |= (1<<5);
+    PORTB = (1<<PB5);
     //digitalWrite(MOSI_PIN, LOW);
-    PORTB &= ~(1<<3);
-    Reset();										//CC1101 reset
-    RegConfigSettings();							//CC1101 register config
-    SpiWriteBurstReg(CC1101_PATABLE,PaTabel,8);		//CC1101 PATABLE config
+    PORTB &= ~(1<<PB3);
+    Reset();                                       //CC1101 reset
+    RegConfigSettings();                           //CC1101 register config
+    SpiWriteBurstReg(CC1101_PATABLE,PaTabel,8);        //CC1101 PATABLE config
 }
 
 
@@ -133,13 +118,12 @@ void Init(void)
 void SpiWriteReg(byte addr, byte value)
 {
     //digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
+    PORTB &= ~(1<<PB2);
     //while(digitalRead(MISO_PIN));
-    wait_Miso()
+    wait_Miso();
     SpiTransfer(addr);
     SpiTransfer(value);
     //digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
 }
 
 /****************************************************************
@@ -153,17 +137,17 @@ void SpiWriteBurstReg(byte addr, byte *buffer, byte num)
     byte i, temp;
     
     temp = addr | WRITE_BURST;
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
-//    while(digitalRead(MISO_PIN));
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
     SpiTransfer(temp);
     for (i = 0; i < num; i++)
     {
         SpiTransfer(buffer[i]);
     }
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
 }
 
 /****************************************************************
@@ -175,12 +159,12 @@ void SpiWriteBurstReg(byte addr, byte *buffer, byte num)
 void SpiStrobe(byte strobe)
 {
     //digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
+    PORTB &= ~(1<<PB2);
     //while(digitalRead(MISO_PIN));
     wait_Miso();
     SpiTransfer(strobe);
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
 }
 
 /****************************************************************
@@ -194,15 +178,14 @@ byte SpiReadReg(byte addr)
     byte temp, value;
     
     temp = addr|READ_SINGLE;
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
-//    while(digitalRead(MISO_PIN));
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
     SpiTransfer(temp);
     value=SpiTransfer(0);
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
-    
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
     return value;
 }
 
@@ -217,17 +200,17 @@ void SpiReadBurstReg(byte addr, byte *buffer, byte num)
     byte i,temp;
     
     temp = addr | READ_BURST;
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
-//    while(digitalRead(MISO_PIN));
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
     SpiTransfer(temp);
     for(i=0;i<num;i++)
     {
         buffer[i]=SpiTransfer(0);
     }
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
 }
 
 /****************************************************************
@@ -241,14 +224,14 @@ byte SpiReadStatus(byte addr)
     byte value,temp;
     
     temp = addr | READ_BURST;
-//    digitalWrite(SS_PIN, LOW);
-    PORTB &= ~(1<<2);
-//    while(digitalRead(MISO_PIN));
+    //digitalWrite(SS_PIN, LOW);
+    PORTB &= ~(1<<PB2);
+    //while(digitalRead(MISO_PIN));
     wait_Miso();
     SpiTransfer(temp);
     value=SpiTransfer(0);
-//    digitalWrite(SS_PIN, HIGH);
-    PORTB |= (1<<2);
+    //digitalWrite(SS_PIN, HIGH);
+    PORTB = (1<<PB2);
     return value;
 }
 
@@ -288,13 +271,13 @@ void RegConfigSettings(void)
     SpiWriteReg(CC1101_TEST2,    0x81);
     SpiWriteReg(CC1101_TEST1,    0x35);
     SpiWriteReg(CC1101_TEST0,    0x09);
-    SpiWriteReg(CC1101_IOCFG2,   0x0B); 	//serial clock.synchronous to the data in synchronous serial mode
-    SpiWriteReg(CC1101_IOCFG0,   0x06);  	//asserts when sync word has been sent/received, and de-asserts at the end of the packet
-    SpiWriteReg(CC1101_PKTCTRL1, 0x04);		//two status bytes will be appended to the payload of the packet,including RSSI LQI and CRC OK
+    SpiWriteReg(CC1101_IOCFG2,   0x0B);     //serial clock.synchronous to the data in synchronous serial mode
+    SpiWriteReg(CC1101_IOCFG0,   0x06);     //asserts when sync word has been sent/received, and de-asserts at the end of the packet
+    SpiWriteReg(CC1101_PKTCTRL1, 0x04);     //two status bytes will be appended to the payload of the packet,including RSSI LQI and CRC OK
     //No address check
-    SpiWriteReg(CC1101_PKTCTRL0, 0x05);		//whitening off;CRC Enable£»variable length packets, packet length configured by the first byte after sync word
-    SpiWriteReg(CC1101_ADDR,     0x00);		//address used for packet filtration.
-    SpiWriteReg(CC1101_PKTLEN,   0x3D); 	//61 bytes max length
+    SpiWriteReg(CC1101_PKTCTRL0, 0x05);     //whitening off;CRC Enable£»variable length packets, packet length configured by the first byte after sync word
+    SpiWriteReg(CC1101_ADDR,     0x00);     //address used for packet filtration.
+    SpiWriteReg(CC1101_PKTLEN,   0x3D);     //61 bytes max length
 }
 
 /****************************************************************
@@ -307,16 +290,17 @@ byte SendData(byte *txBuffer,byte size)
 {
     byte res = 0x00;
     SpiWriteReg(CC1101_TXFIFO,size);
-    SpiWriteBurstReg(CC1101_TXFIFO,txBuffer,size);			//write data to send
-    SpiStrobe(CC1101_STX);									//start send
-    wait_GDO0_high();								// Wait for GDO0 to be set -> sync transmitted
-    wait_GDO0_low();								// Wait for GDO0 to be cleared -> end of packet
-    
+    SpiWriteBurstReg(CC1101_TXFIFO,txBuffer,size);          //write data to send
+    SpiStrobe(CC1101_STX);                                  //start send
+    //while (!digitalRead(GDO0));                             // Wait for GDO0 to be set -> sync transmitted
+    //while (digitalRead(GDO0));                              // Wait for GDO0 to be cleared -> end of packet
+    wait_GDO0_high();
+    wait_GDO0_low();
     if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
         res = 1;
     
     
-    SpiStrobe(CC1101_SFTX);									//flush TXfifo
+    SpiStrobe(CC1101_SFTX);                                 //flush TXfifo
     return res;
     
 }
@@ -338,18 +322,18 @@ void SetReceive(void)
  *INPUT        :none
  *OUTPUT       :flag: 0 no data; 1 receive data
  ****************************************************************/
-byte CheckReceiveFlag(void)
-{
-    if(getGDO0state())			//receive data
-    {
-        while (getGDO0state());
-        return 1;
-    }
-    else							// no data
-    {
-        return 0;
-    }
-}
+// byte CheckReceiveFlag(void)
+// {
+//     if(digitalRead(GDO0))           //receive data
+//     {
+//         while (digitalRead(GDO0));
+//         return 1;
+//     }
+//     else                            // no data
+//     {
+//         return 0;
+//     }
+// }
 
 
 /****************************************************************
@@ -378,8 +362,3 @@ byte ReceiveData(byte *rxBuffer)
     }
     
 }
-
-
-
-
-

@@ -293,6 +293,11 @@
 		6B3826941C6940CB005F2567 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1,",
+					"__AVR_ATtiny48__,",
+					"F_CPU=8000000",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -300,6 +305,10 @@
 		6B3826951C6940CB005F2567 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"__AVR_ATtiny48__,",
+					"F_CPU=8000000",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -371,6 +380,7 @@
 				6B3826951C6940CB005F2567 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6B3826961C6940CB005F2567 /* Build configuration list for PBXLegacyTarget "Build" */ = {
 			isa = XCConfigurationList;
@@ -379,6 +389,7 @@
 				6B3826981C6940CB005F2567 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6B3826991C6940CB005F2567 /* Build configuration list for PBXLegacyTarget "Upload" */ = {
 			isa = XCConfigurationList;
@@ -387,6 +398,7 @@
 				6B38269B1C6940CB005F2567 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6B38269C1C6940CB005F2567 /* Build configuration list for PBXLegacyTarget "Clean" */ = {
 			isa = XCConfigurationList;
@@ -395,6 +407,7 @@
 				6B38269E1C6940CB005F2567 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6B38269F1C6940CB005F2567 /* Build configuration list for PBXNativeTarget "Index" */ = {
 			isa = XCConfigurationList;
@@ -403,6 +416,7 @@
 				6B3826A11C6940CB005F2567 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -14,7 +14,6 @@
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include <avr/io.h>
-#include <arduino/Arduino.h>
 
 #define byte				uint8_t
 //***************************************CC1101 define**************************************************//
@@ -113,12 +112,9 @@
 
 
 //*************************************** pins **************************************************//
-//#define SCK_PIN   PB5
-//#define MISO_PIN  PB4
-//#define MOSI_PIN  PB3
-//#define SS_PIN    PB2
-//#define GDO0	PD5
-//#define GDO2	9
+
+
+
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
 #define bitSet(value, bit) ((value) |= (1UL << (bit)))
 #define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
@@ -126,11 +122,7 @@
 #define wait_Miso()  while(bitRead(PORT_SPI_MISO, BIT_SPI_MISO))
 
 
-#define SPI_SS   PB2     // PB2 = SPI_SS
-#define SPI_MOSI PB3     // PB3 = MOSI
-#define SPI_MISO PB4     // PB4 = MISO
-#define SPI_SCK  PB5     // PB5 = SCK
-#define GDO0	 PD5        // PD2 = INT0
+
 
 #define PORT_SPI_MISO  PINB
 #define BIT_SPI_MISO  4

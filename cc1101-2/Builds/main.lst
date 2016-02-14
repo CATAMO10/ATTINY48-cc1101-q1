@@ -6,9 +6,9 @@
    6               	__zero_reg__ = 1
    8               		.text
    9               	.Ltext0:
- 126               		.section	.text.startup,"ax",@progbits
- 128               	.global	main
- 130               	main:
+ 111               		.section	.text.startup,"ax",@progbits
+ 113               	.global	main
+ 115               	main:
    1:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include <stdio.h>
    2:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include <avr/io.h>
    3:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** #include <avr/interrupt.h>
@@ -22,151 +22,108 @@
   11:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** byte i;
   12:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** 
   13:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** int main(void) {
- 132               	.LM0:
- 133               	.LFBB1:
- 134               	/* prologue: function */
- 135               	/* frame size = 0 */
- 136               	/* stack size = 0 */
- 137               	.L__stack_usage = 0
- 139               	.LM1:
- 140 0000 80E0      		ldi r24,0
- 141 0002 90E0      		ldi r25,0
- 142               	.L2:
+ 117               	.LM0:
+ 118               	.LFBB1:
+ 119               	/* prologue: function */
+ 120               	/* frame size = 0 */
+ 121               	/* stack size = 0 */
+ 122               	.L__stack_usage = 0
+ 124               	.LM1:
+ 125 0000 80E0      		ldi r24,0
+ 126 0002 90E0      		ldi r25,0
+ 127               	.L2:
   14:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     byte version;
   15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     for(i=0;i<size;i++)
   16:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     {
   17:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         TX_buffer[i]=i*2;
- 144               	.LM2:
- 145 0004 E82F      		mov r30,r24
- 146 0006 F0E0      		ldi r31,0
- 147 0008 E050      		subi r30,lo8(-(TX_buffer))
- 148 000a F040      		sbci r31,hi8(-(TX_buffer))
- 149 000c 9083      		st Z,r25
+ 129               	.LM2:
+ 130 0004 E82F      		mov r30,r24
+ 131 0006 F0E0      		ldi r31,0
+ 132 0008 E050      		subi r30,lo8(-(TX_buffer))
+ 133 000a F040      		sbci r31,hi8(-(TX_buffer))
+ 134 000c 9083      		st Z,r25
   15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     {
- 151               	.LM3:
- 152 000e 8F5F      		subi r24,lo8(-(1))
- 153 0010 9E5F      		subi r25,lo8(-(2))
- 154 0012 8D33      		cpi r24,lo8(61)
- 155 0014 01F4      		brne .L2
- 156 0016 8093 0000 		sts i,r24
+ 136               	.LM3:
+ 137 000e 8F5F      		subi r24,lo8(-(1))
+ 138 0010 9E5F      		subi r25,lo8(-(2))
+ 139 0012 8D33      		cpi r24,lo8(61)
+ 140 0014 01F4      		brne .L2
+ 141 0016 8093 0000 		sts i,r24
   18:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     }
   19:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     Init();
- 158               	.LM4:
- 159 001a 00D0      		rcall Init
-  20:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     version = SpiReadStatus(CC1101_VERSION);
- 161               	.LM5:
- 162 001c 81E3      		ldi r24,lo8(49)
- 163 001e 00D0      		rcall SpiReadStatus
- 164 0020 182F      		mov r17,r24
-  21:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     if (!TWIM_Init (100000))
- 166               	.LM6:
- 167 0022 60EA      		ldi r22,lo8(-96)
- 168 0024 76E8      		ldi r23,lo8(-122)
- 169 0026 81E0      		ldi r24,lo8(1)
- 170 0028 90E0      		ldi r25,0
- 171 002a 00D0      		rcall TWIM_Init
- 172 002c 8111      		cpse r24,__zero_reg__
- 173 002e 00C0      		rjmp .L13
- 174               	.L4:
-  22:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     {
-  23:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         
-  24:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         while (1);
- 176               	.LM7:
- 177 0030 00C0      		rjmp .L4
- 178               	.L5:
- 179               	.LBB5:
-  25:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     }
-  26:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     /*
-  27:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****      ** Endless loop
-  28:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****      */
-  29:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     while (1)
-  30:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     {
-  31:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         byte sent;
-  32:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         //sent = SendData(TX_buffer,size);
-  33:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         byte marcstate,marcstate2;
-  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         SpiWriteReg(CC1101_TXFIFO,size);
-  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
-  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         SpiStrobe(CC1101_STX);                  //start send
-  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         marcstate = SpiReadStatus(CC1101_MARCSTATE);
-  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         wait_GDO0_high();
- 181               	.LM8:
- 182 0032 4D9B      		sbis 0x9,5
- 183 0034 00C0      		rjmp .L5
- 184               	.L10:
-  39:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         wait_GDO0_low();
- 186               	.LM9:
- 187 0036 4D99      		sbic 0x9,5
- 188 0038 00C0      		rjmp .L10
-  40:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         marcstate2 = SpiReadStatus(CC1101_MARCSTATE);
- 190               	.LM10:
- 191 003a 85E3      		ldi r24,lo8(53)
- 192 003c 00D0      		rcall SpiReadStatus
- 193 003e C82F      		mov r28,r24
-  41:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
-  42:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //            res = 1;
-  43:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         
-  44:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         SpiStrobe(CC1101_SFTX);
- 195               	.LM11:
- 196 0040 8BE3      		ldi r24,lo8(59)
- 197 0042 00D0      		rcall SpiStrobe
-  45:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         if (!TWIM_Start (slaveaddress, TWIM_WRITE))
- 199               	.LM12:
- 200 0044 60E0      		ldi r22,0
- 201 0046 84E0      		ldi r24,lo8(4)
- 202 0048 00D0      		rcall TWIM_Start
- 203 004a 8111      		cpse r24,__zero_reg__
- 204 004c 00C0      		rjmp .L7
-  46:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         {
-  47:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             TWIM_Stop ();
- 206               	.LM13:
- 207 004e 00D0      		rcall TWIM_Stop
- 208               	.L13:
-  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
- 210               	.LM14:
- 211 0050 6DE3      		ldi r22,lo8(61)
- 212 0052 8FE3      		ldi r24,lo8(63)
- 213 0054 00D0      		rcall SpiWriteReg
-  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         SpiStrobe(CC1101_STX);                  //start send
- 215               	.LM15:
- 216 0056 4DE3      		ldi r20,lo8(61)
- 217 0058 60E0      		ldi r22,lo8(TX_buffer)
- 218 005a 70E0      		ldi r23,hi8(TX_buffer)
- 219 005c 8FE3      		ldi r24,lo8(63)
- 220 005e 00D0      		rcall SpiWriteBurstReg
-  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         marcstate = SpiReadStatus(CC1101_MARCSTATE);
- 222               	.LM16:
- 223 0060 85E3      		ldi r24,lo8(53)
- 224 0062 00D0      		rcall SpiStrobe
-  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         wait_GDO0_high();
- 226               	.LM17:
- 227 0064 85E3      		ldi r24,lo8(53)
- 228 0066 00D0      		rcall SpiReadStatus
- 229 0068 D82F      		mov r29,r24
-  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         wait_GDO0_low();
- 231               	.LM18:
- 232 006a 00C0      		rjmp .L5
- 233               	.L7:
-  48:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         }
-  49:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         else
-  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         {
-  51:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             TWIM_Write(version);
- 235               	.LM19:
- 236 006c 812F      		mov r24,r17
- 237 006e 00D0      		rcall TWIM_Write
-  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             TWIM_Write(marcstate);
- 239               	.LM20:
- 240 0070 8D2F      		mov r24,r29
- 241 0072 00D0      		rcall TWIM_Write
-  53:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             TWIM_Write(marcstate2);
- 243               	.LM21:
- 244 0074 8C2F      		mov r24,r28
- 245 0076 00D0      		rcall TWIM_Write
-  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             TWIM_Stop ();
- 247               	.LM22:
- 248 0078 00D0      		rcall TWIM_Stop
- 249               	.LBB6:
- 250               	.LBB7:
- 252               	.Ltext1:
+ 143               	.LM4:
+ 144 001a 00D0      		rcall Init
+  20:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     //_delay_ms(200);
+  21:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     version = SpiReadStatus(CC1101_VERSION);
+ 146               	.LM5:
+ 147 001c 81E3      		ldi r24,lo8(49)
+ 148 001e 00D0      		rcall SpiReadStatus
+ 149               	.L5:
+ 150               	.LBB5:
+  22:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //    if (!TWIM_Init (100000))
+  23:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //    {
+  24:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        
+  25:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        while (1);
+  26:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //    }
+  27:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     /*
+  28:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****      ** Endless loop
+  29:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****      */
+  30:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     while (1)
+  31:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****     {
+  32:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****         
+  33:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        if (!TWIM_Start (slaveaddress, TWIM_WRITE))
+  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        {
+  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //            TWIM_Stop ();
+  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        }
+  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        else
+  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c **** //        {
+  39:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             //sent = SendData(TX_buffer,size);
+  40:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             byte res;
+  41:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             //TWIM_Write(version);
+  42:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             SpiWriteReg(CC1101_TXFIFO,size);
+ 152               	.LM6:
+ 153 0020 6DE3      		ldi r22,lo8(61)
+ 154 0022 8FE3      		ldi r24,lo8(63)
+ 155 0024 00D0      		rcall SpiWriteReg
+  43:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             //_delay_ms(1000);
+  44:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
+ 157               	.LM7:
+ 158 0026 4DE3      		ldi r20,lo8(61)
+ 159 0028 60E0      		ldi r22,lo8(TX_buffer)
+ 160 002a 70E0      		ldi r23,hi8(TX_buffer)
+ 161 002c 8FE3      		ldi r24,lo8(63)
+ 162 002e 00D0      		rcall SpiWriteBurstReg
+  45:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             //_delay_ms(1000);
+  46:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             SpiStrobe(CC1101_STX);                  //start send
+ 164               	.LM8:
+ 165 0030 85E3      		ldi r24,lo8(53)
+ 166 0032 00D0      		rcall SpiStrobe
+ 167               	.L3:
+  47:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             //_delay_ms(1000);
+  48:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+  49:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             wait_GDO0_high();
+ 169               	.LM9:
+ 170 0034 4D9B      		sbis 0x9,5
+ 171 0036 00C0      		rjmp .L3
+ 172               	.L7:
+  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             wait_GDO0_low();
+ 174               	.LM10:
+ 175 0038 4D99      		sbic 0x9,5
+ 176 003a 00C0      		rjmp .L7
+  51:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
+ 178               	.LM11:
+ 179 003c 8AE3      		ldi r24,lo8(58)
+ 180 003e 00D0      		rcall SpiReadStatus
+  53:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****                 res = 1;
+  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             
+  55:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/cc1101-2/cc1101-2/main.c ****             SpiStrobe(CC1101_SFTX);
+ 182               	.LM12:
+ 183 0040 8BE3      		ldi r24,lo8(59)
+ 184 0042 00D0      		rcall SpiStrobe
+ 185               	.LBB6:
+ 186               	.LBB7:
+ 188               	.Ltext1:
    1:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
    2:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
    3:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
@@ -330,53 +287,49 @@
  161:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	#endif
  162:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
  163:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 254               	.LM23:
- 255 007a 2FE7      		ldi r18,lo8(239999)
- 256 007c 89EA      		ldi r24,hi8(239999)
- 257 007e 93E0      		ldi r25,hlo8(239999)
- 258 0080 2150      		1: subi r18,1
- 259 0082 8040      		sbci r24,0
- 260 0084 9040      		sbci r25,0
- 261 0086 01F4      		brne 1b
- 262 0088 00C0      		rjmp .
- 263 008a 0000      		nop
- 264 008c 00C0      		rjmp .L13
- 265               	.LBE7:
- 266               	.LBE6:
- 267               	.LBE5:
- 276               	.Lscope1:
- 277               		.comm	i,1,1
- 278               	.global	TX_buffer
- 279               		.section .bss
- 282               	TX_buffer:
- 283 0000 0000 0000 		.zero	61
- 283      0000 0000 
- 283      0000 0000 
- 283      0000 0000 
- 283      0000 0000 
- 286               		.text
- 288               	.Letext0:
- 289               		.ident	"GCC: (GNU) 4.9.3"
- 290               	.global __do_clear_bss
+ 190               	.LM13:
+ 191 0044 2FEF      		ldi r18,lo8(1599999)
+ 192 0046 89E6      		ldi r24,hi8(1599999)
+ 193 0048 98E1      		ldi r25,hlo8(1599999)
+ 194 004a 2150      		1: subi r18,1
+ 195 004c 8040      		sbci r24,0
+ 196 004e 9040      		sbci r25,0
+ 197 0050 01F4      		brne 1b
+ 198 0052 00C0      		rjmp .
+ 199 0054 0000      		nop
+ 200 0056 00C0      		rjmp .L5
+ 201               	.LBE7:
+ 202               	.LBE6:
+ 203               	.LBE5:
+ 205               	.Lscope1:
+ 206               		.comm	i,1,1
+ 207               	.global	TX_buffer
+ 208               		.section .bss
+ 211               	TX_buffer:
+ 212 0000 0000 0000 		.zero	61
+ 212      0000 0000 
+ 212      0000 0000 
+ 212      0000 0000 
+ 212      0000 0000 
+ 215               		.text
+ 217               	.Letext0:
+ 218               		.ident	"GCC: (GNU) 4.9.3"
+ 219               	.global __do_clear_bss
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 main.c
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccjrN34.s:2      *ABS*:000000000000003e __SP_H__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccjrN34.s:3      *ABS*:000000000000003d __SP_L__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccjrN34.s:4      *ABS*:000000000000003f __SREG__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccjrN34.s:5      *ABS*:0000000000000000 __tmp_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccjrN34.s:6      *ABS*:0000000000000001 __zero_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccjrN34.s:130    .text.startup:0000000000000000 main
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccjrN34.s:282    .bss:0000000000000000 TX_buffer
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccguw224.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccguw224.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccguw224.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccguw224.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccguw224.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccguw224.s:115    .text.startup:0000000000000000 main
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccguw224.s:211    .bss:0000000000000000 TX_buffer
                             *COM*:0000000000000001 i
 
 UNDEFINED SYMBOLS
 Init
 SpiReadStatus
-TWIM_Init
-SpiStrobe
-TWIM_Start
-TWIM_Stop
 SpiWriteReg
 SpiWriteBurstReg
-TWIM_Write
+SpiStrobe
 __do_clear_bss

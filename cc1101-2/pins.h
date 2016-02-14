@@ -1,126 +1,138 @@
-// Pins definitions for Atmega644/1284P
-// Original file from Maniacbug's Mighty-1284 core and mods by Leonardo Miliani
-// Modded by Felix Rusu - LowPowerLab.com
+/*
+ pins_arduino.h - Pin definition functions for Arduino
+ Part of Arduino - http://www.arduino.cc/
+ 
+ Copyright (c) 2007 David A. Mellis
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General
+ Public License along with this library; if not, write to the
+ Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ Boston, MA  02111-1307  USA
+ 
+ $Id: wiring.h 249 2007-02-03 16:52:51Z mellis $
+ */
 
-#ifndef pins_h
-#define pins_h
+#ifndef Pins_Arduino_h
+#define Pins_Arduino_h
+
 #include <avr/pgmspace.h>
-#include <avr/io.h>
 
-#include <avr/pgmspace.h>
+#define NUM_DIGITAL_PINS            20
+#define NUM_ANALOG_INPUTS           6
+#define analogInputToDigitalPin(p)  ((p < 6) ? (p) + 14 : -1)
 
-//                         ATMEL ATMEGA644P/1284P
-//
-//                               +---\/---+
-//            PCINT8/(D0 ) PB0  1|        |40  PA0 (A0 / D24)/PCINT0
-//            PCINT9/(D1 ) PB1  2|        |39  PA1 (A1 / D25)/PCINT1
-//      PCINT10/INT2 (D2 ) PB2  3|        |38  PA2 (A2 / D26)/PCINT2
-//      PCINT11/OC0A (D3 ) PB3  4|~       |37  PA3 (A3 / D27)/PCINT3
-//   PCINT12/0C0B/SS (D4 ) PB4  5|~       |36  PA4 (A4 / D28)/PCINT4
-//      PCINT13/MOSI (D5 ) PB5  6|        |35  PA5 (A5 / D29)/PCINT5
-// PCINT14/OC3A/MISO (D6 ) PB6  7|~*      |34  PA6 (A6 / D30)/PCINT6
-//  PCINT15/OC3B/SCK (D7 ) PB7  8|~*      |33  PA7 (A7 / D31)/PCINT7
-//                         RST  9|        |32  AREF
-//                         VCC 10|        |31  GND
-//                         GND 11|        |30  AVCC
-//                       XTAL2 12|        |29  PC7 (D23) TOSC2/PCINT23
-//                       XTAL1 13|        |28  PC6 (D22) TOSC1/PCINT22
-//       PCINT24/RX0 (D8 ) PD0 14|        |27  PC5 (D21) TDI/PCINT21
-//       PCINT25/TX0 (D9 ) PD1 15|        |26  PC4 (D20) TDO/PCINT20
-//  PCINT26/INT0/RX1 (D10) PD2 16|        |25  PC3 (D19) TMS/PCINT19
-//  PCINT27/INT1/TX1 (D11) PD3 17|        |24  PC2 (D18) TCK/PCINT18
-//      PCINT28/OC1B (D12) PD4 18|~       |23  PC1 (D17) SDA/PCINT17
-//      PCINT29/OC1A (D13) PD5 19|~       |22  PC0 (D16) SCL/PCINT16
-//      PCINT30/OC2B (D14) PD6 20|~      ~|21  PD7 (D15) OC2A/PCINT31
-//                               +--------+
-//
-// *: OC3A/OC3B (and corresponding PWMs) are only present on Atmega1284
-// PCINT15-8: D7-0    : bit 1
-// PCINT31-24: D15-8  : bit 3
-// PCINT23-16: D23-16 : bit 2
-// PCINT7-0: D31-24   : bit 0
-
-#define NUM_DIGITAL_PINS            31
-#define NUM_ANALOG_INPUTS           8
-#define analogInputToDigitalPin(p)  ((p < NUM_ANALOG_INPUTS) ? (p) + 24 : -1)
-
-#if defined(__AVR_ATmega1284P__)
-#define digitalPinHasPWM(p)         ((p) == 3 || (p) == 4 || (p) == 6 || (p) == 7 || (p) == 12 || (p) == 13 || (p) == 14 || (p) == 15)
+#if defined(__AVR_ATmega8__)
+#define digitalPinHasPWM(p)         ((p) == 9 || (p) == 10 || (p) == 11)
 #else
-#define digitalPinHasPWM(p)         ((p) == 3 || (p) == 4 || (p) == 12 || (p) == 13 || (p) == 14 || (p) == 15)
+#define digitalPinHasPWM(p)         ((p) == 3 || (p) == 5 || (p) == 6 || (p) == 9 || (p) == 10 || (p) == 11)
 #endif
 
-static const uint8_t SS   = 4;
-static const uint8_t MOSI = 5;
-static const uint8_t MISO = 6;
-static const uint8_t SCK  = 7;
+static const uint8_t SS   = 10;
+static const uint8_t MOSI = 11;
+static const uint8_t MISO = 12;
+static const uint8_t SCK  = 13;
 
-static const uint8_t SDA = 17;
-static const uint8_t SCL = 16;
-//static const uint8_t LED = 15;
+static const uint8_t SDA = 18;
+static const uint8_t SCL = 19;
+#define LED_BUILTIN 13
 
-static const uint8_t A0 = 24;
-static const uint8_t A1 = 25;
-static const uint8_t A2 = 26;
-static const uint8_t A3 = 27;
-static const uint8_t A4 = 28;
-static const uint8_t A5 = 29;
-static const uint8_t A6 = 30;
-static const uint8_t A7 = 31;
+static const uint8_t A0 = 14;
+static const uint8_t A1 = 15;
+static const uint8_t A2 = 16;
+static const uint8_t A3 = 17;
+static const uint8_t A4 = 18;
+static const uint8_t A5 = 19;
+static const uint8_t A6 = 20;
+static const uint8_t A7 = 21;
 
-#define digitalPinToPCICR(p)    (((p) >= 0 && (p) < NUM_DIGITAL_PINS) ? (&PCICR) : ((uint8_t *)0))
-#define digitalPinToPCICRbit(p) (((p) <= 7) ? 1 : (((p) <= 15) ? 3 : (((p) <= 23) ? 2 : 0)))
+#define digitalPinToPCICR(p)    (((p) >= 0 && (p) <= 21) ? (&PCICR) : ((uint8_t *)0))
+#define digitalPinToPCICRbit(p) (((p) <= 7) ? 2 : (((p) <= 13) ? 0 : 1))
 #define digitalPinToPCMSK(p)    (((p) <= 7) ? (&PCMSK2) : (((p) <= 13) ? (&PCMSK0) : (((p) <= 21) ? (&PCMSK1) : ((uint8_t *)0))))
-#define digitalPinToPCMSKbit(p) ((p) % 8)
+#define digitalPinToPCMSKbit(p) (((p) <= 7) ? (p) : (((p) <= 13) ? ((p) - 8) : ((p) - 14)))
+
+#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
 
 #ifdef ARDUINO_MAIN
 
-#define PA 1
-#define PB 2
-#define PC 3
-#define PD 4
+// On the Arduino board, digital pins are also used
+// for the analog output (software PWM).  Analog input
+// pins are a separate set.
+
+// ATMEL ATMEGA8 & 168 / ARDUINO
+//
+//                  +-\/-+
+//            PC6  1|    |28  PC5 (AI 5)
+//      (D 0) PD0  2|    |27  PC4 (AI 4)
+//      (D 1) PD1  3|    |26  PC3 (AI 3)
+//      (D 2) PD2  4|    |25  PC2 (AI 2)
+// PWM+ (D 3) PD3  5|    |24  PC1 (AI 1)
+//      (D 4) PD4  6|    |23  PC0 (AI 0)
+//            VCC  7|    |22  GND
+//            GND  8|    |21  AREF
+//            PB6  9|    |20  AVCC
+//            PB7 10|    |19  PB5 (D 13)
+// PWM+ (D 5) PD5 11|    |18  PB4 (D 12)
+// PWM+ (D 6) PD6 12|    |17  PB3 (D 11) PWM
+//      (D 7) PD7 13|    |16  PB2 (D 10) PWM
+//      (D 8) PB0 14|    |15  PB1 (D 9) PWM
+//                  +----+
+//
+// (PWM+ indicates the additional PWM pins on the ATmega168.)
+
+// ATMEL ATMEGA1280 / ARDUINO
+//
+// 0-7 PE0-PE7   works
+// 8-13 PB0-PB5  works
+// 14-21 PA0-PA7 works
+// 22-29 PH0-PH7 works
+// 30-35 PG5-PG0 works
+// 36-43 PC7-PC0 works
+// 44-51 PJ7-PJ0 works
+// 52-59 PL7-PL0 works
+// 60-67 PD7-PD0 works
+// A0-A7 PF0-PF7
+// A8-A15 PK0-PK7
+
 
 // these arrays map port names (e.g. port B) to the
 // appropriate addresses for various functions (e.g. reading
 // and writing)
-const uint16_t PROGMEM port_to_mode_PGM[] =
-{
+const uint16_t PROGMEM port_to_mode_PGM[] = {
     NOT_A_PORT,
-    (uint16_t) &DDRA,
+    NOT_A_PORT,
     (uint16_t) &DDRB,
     (uint16_t) &DDRC,
     (uint16_t) &DDRD,
 };
 
-const uint16_t PROGMEM port_to_output_PGM[] =
-{
+const uint16_t PROGMEM port_to_output_PGM[] = {
     NOT_A_PORT,
-    (uint16_t) &PORTA,
+    NOT_A_PORT,
     (uint16_t) &PORTB,
     (uint16_t) &PORTC,
     (uint16_t) &PORTD,
 };
 
-const uint16_t PROGMEM port_to_input_PGM[] =
-{
+const uint16_t PROGMEM port_to_input_PGM[] = {
     NOT_A_PORT,
-    (uint16_t) &PINA,
+    NOT_A_PORT,
     (uint16_t) &PINB,
     (uint16_t) &PINC,
     (uint16_t) &PIND,
 };
 
-const uint8_t PROGMEM digital_pin_to_port_PGM[] =
-{
-    PB, /* 0 */
-    PB,
-    PB,
-    PB,
-    PB,
-    PB,
-    PB,
-    PB,
-    PD, /* 8 */
+const uint8_t PROGMEM digital_pin_to_port_PGM[] = {
+    PD, /* 0 */
     PD,
     PD,
     PD,
@@ -128,27 +140,22 @@ const uint8_t PROGMEM digital_pin_to_port_PGM[] =
     PD,
     PD,
     PD,
-    PC, /* 16 */
+    PB, /* 8 */
+    PB,
+    PB,
+    PB,
+    PB,
+    PB,
+    PC, /* 14 */
     PC,
     PC,
     PC,
     PC,
     PC,
-    PC,
-    PC,
-    PA, /* 24 */
-    PA,
-    PA,
-    PA,
-    PA,
-    PA,
-    PA,
-    PA  /* 31 */
 };
 
-const uint8_t PROGMEM digital_pin_to_bit_mask_PGM[] =
-{
-    _BV(0), /* 0, port B */
+const uint8_t PROGMEM digital_pin_to_bit_mask_PGM[] = {
+    _BV(0), /* 0, port D */
     _BV(1),
     _BV(2),
     _BV(3),
@@ -156,74 +163,76 @@ const uint8_t PROGMEM digital_pin_to_bit_mask_PGM[] =
     _BV(5),
     _BV(6),
     _BV(7),
-    _BV(0), /* 8, port D */
+    _BV(0), /* 8, port B */
     _BV(1),
     _BV(2),
     _BV(3),
     _BV(4),
     _BV(5),
-    _BV(6),
-    _BV(7),
-    _BV(0), /* 16, port C */
+    _BV(0), /* 14, port C */
     _BV(1),
     _BV(2),
     _BV(3),
     _BV(4),
     _BV(5),
-    _BV(6),
-    _BV(7),
-    _BV(0), /* 24, port A */
-    _BV(1),
-    _BV(2),
-    _BV(3),
-    _BV(4),
-    _BV(5),
-    _BV(6),
-    _BV(7)
 };
 
-const uint8_t PROGMEM digital_pin_to_timer_PGM[] =
-{
-    NOT_ON_TIMER, 	/* 0  - PB0 */
-    NOT_ON_TIMER, 	/* 1  - PB1 */
-    NOT_ON_TIMER, 	/* 2  - PB2 */
-    TIMER0A,		/* 3  - PB3 */
-    TIMER0B,		/* 4  - PB4 */
-    NOT_ON_TIMER, 	/* 5  - PB5 */
-#if defined(__AVR_ATmega1284P__)
-    TIMER3A,		/* 6  - PB6 */
-    TIMER3B,		/* 7  - PB7 */
+const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
+    NOT_ON_TIMER, /* 0 - port D */
+    NOT_ON_TIMER,
+    NOT_ON_TIMER,
+    // on the ATmega168, digital pin 3 has hardware pwm
+#if defined(__AVR_ATmega8__)
+    NOT_ON_TIMER,
 #else
-    NOT_ON_TIMER,   /* 6  - PB6 */
-    NOT_ON_TIMER,   /* 7  - PB7 */
+    TIMER2B,
 #endif
-    NOT_ON_TIMER, 	/* 8  - PD0 */
-    NOT_ON_TIMER, 	/* 9  - PD1 */
-    NOT_ON_TIMER, 	/* 10 - PD2 */
-    NOT_ON_TIMER, 	/* 11 - PD3 */
-    TIMER1B,     	/* 12 - PD4 */
-    TIMER1A,     	/* 13 - PD5 */
-    TIMER2B,     	/* 14 - PD6 */
-    TIMER2A,     	/* 15 - PD7 */
-    NOT_ON_TIMER, 	/* 16 - PC0 */
-    NOT_ON_TIMER,   /* 17 - PC1 */
-    NOT_ON_TIMER,   /* 18 - PC2 */
-    NOT_ON_TIMER,   /* 19 - PC3 */
-    NOT_ON_TIMER,   /* 20 - PC4 */
-    NOT_ON_TIMER,   /* 21 - PC5 */
-    NOT_ON_TIMER,   /* 22 - PC6 */
-    NOT_ON_TIMER,   /* 23 - PC7 */
-    NOT_ON_TIMER,   /* 24 - PA0 */
-    NOT_ON_TIMER,   /* 25 - PA1 */
-    NOT_ON_TIMER,   /* 26 - PA2 */
-    NOT_ON_TIMER,   /* 27 - PA3 */
-    NOT_ON_TIMER,   /* 28 - PA4 */
-    NOT_ON_TIMER,   /* 29 - PA5 */
-    NOT_ON_TIMER,   /* 30 - PA6 */
-    NOT_ON_TIMER    /* 31 - PA7 */
+    NOT_ON_TIMER,
+    // on the ATmega168, digital pins 5 and 6 have hardware pwm
+#if defined(__AVR_ATmega8__)
+    NOT_ON_TIMER,
+    NOT_ON_TIMER,
+#else
+    TIMER0B,
+    TIMER0A,
+#endif
+    NOT_ON_TIMER,
+    NOT_ON_TIMER, /* 8 - port B */
+    TIMER1A,
+    TIMER1B,
+#if defined(__AVR_ATmega8__)
+    TIMER2,
+#else
+    TIMER2A,
+#endif
+    NOT_ON_TIMER,
+    NOT_ON_TIMER,
+    NOT_ON_TIMER,
+    NOT_ON_TIMER, /* 14 - port C */
+    NOT_ON_TIMER,
+    NOT_ON_TIMER,
+    NOT_ON_TIMER,
+    NOT_ON_TIMER,
 };
 
-#endif // ARDUINO_MAIN
+#endif
 
-#endif // Pins_Arduino_h
-// vim:ai:cin:sts=2 sw=2 ft=cpp
+// These serial port names are intended to allow libraries and architecture-neutral
+// sketches to automatically default to the correct port name for a particular type
+// of use.  For example, a GPS module would normally connect to SERIAL_PORT_HARDWARE_OPEN,
+// the first hardware serial port whose RX/TX pins are not dedicated to another use.
+//
+// SERIAL_PORT_MONITOR        Port which normally prints to the Arduino Serial Monitor
+//
+// SERIAL_PORT_USBVIRTUAL     Port which is USB virtual serial
+//
+// SERIAL_PORT_LINUXBRIDGE    Port which connects to a Linux system via Bridge library
+//
+// SERIAL_PORT_HARDWARE       Hardware serial port, physical RX & TX pins.
+//
+// SERIAL_PORT_HARDWARE_OPEN  Hardware serial ports which are open for use.  Their RX & TX
+//                            pins are NOT connected to anything by default.
+#define SERIAL_PORT_MONITOR   Serial
+#define SERIAL_PORT_HARDWARE  Serial
+
+#endif

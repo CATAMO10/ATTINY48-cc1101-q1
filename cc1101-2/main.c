@@ -17,43 +17,48 @@ int main(void) {
         TX_buffer[i]=i*2;
     }
     Init();
+    //_delay_ms(200);
     version = SpiReadStatus(CC1101_VERSION);
-    if (!TWIM_Init (100000))
-    {
-        
-        while (1);
-    }
+//    if (!TWIM_Init (100000))
+//    {
+//        
+//        while (1);
+//    }
     /*
      ** Endless loop
      */
     while (1)
     {
-        byte sent;
-        //sent = SendData(TX_buffer,size);
-        byte marcstate,marcstate2;
-        SpiWriteReg(CC1101_TXFIFO,size);
-        SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
-        SpiStrobe(CC1101_STX);                  //start send
-        marcstate = SpiReadStatus(CC1101_MARCSTATE);
-        wait_GDO0_high();
-        wait_GDO0_low();
-        marcstate2 = SpiReadStatus(CC1101_MARCSTATE);
-//        if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
-//            res = 1;
         
-        SpiStrobe(CC1101_SFTX);
-        if (!TWIM_Start (slaveaddress, TWIM_WRITE))
-        {
-            TWIM_Stop ();
-        }
-        else
-        {
-            TWIM_Write(version);
-            TWIM_Write(marcstate);
-            TWIM_Write(marcstate2);
-            TWIM_Stop ();
-            _delay_ms (300);
-        }
+//        if (!TWIM_Start (slaveaddress, TWIM_WRITE))
+//        {
+//            TWIM_Stop ();
+//        }
+//        else
+//        {
+            //sent = SendData(TX_buffer,size);
+            byte res;
+            //TWIM_Write(version);
+            SpiWriteReg(CC1101_TXFIFO,size);
+            //_delay_ms(1000);
+            SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,size);      //write data to send
+            //_delay_ms(1000);
+            SpiStrobe(CC1101_STX);                  //start send
+            //_delay_ms(1000);
+            //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+            wait_GDO0_high();
+            wait_GDO0_low();
+            //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+            if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
+                res = 1;
+            
+            SpiStrobe(CC1101_SFTX);
+            //_delay_ms(1000);
+
+            //TWIM_Stop ();
+        //}
+        
+        _delay_ms(2000);
         
     }
 }
