@@ -1,0 +1,997 @@
+   1               		.file	"ext_interrupt.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 114               	.global	Configure_Interrupt
+ 116               	Configure_Interrupt:
+   1:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** /*! \file *********************************************************************
+   2:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+   3:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * \brief  ATtiny88 External interrupts driver source file.
+   4:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+   5:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      This file contains the function implementations the external interrupts
+   6:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      driver.
+   7:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+   8:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      The driver is not intended for size and/or speed critical code, since
+   9:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      some functions are several lines of code, and the function call
+  10:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      overhead would decrease code performance. The driver is intended for
+  11:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      rapid prototyping and documentation purposes for getting started with
+  12:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      the ATtiny88 external interrupts.
+  13:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  14:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      For size and/or speed critical code, it is recommended to copy the
+  15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      function contents directly into your application instead of making
+  16:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      a function call.
+  17:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  18:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * \par Application note:
+  19:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      AVR1201: Using external interrupts for tinyAVR devices
+  20:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  21:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * \par Documentation
+  22:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      For comprehensive code documentation, supported compilers, compiler
+  23:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      settings and supported devices see readme.html
+  24:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  25:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * \author
+  26:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      Atmel Corporation: http://www.atmel.com \n
+  27:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *      Support email: avr@atmel.com
+  28:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  29:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * Copyright (c) 2011, Atmel Corporation All rights reserved.
+  30:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  31:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * Redistribution and use in source and binary forms, with or without
+  32:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * modification, are permitted provided that the following conditions are met:
+  33:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * 1. Redistributions of source code must retain the above copyright notice,
+  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * this list of conditions and the following disclaimer.
+  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * 2. Redistributions in binary form must reproduce the above copyright notice,
+  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * this list of conditions and the following disclaimer in the documentation
+  39:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * and/or other materials provided with the distribution.
+  40:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  41:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * 3. The name of ATMEL may not be used to endorse or promote products derived
+  42:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * from this software without specific prior written permission.
+  43:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+  44:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+  45:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  46:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE EXPRESSLY AND
+  47:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT,
+  48:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  49:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  51:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  53:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *****************************************************************************/
+  55:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** 
+  56:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** /*! \brief This function configures the external interrupt to sense either
+  57:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *         rising edge, falling edge, both the edges or low level to
+  58:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *         rise an interrupt request.
+  59:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *  \param INT_NO	The interrupt for which configuration has to be setup.
+  60:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *  \param INT_MODE	The sensing mode of the INT_NO.
+  61:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  */
+  62:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** #include <stdio.h>
+  63:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** #include <avr/io.h>
+  64:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** #include <avr/interrupt.h>
+  65:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** #include <util/delay.h>
+  66:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** #include <stdbool.h>
+  67:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** 
+  68:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** #define byte				uint8_t
+  69:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** void Configure_Interrupt(uint8_t INT_NO, uint8_t INT_MODE)
+  70:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** {
+ 118               	.LM0:
+ 119               	.LFBB1:
+ 120               	/* prologue: function */
+ 121               	/* frame size = 0 */
+ 122               	/* stack size = 0 */
+ 123               	.L__stack_usage = 0
+  71:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     switch(INT_NO)
+ 125               	.LM1:
+ 126 0000 8823      		tst r24
+ 127 0002 01F0      		breq .L3
+ 128 0004 8130      		cpi r24,lo8(1)
+ 129 0006 01F0      		breq .L4
+ 130 0008 0895      		ret
+ 131               	.L3:
+  72:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+  73:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 0: switch(INT_MODE)
+ 133               	.LM2:
+ 134 000a 6130      		cpi r22,lo8(1)
+ 135 000c 01F0      		breq .L5
+ 136 000e 00F0      		brlo .L6
+ 137 0010 6230      		cpi r22,lo8(2)
+ 138 0012 01F0      		breq .L7
+ 139 0014 6330      		cpi r22,lo8(3)
+ 140 0016 01F0      		breq .L8
+ 141 0018 0895      		ret
+ 142               	.L6:
+  74:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+  75:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 0:EICRA=(EICRA&(~(1<<ISC01|1<<ISC00)))|(0<<ISC01|0<<ISC00);
+ 144               	.LM3:
+ 145 001a 8091 6900 		lds r24,105
+ 146 001e 8C7F      		andi r24,lo8(-4)
+ 147 0020 00C0      		rjmp .L13
+ 148               	.L5:
+  76:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  77:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 1:EICRA=(EICRA&(~(1<<ISC01|1<<ISC00)))|(0<<ISC01|1<<ISC00);
+ 150               	.LM4:
+ 151 0022 8091 6900 		lds r24,105
+ 152 0026 8C7F      		andi r24,lo8(-4)
+ 153 0028 8160      		ori r24,lo8(1)
+ 154 002a 00C0      		rjmp .L13
+ 155               	.L7:
+  78:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  79:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 2:EICRA=(EICRA&(~(1<<ISC01|1<<ISC00)))|(1<<ISC01|0<<ISC00);
+ 157               	.LM5:
+ 158 002c 8091 6900 		lds r24,105
+ 159 0030 8C7F      		andi r24,lo8(-4)
+ 160 0032 8260      		ori r24,lo8(2)
+ 161 0034 00C0      		rjmp .L13
+ 162               	.L8:
+  80:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  81:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 3:EICRA=(EICRA&(~(1<<ISC01|1<<ISC00)))|(1<<ISC01|1<<ISC00);
+ 164               	.LM6:
+ 165 0036 8091 6900 		lds r24,105
+ 166 003a 8360      		ori r24,lo8(3)
+ 167 003c 00C0      		rjmp .L13
+ 168               	.L4:
+  82:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  83:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             default:break;
+  84:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         }
+  85:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+  86:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             
+  87:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 1: switch(INT_MODE)
+ 170               	.LM7:
+ 171 003e 6130      		cpi r22,lo8(1)
+ 172 0040 01F0      		breq .L9
+ 173 0042 00F0      		brlo .L10
+ 174 0044 6230      		cpi r22,lo8(2)
+ 175 0046 01F0      		breq .L11
+ 176 0048 6330      		cpi r22,lo8(3)
+ 177 004a 01F0      		breq .L12
+ 178 004c 0895      		ret
+ 179               	.L10:
+  88:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+  89:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 0:EICRA=(EICRA&(~(1<<ISC11|1<<ISC10)))|(0<<ISC11|0<<ISC10);
+ 181               	.LM8:
+ 182 004e 8091 6900 		lds r24,105
+ 183 0052 837F      		andi r24,lo8(-13)
+ 184 0054 00C0      		rjmp .L13
+ 185               	.L9:
+  90:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  91:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 1:EICRA=(EICRA&(~(1<<ISC11|1<<ISC10)))|(0<<ISC11|1<<ISC10);
+ 187               	.LM9:
+ 188 0056 8091 6900 		lds r24,105
+ 189 005a 837F      		andi r24,lo8(-13)
+ 190 005c 8460      		ori r24,lo8(4)
+ 191 005e 00C0      		rjmp .L13
+ 192               	.L11:
+  92:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  93:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 2:EICRA=(EICRA&(~(1<<ISC11|1<<ISC10)))|(1<<ISC11|0<<ISC10);
+ 194               	.LM10:
+ 195 0060 8091 6900 		lds r24,105
+ 196 0064 837F      		andi r24,lo8(-13)
+ 197 0066 8860      		ori r24,lo8(8)
+ 198 0068 00C0      		rjmp .L13
+ 199               	.L12:
+  94:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  95:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 3:EICRA=(EICRA&(~(1<<ISC11|1<<ISC10)))|(1<<ISC11|1<<ISC10);
+ 201               	.LM11:
+ 202 006a 8091 6900 		lds r24,105
+ 203 006e 8C60      		ori r24,lo8(12)
+ 204               	.L13:
+ 205 0070 8093 6900 		sts 105,r24
+ 206 0074 0895      		ret
+ 208               	.Lscope1:
+ 211               	.global	Enable_Interrupt
+ 213               	Enable_Interrupt:
+  96:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+  97:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             default:break;
+  98:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         }
+  99:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 100:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             
+ 101:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         default:break;
+ 102:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 103:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** }
+ 104:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** 
+ 105:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** /*! \brief This function enables the external interrupt.
+ 106:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+ 107:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *  \param INT_NO	The interrupt which has to be enabled.
+ 108:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  */
+ 109:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** void Enable_Interrupt(uint8_t INT_NO)
+ 110:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** {
+ 215               	.LM12:
+ 216               	.LFBB2:
+ 217               	/* prologue: function */
+ 218               	/* frame size = 0 */
+ 219               	/* stack size = 0 */
+ 220               	.L__stack_usage = 0
+ 111:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     switch(INT_NO)
+ 222               	.LM13:
+ 223 0076 8823      		tst r24
+ 224 0078 01F0      		breq .L17
+ 225 007a 8130      		cpi r24,lo8(1)
+ 226 007c 01F0      		breq .L18
+ 227 007e 0895      		ret
+ 228               	.L17:
+ 112:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 113:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 0:EIMSK|=(1<<INT0);
+ 230               	.LM14:
+ 231 0080 E89A      		sbi 0x1d,0
+ 114:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 233               	.LM15:
+ 234 0082 0895      		ret
+ 235               	.L18:
+ 115:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 1:EIMSK|=(1<<INT1);
+ 237               	.LM16:
+ 238 0084 E99A      		sbi 0x1d,1
+ 239 0086 0895      		ret
+ 241               	.Lscope2:
+ 244               	.global	Enable_Pcinterrupt
+ 246               	Enable_Pcinterrupt:
+ 116:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 117:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         default:break;
+ 118:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 119:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** }
+ 120:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** 
+ 121:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** /*! \brief This function enables the external pin change interrupt.
+ 122:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+ 123:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *  \param PCINT_NO	The pin change interrupt which has to be enabled.
+ 124:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  */
+ 125:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** void Enable_Pcinterrupt(uint8_t PCINT_NO)
+ 126:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** {
+ 248               	.LM17:
+ 249               	.LFBB3:
+ 250               	/* prologue: function */
+ 251               	/* frame size = 0 */
+ 252               	/* stack size = 0 */
+ 253               	.L__stack_usage = 0
+ 254 0088 E82F      		mov r30,r24
+ 127:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     if(PCINT_NO>=0 && PCINT_NO<=7)
+ 256               	.LM18:
+ 257 008a 8830      		cpi r24,lo8(8)
+ 258 008c 00F4      		brsh .L20
+ 128:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 129:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE0)))|(1<<PCIE0);
+ 260               	.LM19:
+ 261 008e 8091 6800 		lds r24,104
+ 262 0092 8160      		ori r24,lo8(1)
+ 263 0094 8093 6800 		sts 104,r24
+ 130:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         
+ 131:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         switch(PCINT_NO)
+ 265               	.LM20:
+ 266 0098 8E2F      		mov r24,r30
+ 267 009a 90E0      		ldi r25,0
+ 268 009c FC01      		movw r30,r24
+ 269 009e 3197      		sbiw r30,1
+ 270 00a0 E730      		cpi r30,7
+ 271 00a2 F105      		cpc r31,__zero_reg__
+ 272 00a4 00F4      		brsh .L21
+ 273 00a6 E050      		subi r30,lo8(-(gs(.L23)))
+ 274 00a8 F040      		sbci r31,hi8(-(gs(.L23)))
+ 132:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+ 133:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 0:PCMSK0|=(1<<PCINT0);
+ 134:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 135:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 1:PCMSK0|=(1<<PCINT1);
+ 136:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 137:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 2:PCMSK0|=(1<<PCINT2);
+ 138:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 139:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 3:PCMSK0|=(1<<PCINT3);
+ 140:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 141:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 4:PCMSK0|=(1<<PCINT4);
+ 142:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 143:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 5:PCMSK0|=(1<<PCINT5);
+ 144:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 145:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 6:PCMSK0|=(1<<PCINT6);
+ 146:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 147:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 7:PCMSK0|=(1<<PCINT7);
+ 276               	.LM21:
+ 277 00aa 8091 6B00 		lds r24,107
+ 131:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+ 279               	.LM22:
+ 280 00ae 0994      		ijmp
+ 281               		.section	.progmem.gcc_sw_table,"ax",@progbits
+ 282               		.p2align	1
+ 283               	.L23:
+ 284 0000 00C0      		rjmp .L22
+ 285 0002 00C0      		rjmp .L24
+ 286 0004 00C0      		rjmp .L25
+ 287 0006 00C0      		rjmp .L26
+ 288 0008 00C0      		rjmp .L27
+ 289 000a 00C0      		rjmp .L28
+ 290 000c 00C0      		rjmp .L29
+ 291               		.text
+ 292               	.L21:
+ 133:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 294               	.LM23:
+ 295 00b0 8091 6B00 		lds r24,107
+ 296 00b4 8160      		ori r24,lo8(1)
+ 297 00b6 00C0      		rjmp .L57
+ 298               	.L22:
+ 135:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 300               	.LM24:
+ 301 00b8 8260      		ori r24,lo8(2)
+ 302               	.L57:
+ 303 00ba 8093 6B00 		sts 107,r24
+ 136:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 2:PCMSK0|=(1<<PCINT2);
+ 305               	.LM25:
+ 306 00be 0895      		ret
+ 307               	.L24:
+ 137:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 309               	.LM26:
+ 310 00c0 8460      		ori r24,lo8(4)
+ 311 00c2 00C0      		rjmp .L57
+ 312               	.L25:
+ 139:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 314               	.LM27:
+ 315 00c4 8860      		ori r24,lo8(8)
+ 316 00c6 00C0      		rjmp .L57
+ 317               	.L26:
+ 141:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 319               	.LM28:
+ 320 00c8 8061      		ori r24,lo8(16)
+ 321 00ca 00C0      		rjmp .L57
+ 322               	.L27:
+ 143:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 324               	.LM29:
+ 325 00cc 8062      		ori r24,lo8(32)
+ 326 00ce 00C0      		rjmp .L57
+ 327               	.L28:
+ 145:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 329               	.LM30:
+ 330 00d0 8064      		ori r24,lo8(64)
+ 331 00d2 00C0      		rjmp .L57
+ 332               	.L29:
+ 334               	.LM31:
+ 335 00d4 8068      		ori r24,lo8(-128)
+ 336 00d6 00C0      		rjmp .L57
+ 337               	.L20:
+ 148:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 149:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             default:break;
+ 150:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         }
+ 151:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 152:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     else if(PCINT_NO>=8 && PCINT_NO<=15)
+ 339               	.LM32:
+ 340 00d8 88EF      		ldi r24,lo8(-8)
+ 341 00da 8E0F      		add r24,r30
+ 342 00dc 8830      		cpi r24,lo8(8)
+ 343 00de 00F4      		brsh .L31
+ 153:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 154:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE1)))|(1<<PCIE1);
+ 345               	.LM33:
+ 346 00e0 8091 6800 		lds r24,104
+ 347 00e4 8260      		ori r24,lo8(2)
+ 348 00e6 8093 6800 		sts 104,r24
+ 155:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         
+ 156:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         switch(PCINT_NO)
+ 350               	.LM34:
+ 351 00ea 8E2F      		mov r24,r30
+ 352 00ec 90E0      		ldi r25,0
+ 353 00ee FC01      		movw r30,r24
+ 354 00f0 3997      		sbiw r30,9
+ 355 00f2 E730      		cpi r30,7
+ 356 00f4 F105      		cpc r31,__zero_reg__
+ 357 00f6 00F4      		brsh .L32
+ 358 00f8 E050      		subi r30,lo8(-(gs(.L34)))
+ 359 00fa F040      		sbci r31,hi8(-(gs(.L34)))
+ 157:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+ 158:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 8:PCMSK1|=(1<<PCINT8);
+ 159:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 160:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 9:PCMSK1|=(1<<PCINT9);
+ 161:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 162:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 10:PCMSK1|=(1<<PCINT10);
+ 163:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 164:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 11:PCMSK1|=(1<<PCINT11);
+ 165:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 166:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 12:PCMSK1|=(1<<PCINT12);
+ 167:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 168:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 13:PCMSK1|=(1<<PCINT13);
+ 169:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 170:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 14:PCMSK1|=(1<<PCINT14);
+ 171:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 172:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 15:PCMSK1|=(1<<PCINT15);
+ 361               	.LM35:
+ 362 00fc 8091 6C00 		lds r24,108
+ 156:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+ 364               	.LM36:
+ 365 0100 0994      		ijmp
+ 366               		.section	.progmem.gcc_sw_table,"ax",@progbits
+ 367               		.p2align	1
+ 368               	.L34:
+ 369 000e 00C0      		rjmp .L33
+ 370 0010 00C0      		rjmp .L35
+ 371 0012 00C0      		rjmp .L36
+ 372 0014 00C0      		rjmp .L37
+ 373 0016 00C0      		rjmp .L38
+ 374 0018 00C0      		rjmp .L39
+ 375 001a 00C0      		rjmp .L40
+ 376               		.text
+ 377               	.L32:
+ 158:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 379               	.LM37:
+ 380 0102 8091 6C00 		lds r24,108
+ 381 0106 8160      		ori r24,lo8(1)
+ 382 0108 00C0      		rjmp .L59
+ 383               	.L33:
+ 160:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 385               	.LM38:
+ 386 010a 8260      		ori r24,lo8(2)
+ 387 010c 00C0      		rjmp .L59
+ 388               	.L35:
+ 162:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 390               	.LM39:
+ 391 010e 8460      		ori r24,lo8(4)
+ 392 0110 00C0      		rjmp .L59
+ 393               	.L36:
+ 164:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 395               	.LM40:
+ 396 0112 8860      		ori r24,lo8(8)
+ 397 0114 00C0      		rjmp .L59
+ 398               	.L37:
+ 166:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 400               	.LM41:
+ 401 0116 8061      		ori r24,lo8(16)
+ 402 0118 00C0      		rjmp .L59
+ 403               	.L38:
+ 168:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 405               	.LM42:
+ 406 011a 8062      		ori r24,lo8(32)
+ 407 011c 00C0      		rjmp .L59
+ 408               	.L39:
+ 170:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 410               	.LM43:
+ 411 011e 8064      		ori r24,lo8(64)
+ 412 0120 00C0      		rjmp .L59
+ 413               	.L40:
+ 415               	.LM44:
+ 416 0122 8068      		ori r24,lo8(-128)
+ 417               	.L59:
+ 418 0124 8093 6C00 		sts 108,r24
+ 173:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 420               	.LM45:
+ 421 0128 0895      		ret
+ 422               	.L31:
+ 174:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             default:break;
+ 175:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         }
+ 176:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 177:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     else if(PCINT_NO>=16 && PCINT_NO<=23)
+ 424               	.LM46:
+ 425 012a 80EF      		ldi r24,lo8(-16)
+ 426 012c 8E0F      		add r24,r30
+ 427 012e 8830      		cpi r24,lo8(8)
+ 428 0130 00F4      		brsh .L41
+ 178:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 179:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE2)))|(1<<PCIE2);
+ 430               	.LM47:
+ 431 0132 8091 6800 		lds r24,104
+ 432 0136 8460      		ori r24,lo8(4)
+ 433 0138 8093 6800 		sts 104,r24
+ 180:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         
+ 181:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         switch(PCINT_NO)
+ 435               	.LM48:
+ 436 013c 8E2F      		mov r24,r30
+ 437 013e 90E0      		ldi r25,0
+ 438 0140 FC01      		movw r30,r24
+ 439 0142 7197      		sbiw r30,17
+ 440 0144 E730      		cpi r30,7
+ 441 0146 F105      		cpc r31,__zero_reg__
+ 442 0148 00F4      		brsh .L42
+ 443 014a E050      		subi r30,lo8(-(gs(.L44)))
+ 444 014c F040      		sbci r31,hi8(-(gs(.L44)))
+ 182:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+ 183:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 16:PCMSK2|=(1<<PCINT16);
+ 184:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 185:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 17:PCMSK2|=(1<<PCINT17);
+ 186:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 187:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 18:PCMSK2|=(1<<PCINT18);
+ 188:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 189:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 19:PCMSK2|=(1<<PCINT19);
+ 190:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 191:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 20:PCMSK2|=(1<<PCINT20);
+ 192:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 193:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 21:
+ 194:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 PCMSK2|=(1<<PCINT21);
+ 195:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 196:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 22:PCMSK2|=(1<<PCINT22);
+ 197:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 198:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 23:PCMSK2|=(1<<PCINT23);
+ 446               	.LM49:
+ 447 014e 8091 6D00 		lds r24,109
+ 181:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+ 449               	.LM50:
+ 450 0152 0994      		ijmp
+ 451               		.section	.progmem.gcc_sw_table,"ax",@progbits
+ 452               		.p2align	1
+ 453               	.L44:
+ 454 001c 00C0      		rjmp .L43
+ 455 001e 00C0      		rjmp .L45
+ 456 0020 00C0      		rjmp .L46
+ 457 0022 00C0      		rjmp .L47
+ 458 0024 00C0      		rjmp .L48
+ 459 0026 00C0      		rjmp .L49
+ 460 0028 00C0      		rjmp .L50
+ 461               		.text
+ 462               	.L42:
+ 183:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 464               	.LM51:
+ 465 0154 8091 6D00 		lds r24,109
+ 466 0158 8160      		ori r24,lo8(1)
+ 467 015a 00C0      		rjmp .L58
+ 468               	.L43:
+ 185:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 470               	.LM52:
+ 471 015c 8260      		ori r24,lo8(2)
+ 472 015e 00C0      		rjmp .L58
+ 473               	.L45:
+ 187:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 475               	.LM53:
+ 476 0160 8460      		ori r24,lo8(4)
+ 477 0162 00C0      		rjmp .L58
+ 478               	.L46:
+ 189:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 480               	.LM54:
+ 481 0164 8860      		ori r24,lo8(8)
+ 482 0166 00C0      		rjmp .L58
+ 483               	.L47:
+ 191:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 485               	.LM55:
+ 486 0168 8061      		ori r24,lo8(16)
+ 487 016a 00C0      		rjmp .L58
+ 488               	.L48:
+ 194:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 490               	.LM56:
+ 491 016c 8062      		ori r24,lo8(32)
+ 492 016e 00C0      		rjmp .L58
+ 493               	.L49:
+ 196:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 495               	.LM57:
+ 496 0170 8064      		ori r24,lo8(64)
+ 497 0172 00C0      		rjmp .L58
+ 498               	.L50:
+ 500               	.LM58:
+ 501 0174 8068      		ori r24,lo8(-128)
+ 502               	.L58:
+ 503 0176 8093 6D00 		sts 109,r24
+ 199:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 505               	.LM59:
+ 506 017a 0895      		ret
+ 507               	.L41:
+ 200:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             default:break;
+ 201:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         }
+ 202:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 203:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     else
+ 204:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 205:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE3)))|(1<<PCIE3);
+ 509               	.LM60:
+ 510 017c 8091 6800 		lds r24,104
+ 511 0180 8860      		ori r24,lo8(8)
+ 512 0182 8093 6800 		sts 104,r24
+ 206:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         
+ 207:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         switch(PCINT_NO)
+ 514               	.LM61:
+ 515 0186 E931      		cpi r30,lo8(25)
+ 516 0188 01F0      		breq .L51
+ 517 018a 00F4      		brsh .L52
+ 518 018c E831      		cpi r30,lo8(24)
+ 519 018e 01F0      		breq .L53
+ 520 0190 0895      		ret
+ 521               	.L52:
+ 522 0192 EA31      		cpi r30,lo8(26)
+ 523 0194 01F0      		breq .L54
+ 524 0196 EB31      		cpi r30,lo8(27)
+ 525 0198 01F0      		breq .L55
+ 526 019a 0895      		ret
+ 527               	.L53:
+ 208:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         {
+ 209:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 24:PCMSK3|=(1<<PCINT24);
+ 529               	.LM62:
+ 530 019c 8091 6A00 		lds r24,106
+ 531 01a0 8160      		ori r24,lo8(1)
+ 532 01a2 00C0      		rjmp .L56
+ 533               	.L51:
+ 210:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 211:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 25:PCMSK3|=(1<<PCINT25);
+ 535               	.LM63:
+ 536 01a4 8091 6A00 		lds r24,106
+ 537 01a8 8260      		ori r24,lo8(2)
+ 538 01aa 00C0      		rjmp .L56
+ 539               	.L54:
+ 212:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 213:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 26:PCMSK3|=(1<<PCINT26);
+ 541               	.LM64:
+ 542 01ac 8091 6A00 		lds r24,106
+ 543 01b0 8460      		ori r24,lo8(4)
+ 544 01b2 00C0      		rjmp .L56
+ 545               	.L55:
+ 214:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 215:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             case 27:PCMSK3|=(1<<PCINT27);
+ 547               	.LM65:
+ 548 01b4 8091 6A00 		lds r24,106
+ 549 01b8 8860      		ori r24,lo8(8)
+ 550               	.L56:
+ 551 01ba 8093 6A00 		sts 106,r24
+ 552 01be 0895      		ret
+ 554               	.Lscope3:
+ 557               	.global	Disable_Interrupt
+ 559               	Disable_Interrupt:
+ 216:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****                 break;
+ 217:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             default:break;
+ 218:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         }
+ 219:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 220:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** }
+ 221:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** 
+ 222:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** /*! \brief This function disables the external interrupt.
+ 223:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+ 224:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *  \param INT_NO	The interrupt which has to be disabled.
+ 225:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  */
+ 226:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** void Disable_Interrupt(uint8_t INT_NO)
+ 227:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** {
+ 561               	.LM66:
+ 562               	.LFBB4:
+ 563               	/* prologue: function */
+ 564               	/* frame size = 0 */
+ 565               	/* stack size = 0 */
+ 566               	.L__stack_usage = 0
+ 228:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     switch(INT_NO)
+ 568               	.LM67:
+ 569 01c0 8823      		tst r24
+ 570 01c2 01F0      		breq .L62
+ 571 01c4 8130      		cpi r24,lo8(1)
+ 572 01c6 01F0      		breq .L63
+ 573 01c8 0895      		ret
+ 574               	.L62:
+ 229:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 230:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 0:EIMSK=(EIMSK&(~(1<<INT0)));
+ 576               	.LM68:
+ 577 01ca E898      		cbi 0x1d,0
+ 231:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 579               	.LM69:
+ 580 01cc 0895      		ret
+ 581               	.L63:
+ 232:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 1:EIMSK=(EIMSK&(~(1<<INT1)));
+ 583               	.LM70:
+ 584 01ce E998      		cbi 0x1d,1
+ 585 01d0 0895      		ret
+ 587               	.Lscope4:
+ 590               	.global	Disable_Pcinterrupt
+ 592               	Disable_Pcinterrupt:
+ 233:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 234:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         default:break;
+ 235:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 236:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** }
+ 237:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** 
+ 238:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** /*! \brief This function disables the external pin change interrupt.
+ 239:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *
+ 240:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  *  \param PCINT_NO	The pin change interrupt which has to be disabled.
+ 241:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****  */
+ 242:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** void Disable_Pcinterrupt(uint8_t PCINT_NO)
+ 243:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c **** {
+ 594               	.LM71:
+ 595               	.LFBB5:
+ 596               	/* prologue: function */
+ 597               	/* frame size = 0 */
+ 598               	/* stack size = 0 */
+ 599               	.L__stack_usage = 0
+ 244:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     switch(PCINT_NO)
+ 601               	.LM72:
+ 602 01d2 90E0      		ldi r25,0
+ 603 01d4 8C31      		cpi r24,28
+ 604 01d6 9105      		cpc r25,__zero_reg__
+ 605 01d8 00F0      		brlo .+2
+ 606 01da 00C0      		rjmp .L65
+ 607 01dc FC01      		movw r30,r24
+ 608 01de E050      		subi r30,lo8(-(gs(.L67)))
+ 609 01e0 F040      		sbci r31,hi8(-(gs(.L67)))
+ 610 01e2 0994      		ijmp
+ 611               		.section	.progmem.gcc_sw_table,"ax",@progbits
+ 612               		.p2align	1
+ 613               	.L67:
+ 614 002a 00C0      		rjmp .L66
+ 615 002c 00C0      		rjmp .L68
+ 616 002e 00C0      		rjmp .L69
+ 617 0030 00C0      		rjmp .L70
+ 618 0032 00C0      		rjmp .L71
+ 619 0034 00C0      		rjmp .L72
+ 620 0036 00C0      		rjmp .L73
+ 621 0038 00C0      		rjmp .L74
+ 622 003a 00C0      		rjmp .L75
+ 623 003c 00C0      		rjmp .L76
+ 624 003e 00C0      		rjmp .L77
+ 625 0040 00C0      		rjmp .L78
+ 626 0042 00C0      		rjmp .L79
+ 627 0044 00C0      		rjmp .L80
+ 628 0046 00C0      		rjmp .L81
+ 629 0048 00C0      		rjmp .L82
+ 630 004a 00C0      		rjmp .L83
+ 631 004c 00C0      		rjmp .L84
+ 632 004e 00C0      		rjmp .L85
+ 633 0050 00C0      		rjmp .L86
+ 634 0052 00C0      		rjmp .L87
+ 635 0054 00C0      		rjmp .L88
+ 636 0056 00C0      		rjmp .L89
+ 637 0058 00C0      		rjmp .L90
+ 638 005a 00C0      		rjmp .L91
+ 639 005c 00C0      		rjmp .L92
+ 640 005e 00C0      		rjmp .L93
+ 641 0060 00C0      		rjmp .L94
+ 642               		.text
+ 643               	.L66:
+ 245:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 246:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 0:PCMSK0=(PCMSK0&(~(1<<PCINT0)));
+ 645               	.LM73:
+ 646 01e4 8091 6B00 		lds r24,107
+ 647 01e8 8E7F      		andi r24,lo8(-2)
+ 648 01ea 00C0      		rjmp .L99
+ 649               	.L68:
+ 247:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 248:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 1:PCMSK0=(PCMSK0&(~(1<<PCINT1)));
+ 651               	.LM74:
+ 652 01ec 8091 6B00 		lds r24,107
+ 653 01f0 8D7F      		andi r24,lo8(-3)
+ 654               	.L99:
+ 655 01f2 8093 6B00 		sts 107,r24
+ 249:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 657               	.LM75:
+ 658 01f6 00C0      		rjmp .L65
+ 659               	.L69:
+ 250:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 2:PCMSK0=(PCMSK0&(~(1<<PCINT2)));
+ 661               	.LM76:
+ 662 01f8 8091 6B00 		lds r24,107
+ 663 01fc 8B7F      		andi r24,lo8(-5)
+ 664 01fe 00C0      		rjmp .L99
+ 665               	.L70:
+ 251:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 252:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 3:PCMSK0=(PCMSK0&(~(1<<PCINT3)));
+ 667               	.LM77:
+ 668 0200 8091 6B00 		lds r24,107
+ 669 0204 877F      		andi r24,lo8(-9)
+ 670 0206 00C0      		rjmp .L99
+ 671               	.L71:
+ 253:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 254:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 4:PCMSK0=(PCMSK0&(~(1<<PCINT4)));
+ 673               	.LM78:
+ 674 0208 8091 6B00 		lds r24,107
+ 675 020c 8F7E      		andi r24,lo8(-17)
+ 676 020e 00C0      		rjmp .L99
+ 677               	.L72:
+ 255:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 256:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 5:PCMSK0=(PCMSK0&(~(1<<PCINT5)));
+ 679               	.LM79:
+ 680 0210 8091 6B00 		lds r24,107
+ 681 0214 8F7D      		andi r24,lo8(-33)
+ 682 0216 00C0      		rjmp .L99
+ 683               	.L73:
+ 257:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 258:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 6:PCMSK0=(PCMSK0&(~(1<<PCINT6)));
+ 685               	.LM80:
+ 686 0218 8091 6B00 		lds r24,107
+ 687 021c 8F7B      		andi r24,lo8(-65)
+ 688 021e 00C0      		rjmp .L99
+ 689               	.L74:
+ 259:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 260:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 7:PCMSK0=(PCMSK0&(~(1<<PCINT7)));
+ 691               	.LM81:
+ 692 0220 8091 6B00 		lds r24,107
+ 693 0224 8F77      		andi r24,lo8(127)
+ 694 0226 00C0      		rjmp .L99
+ 695               	.L75:
+ 261:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 262:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 8:PCMSK1=(PCMSK1&(~(1<<PCINT8)));
+ 697               	.LM82:
+ 698 0228 8091 6C00 		lds r24,108
+ 699 022c 8E7F      		andi r24,lo8(-2)
+ 700 022e 00C0      		rjmp .L102
+ 701               	.L76:
+ 263:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 264:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 9:PCMSK1=(PCMSK1&(~(1<<PCINT9)));
+ 703               	.LM83:
+ 704 0230 8091 6C00 		lds r24,108
+ 705 0234 8D7F      		andi r24,lo8(-3)
+ 706 0236 00C0      		rjmp .L102
+ 707               	.L77:
+ 265:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 266:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 10:PCMSK1=(PCMSK1&(~(1<<PCINT10)));
+ 709               	.LM84:
+ 710 0238 8091 6C00 		lds r24,108
+ 711 023c 8B7F      		andi r24,lo8(-5)
+ 712 023e 00C0      		rjmp .L102
+ 713               	.L78:
+ 267:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 268:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 11:PCMSK1=(PCMSK1&(~(1<<PCINT11)));
+ 715               	.LM85:
+ 716 0240 8091 6C00 		lds r24,108
+ 717 0244 877F      		andi r24,lo8(-9)
+ 718 0246 00C0      		rjmp .L102
+ 719               	.L79:
+ 269:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 270:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 12:PCMSK1=(PCMSK1&(~(1<<PCINT12)));
+ 721               	.LM86:
+ 722 0248 8091 6C00 		lds r24,108
+ 723 024c 8F7E      		andi r24,lo8(-17)
+ 724 024e 00C0      		rjmp .L102
+ 725               	.L80:
+ 271:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 272:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 13:PCMSK1=(PCMSK1&(~(1<<PCINT13)));
+ 727               	.LM87:
+ 728 0250 8091 6C00 		lds r24,108
+ 729 0254 8F7D      		andi r24,lo8(-33)
+ 730 0256 00C0      		rjmp .L102
+ 731               	.L81:
+ 273:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 274:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 14:PCMSK1=(PCMSK1&(~(1<<PCINT14)));
+ 733               	.LM88:
+ 734 0258 8091 6C00 		lds r24,108
+ 735 025c 8F7B      		andi r24,lo8(-65)
+ 736 025e 00C0      		rjmp .L102
+ 737               	.L82:
+ 275:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 276:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 15:PCMSK1=(PCMSK1&(~(1<<PCINT15)));
+ 739               	.LM89:
+ 740 0260 8091 6C00 		lds r24,108
+ 741 0264 8F77      		andi r24,lo8(127)
+ 742               	.L102:
+ 743 0266 8093 6C00 		sts 108,r24
+ 277:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 745               	.LM90:
+ 746 026a 00C0      		rjmp .L65
+ 747               	.L83:
+ 278:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 16:PCMSK2=(PCMSK2&(~(1<<PCINT16)));
+ 749               	.LM91:
+ 750 026c 8091 6D00 		lds r24,109
+ 751 0270 8E7F      		andi r24,lo8(-2)
+ 752 0272 00C0      		rjmp .L101
+ 753               	.L84:
+ 279:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 280:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 17:PCMSK2=(PCMSK2&(~(1<<PCINT17)));
+ 755               	.LM92:
+ 756 0274 8091 6D00 		lds r24,109
+ 757 0278 8D7F      		andi r24,lo8(-3)
+ 758 027a 00C0      		rjmp .L101
+ 759               	.L85:
+ 281:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 282:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 18:PCMSK2=(PCMSK2&(~(1<<PCINT18)));
+ 761               	.LM93:
+ 762 027c 8091 6D00 		lds r24,109
+ 763 0280 8B7F      		andi r24,lo8(-5)
+ 764 0282 00C0      		rjmp .L101
+ 765               	.L86:
+ 283:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 284:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 19:PCMSK2=(PCMSK2&(~(1<<PCINT19)));
+ 767               	.LM94:
+ 768 0284 8091 6D00 		lds r24,109
+ 769 0288 877F      		andi r24,lo8(-9)
+ 770 028a 00C0      		rjmp .L101
+ 771               	.L87:
+ 285:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 286:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 20:PCMSK2=(PCMSK2&(~(1<<PCINT20)));
+ 773               	.LM95:
+ 774 028c 8091 6D00 		lds r24,109
+ 775 0290 8F7E      		andi r24,lo8(-17)
+ 776 0292 00C0      		rjmp .L101
+ 777               	.L88:
+ 287:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 288:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 21:PCMSK2=(PCMSK2&(~(1<<PCINT21)));
+ 779               	.LM96:
+ 780 0294 8091 6D00 		lds r24,109
+ 781 0298 8F7D      		andi r24,lo8(-33)
+ 782 029a 00C0      		rjmp .L101
+ 783               	.L89:
+ 289:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 290:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 22:PCMSK2=(PCMSK2&(~(1<<PCINT22)));
+ 785               	.LM97:
+ 786 029c 8091 6D00 		lds r24,109
+ 787 02a0 8F7B      		andi r24,lo8(-65)
+ 788 02a2 00C0      		rjmp .L101
+ 789               	.L90:
+ 291:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 292:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 23:PCMSK2=(PCMSK2&(~(1<<PCINT23)));
+ 791               	.LM98:
+ 792 02a4 8091 6D00 		lds r24,109
+ 793 02a8 8F77      		andi r24,lo8(127)
+ 794               	.L101:
+ 795 02aa 8093 6D00 		sts 109,r24
+ 293:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 797               	.LM99:
+ 798 02ae 00C0      		rjmp .L65
+ 799               	.L91:
+ 294:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 24:PCMSK3=(PCMSK3&(~(1<<PCINT24)));
+ 801               	.LM100:
+ 802 02b0 8091 6A00 		lds r24,106
+ 803 02b4 8E7F      		andi r24,lo8(-2)
+ 804 02b6 00C0      		rjmp .L100
+ 805               	.L92:
+ 295:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 296:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 25:PCMSK3=(PCMSK3&(~(1<<PCINT25)));
+ 807               	.LM101:
+ 808 02b8 8091 6A00 		lds r24,106
+ 809 02bc 8D7F      		andi r24,lo8(-3)
+ 810 02be 00C0      		rjmp .L100
+ 811               	.L93:
+ 297:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 298:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 26:PCMSK3=(PCMSK3&(~(1<<PCINT26)));
+ 813               	.LM102:
+ 814 02c0 8091 6A00 		lds r24,106
+ 815 02c4 8B7F      		andi r24,lo8(-5)
+ 816 02c6 00C0      		rjmp .L100
+ 817               	.L94:
+ 299:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 300:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         case 27:PCMSK3=(PCMSK3&(~(1<<PCINT27)));
+ 819               	.LM103:
+ 820 02c8 8091 6A00 		lds r24,106
+ 821 02cc 877F      		andi r24,lo8(-9)
+ 822               	.L100:
+ 823 02ce 8093 6A00 		sts 106,r24
+ 824               	.L65:
+ 301:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****             break;
+ 302:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         default:break;
+ 303:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 304:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     
+ 305:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     if(PCMSK0 == 0x00)
+ 826               	.LM104:
+ 827 02d2 8091 6B00 		lds r24,107
+ 828 02d6 8111      		cpse r24,__zero_reg__
+ 829 02d8 00C0      		rjmp .L95
+ 306:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 307:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE0)));
+ 831               	.LM105:
+ 832 02da 8091 6800 		lds r24,104
+ 833 02de 8E7F      		andi r24,lo8(-2)
+ 834 02e0 00C0      		rjmp .L103
+ 835               	.L95:
+ 308:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 309:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     else if(PCMSK1 == 0x00)
+ 837               	.LM106:
+ 838 02e2 8091 6C00 		lds r24,108
+ 839 02e6 8111      		cpse r24,__zero_reg__
+ 840 02e8 00C0      		rjmp .L97
+ 310:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 311:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE1)));
+ 842               	.LM107:
+ 843 02ea 8091 6800 		lds r24,104
+ 844 02ee 8D7F      		andi r24,lo8(-3)
+ 845 02f0 00C0      		rjmp .L103
+ 846               	.L97:
+ 312:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 313:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     else if(PCMSK2 == 0x00)
+ 848               	.LM108:
+ 849 02f2 8091 6D00 		lds r24,109
+ 850 02f6 8111      		cpse r24,__zero_reg__
+ 851 02f8 00C0      		rjmp .L98
+ 314:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 315:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE2)));
+ 853               	.LM109:
+ 854 02fa 8091 6800 		lds r24,104
+ 855 02fe 8B7F      		andi r24,lo8(-5)
+ 856 0300 00C0      		rjmp .L103
+ 857               	.L98:
+ 316:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     }
+ 317:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     else if(PCMSK3 == 0x00)
+ 859               	.LM110:
+ 860 0302 8091 6A00 		lds r24,106
+ 861 0306 8111      		cpse r24,__zero_reg__
+ 862 0308 00C0      		rjmp .L64
+ 318:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****     {
+ 319:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/ext_interrupt.c ****         PCICR=(PCICR&(~(1<<PCIE3)));
+ 864               	.LM111:
+ 865 030a 8091 6800 		lds r24,104
+ 866 030e 877F      		andi r24,lo8(-9)
+ 867               	.L103:
+ 868 0310 8093 6800 		sts 104,r24
+ 869               	.L64:
+ 870 0314 0895      		ret
+ 872               	.Lscope5:
+ 874               	.Letext0:
+ 875               		.ident	"GCC: (GNU) 4.9.3"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 ext_interrupt.c
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:116    .text:0000000000000000 Configure_Interrupt
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:213    .text:0000000000000076 Enable_Interrupt
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:246    .text:0000000000000088 Enable_Pcinterrupt
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:559    .text:00000000000001c0 Disable_Interrupt
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccfe2xnE.s:592    .text:00000000000001d2 Disable_Pcinterrupt
+
+NO UNDEFINED SYMBOLS

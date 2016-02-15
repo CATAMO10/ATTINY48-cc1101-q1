@@ -1,0 +1,423 @@
+   1               		.file	"TWI_Master.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 118               	.global	TWIM_Init
+ 120               	TWIM_Init:
+   1:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+   2:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #include <stdio.h>
+   3:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #include <avr/interrupt.h>
+   4:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+   5:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #include "General.h"
+   6:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #include "TWI_Master.h"
+   7:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+   8:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** /****************************************************************************
+   9:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  TWI State codes
+  10:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  ****************************************************************************/
+  11:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** // General TWI Master staus codes
+  12:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_START					0x08  // START has been transmitted
+  13:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_REP_START				0x10  // Repeated START has been transmitted
+  14:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_ARB_LOST				0x38  // Arbitration lost
+  15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+  16:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** // TWI Master Transmitter staus codes
+  17:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MTX_ADR_ACK				0x18  // SLA+W has been tramsmitted and ACK received
+  18:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MTX_ADR_NACK			0x20  // SLA+W has been tramsmitted and NACK received
+  19:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MTX_DATA_ACK			0x28  // Data byte has been tramsmitted and ACK received
+  20:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MTX_DATA_NACK			0x30  // Data byte has been tramsmitted and NACK received
+  21:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+  22:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** // TWI Master Receiver staus codes
+  23:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MRX_ADR_ACK				0x40  // SLA+R has been tramsmitted and ACK received
+  24:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MRX_ADR_NACK			0x48  // SLA+R has been tramsmitted and NACK received
+  25:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MRX_DATA_ACK			0x50  // Data byte has been received and ACK tramsmitted
+  26:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_MRX_DATA_NACK			0x58  // Data byte has been received and NACK tramsmitted
+  27:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+  28:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** // TWI Slave Transmitter staus codes
+  29:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_STX_ADR_ACK				0xA8  // Own SLA+R has been received; ACK has been returned
+  30:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_STX_ADR_ACK_M_ARB_LOST	0xB0  // Arbitration lost in SLA+R/W as Master; own SLA+R has be
+  31:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_STX_DATA_ACK			0xB8  // Data byte in TWDR has been transmitted; ACK has been received
+  32:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_STX_DATA_NACK			0xC0  // Data byte in TWDR has been transmitted; NOT ACK has been recei
+  33:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_STX_DATA_ACK_LAST_BYTE	0xC8  // Last data byte in TWDR has been transmitted (TWEA = “
+  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** // TWI Slave Receiver staus codes
+  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_ADR_ACK				0x60  // Own SLA+W has been received ACK has been returned
+  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_ADR_ACK_M_ARB_LOST	0x68  // Arbitration lost in SLA+R/W as Master; own SLA+W has be
+  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_GEN_ACK				0x70  // General call address has been received; ACK has been returned
+  39:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_GEN_ACK_M_ARB_LOST	0x78  // Arbitration lost in SLA+R/W as Master; General call add
+  40:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_ADR_DATA_ACK		0x80  // Previously addressed with own SLA+W; data has been received;
+  41:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_ADR_DATA_NACK		0x88  // Previously addressed with own SLA+W; data has been received
+  42:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_GEN_DATA_ACK		0x90  // Previously addressed with general call; data has been receiv
+  43:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_GEN_DATA_NACK		0x98  // Previously addressed with general call; data has been recei
+  44:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_SRX_STOP_RESTART		0xA0  // A STOP condition or repeated START condition has been receiv
+  45:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+  46:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** // TWI Miscellaneous status codes
+  47:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_NO_STATE				0xF8  // No relevant state information available; TWINT = “0”
+  48:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** #define TWI_BUS_ERROR				0x00  // Bus error due to an illegal START or STOP condition
+  49:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** 
+  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** /*******************************************************
+  51:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Public Function: TWIM_Init
+  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  53:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Purpose: Initialise the TWI Master Interface
+  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  55:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Input Parameter:
+  56:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - uint16_t	TWI_Bitrate (Hz)
+  57:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  58:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Return Value: uint8_t
+  59:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - FALSE:	Bitrate too high
+  60:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - TRUE:		Bitrate OK
+  61:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  62:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  *******************************************************/
+  63:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** uint8_t TWIM_Init (uint32_t TWI_Bitrate)
+  64:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** {
+ 122               	.LM0:
+ 123               	.LFBB1:
+ 124               	/* prologue: function */
+ 125               	/* frame size = 0 */
+ 126               	/* stack size = 0 */
+ 127               	.L__stack_usage = 0
+ 128 0000 9B01      		movw r18,r22
+ 129 0002 AC01      		movw r20,r24
+  65:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+  66:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Set TWI bitrate
+  67:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** If bitrate is too high, then error return
+  68:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+  69:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWBR = ((F_CPU/TWI_Bitrate)-16)/2;
+ 131               	.LM1:
+ 132 0004 60E0      		ldi r22,0
+ 133 0006 72E1      		ldi r23,lo8(18)
+ 134 0008 8AE7      		ldi r24,lo8(122)
+ 135 000a 90E0      		ldi r25,0
+ 136 000c 00D0      		rcall __udivmodsi4
+ 137 000e DA01      		movw r26,r20
+ 138 0010 C901      		movw r24,r18
+ 139 0012 4097      		sbiw r24,16
+ 140 0014 A109      		sbc r26,__zero_reg__
+ 141 0016 B109      		sbc r27,__zero_reg__
+ 142 0018 B695      		lsr r27
+ 143 001a A795      		ror r26
+ 144 001c 9795      		ror r25
+ 145 001e 8795      		ror r24
+ 146 0020 8093 B800 		sts 184,r24
+  70:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     if (TWBR < 11) return FALSE;
+ 148               	.LM2:
+ 149 0024 9091 B800 		lds r25,184
+ 150 0028 81E0      		ldi r24,lo8(1)
+ 151 002a 9B30      		cpi r25,lo8(11)
+ 152 002c 00F4      		brsh .L2
+ 153 002e 80E0      		ldi r24,0
+ 154               	.L2:
+  71:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     
+  72:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     return TRUE;
+  73:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** }
+ 156               	.LM3:
+ 157 0030 0895      		ret
+ 159               	.Lscope1:
+ 163               	.global	TWIM_Start
+ 165               	TWIM_Start:
+  74:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** /*******************************************************
+  75:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Public Function: TWIM_Start
+  76:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  77:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Purpose: Start the TWI Master Interface
+  78:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  79:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Input Parameter:
+  80:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - uint8_t	Device address
+  81:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - uint8_t	Type of required Operation:
+  82:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  TWIM_READ: Read data from the slave
+  83:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  TWIM_WRITE: Write data to the slave
+  84:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  85:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Return Value: uint8_t
+  86:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - TRUE:		OK, TWI Master accessible
+  87:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - FALSE:	Error in starting TWI Master
+  88:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+  89:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  *******************************************************/
+  90:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** uint8_t TWIM_Start (uint8_t Address, uint8_t TWIM_Type)
+  91:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** {
+ 167               	.LM4:
+ 168               	.LFBB2:
+ 169               	/* prologue: function */
+ 170               	/* frame size = 0 */
+ 171               	/* stack size = 0 */
+ 172               	.L__stack_usage = 0
+  92:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     uint8_t		twst;
+  93:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+  94:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Send START condition
+  95:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+  96:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
+ 174               	.LM5:
+ 175 0032 94EA      		ldi r25,lo8(-92)
+ 176 0034 9093 BC00 		sts 188,r25
+ 177               	.L5:
+  97:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+  98:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Wait until transmission completed
+  99:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 100:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     while (!(TWCR & (1<<TWINT)));
+ 179               	.LM6:
+ 180 0038 9091 BC00 		lds r25,188
+ 181 003c 97FF      		sbrs r25,7
+ 182 003e 00C0      		rjmp .L5
+ 101:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 102:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Check value of TWI Status Register. Mask prescaler bits.
+ 103:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 104:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     twst = TWSR & 0xF8;
+ 184               	.LM7:
+ 185 0040 9091 B900 		lds r25,185
+ 186 0044 987F      		andi r25,lo8(-8)
+ 105:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     if ((twst != TWI_START) && (twst != TWI_REP_START)) return FALSE;
+ 188               	.LM8:
+ 189 0046 9830      		cpi r25,lo8(8)
+ 190 0048 01F0      		breq .L6
+ 192               	.LM9:
+ 193 004a 9031      		cpi r25,lo8(16)
+ 194 004c 01F0      		breq .L6
+ 195               	.L9:
+ 197               	.LM10:
+ 198 004e 80E0      		ldi r24,0
+ 199 0050 0895      		ret
+ 200               	.L6:
+ 106:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 107:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Send device address
+ 108:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 109:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWDR = (Address<<1) + TWIM_Type;
+ 202               	.LM11:
+ 203 0052 880F      		lsl r24
+ 204 0054 680F      		add r22,r24
+ 205 0056 6093 BB00 		sts 187,r22
+ 110:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWCR = (1<<TWINT)|(1<<TWEN);
+ 207               	.LM12:
+ 208 005a 84E8      		ldi r24,lo8(-124)
+ 209 005c 8093 BC00 		sts 188,r24
+ 210               	.L8:
+ 111:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 112:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Wait until transmission completed and ACK/NACK has been received
+ 113:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 114:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     while (!(TWCR & (1<<TWINT)));
+ 212               	.LM13:
+ 213 0060 8091 BC00 		lds r24,188
+ 214 0064 87FF      		sbrs r24,7
+ 215 0066 00C0      		rjmp .L8
+ 115:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 116:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Check value of TWI Status Register. Mask prescaler bits.
+ 117:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 118:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     twst = TWSR & 0xF8;
+ 217               	.LM14:
+ 218 0068 8091 B900 		lds r24,185
+ 219 006c 887F      		andi r24,lo8(-8)
+ 119:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     if ((twst != TWI_MTX_ADR_ACK) && (twst != TWI_MRX_ADR_ACK)) return FALSE;
+ 221               	.LM15:
+ 222 006e 8831      		cpi r24,lo8(24)
+ 223 0070 01F0      		breq .L10
+ 225               	.LM16:
+ 226 0072 8034      		cpi r24,lo8(64)
+ 227 0074 01F4      		brne .L9
+ 228               	.L10:
+ 120:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     
+ 121:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     return TRUE;
+ 230               	.LM17:
+ 231 0076 81E0      		ldi r24,lo8(1)
+ 122:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** }
+ 233               	.LM18:
+ 234 0078 0895      		ret
+ 236               	.Lscope2:
+ 238               	.global	TWIM_Stop
+ 240               	TWIM_Stop:
+ 123:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** /*******************************************************
+ 124:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Public Function: TWIM_Stop
+ 125:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 126:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Purpose: Stop the TWI Master
+ 127:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 128:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Input Parameter: None
+ 129:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 130:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Return Value: None
+ 131:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 132:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  *******************************************************/
+ 133:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** void TWIM_Stop (void)
+ 134:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** {
+ 242               	.LM19:
+ 243               	.LFBB3:
+ 244               	/* prologue: function */
+ 245               	/* frame size = 0 */
+ 246               	/* stack size = 0 */
+ 247               	.L__stack_usage = 0
+ 135:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 136:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Send stop condition
+ 137:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 138:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWSTO);
+ 249               	.LM20:
+ 250 007a 84E9      		ldi r24,lo8(-108)
+ 251 007c 8093 BC00 		sts 188,r24
+ 252               	.L20:
+ 139:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 140:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Wait until stop condition is executed and bus released
+ 141:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 142:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     while (TWCR & (1<<TWINT));
+ 254               	.LM21:
+ 255 0080 8091 BC00 		lds r24,188
+ 256 0084 87FD      		sbrc r24,7
+ 257 0086 00C0      		rjmp .L20
+ 258               	/* epilogue start */
+ 143:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** }
+ 260               	.LM22:
+ 261 0088 0895      		ret
+ 263               	.Lscope3:
+ 266               	.global	TWIM_Write
+ 268               	TWIM_Write:
+ 144:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** /*******************************************************
+ 145:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Public Function: TWIM_Write
+ 146:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 147:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Purpose: Write a byte to the slave
+ 148:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 149:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Input Parameter:
+ 150:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - uint8_t	Byte to be sent
+ 151:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 152:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Return Value: uint8_t
+ 153:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - TRUE:		OK, Byte sent
+ 154:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - FALSE:	Error in byte transmission
+ 155:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 156:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  *******************************************************/
+ 157:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** uint8_t TWIM_Write (uint8_t byte)
+ 158:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** {
+ 270               	.LM23:
+ 271               	.LFBB4:
+ 272               	/* prologue: function */
+ 273               	/* frame size = 0 */
+ 274               	/* stack size = 0 */
+ 275               	.L__stack_usage = 0
+ 159:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     uint8_t   twst;
+ 160:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 161:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Send data to the previously addressed device
+ 162:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 163:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWDR = byte;
+ 277               	.LM24:
+ 278 008a 8093 BB00 		sts 187,r24
+ 164:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWCR = (1<<TWINT)|(1<<TWEN);
+ 280               	.LM25:
+ 281 008e 84E8      		ldi r24,lo8(-124)
+ 282 0090 8093 BC00 		sts 188,r24
+ 283               	.L23:
+ 165:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 166:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Wait until transmission completed
+ 167:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 168:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     while (!(TWCR & (1<<TWINT)));
+ 285               	.LM26:
+ 286 0094 8091 BC00 		lds r24,188
+ 287 0098 87FF      		sbrs r24,7
+ 288 009a 00C0      		rjmp .L23
+ 169:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     /*
+ 170:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      ** Check value of TWI Status Register. Mask prescaler bits
+ 171:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****      */
+ 172:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     twst = TWSR & 0xF8;
+ 290               	.LM27:
+ 291 009c 9091 B900 		lds r25,185
+ 292 00a0 987F      		andi r25,lo8(-8)
+ 173:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     if (twst != TWI_MTX_DATA_ACK) return 1;
+ 294               	.LM28:
+ 295 00a2 81E0      		ldi r24,lo8(1)
+ 296 00a4 9832      		cpi r25,lo8(40)
+ 297 00a6 01F4      		brne .L24
+ 298 00a8 80E0      		ldi r24,0
+ 299               	.L24:
+ 174:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     
+ 175:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     return 0;
+ 176:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** }
+ 301               	.LM29:
+ 302 00aa 0895      		ret
+ 304               	.Lscope4:
+ 306               	.global	TWIM_ReadAck
+ 308               	TWIM_ReadAck:
+ 177:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** /*******************************************************
+ 178:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Public Function: TWIM_ReadAck
+ 179:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 180:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Purpose: Read a byte from the slave and request next byte
+ 181:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 182:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Input Parameter: None
+ 183:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 184:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Return Value: uint8_t
+ 185:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - uint8_t	Read byte
+ 186:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 187:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  *******************************************************/
+ 188:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** uint8_t TWIM_ReadAck (void)
+ 189:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** {
+ 310               	.LM30:
+ 311               	.LFBB5:
+ 312               	/* prologue: function */
+ 313               	/* frame size = 0 */
+ 314               	/* stack size = 0 */
+ 315               	.L__stack_usage = 0
+ 190:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
+ 317               	.LM31:
+ 318 00ac 84EC      		ldi r24,lo8(-60)
+ 319 00ae 8093 BC00 		sts 188,r24
+ 320               	.L27:
+ 191:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     while (!(TWCR & (1<<TWINT)));
+ 322               	.LM32:
+ 323 00b2 8091 BC00 		lds r24,188
+ 324 00b6 87FF      		sbrs r24,7
+ 325 00b8 00C0      		rjmp .L27
+ 192:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     
+ 193:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     return TWDR;
+ 327               	.LM33:
+ 328 00ba 8091 BB00 		lds r24,187
+ 194:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** }
+ 330               	.LM34:
+ 331 00be 0895      		ret
+ 333               	.Lscope5:
+ 335               	.global	TWIM_ReadNack
+ 337               	TWIM_ReadNack:
+ 195:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** /*******************************************************
+ 196:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Public Function: TWIM_ReadAck
+ 197:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 198:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Purpose: Read the last byte from the slave
+ 199:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 200:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Input Parameter: None
+ 201:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 202:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  Return Value: uint8_t
+ 203:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  - uint8_t	Read byte
+ 204:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  
+ 205:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****  *******************************************************/
+ 206:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** uint8_t TWIM_ReadNack (void)
+ 207:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** {
+ 339               	.LM35:
+ 340               	.LFBB6:
+ 341               	/* prologue: function */
+ 342               	/* frame size = 0 */
+ 343               	/* stack size = 0 */
+ 344               	.L__stack_usage = 0
+ 208:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     TWCR = (1<<TWINT)|(1<<TWEN);
+ 346               	.LM36:
+ 347 00c0 84E8      		ldi r24,lo8(-124)
+ 348 00c2 8093 BC00 		sts 188,r24
+ 349               	.L30:
+ 209:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     while(!(TWCR & (1<<TWINT)));
+ 351               	.LM37:
+ 352 00c6 8091 BC00 		lds r24,188
+ 353 00ca 87FF      		sbrs r24,7
+ 354 00cc 00C0      		rjmp .L30
+ 210:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     
+ 211:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c ****     return TWDR;
+ 356               	.LM38:
+ 357 00ce 8091 BB00 		lds r24,187
+ 212:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/TWI_Master.c **** }
+ 359               	.LM39:
+ 360 00d2 0895      		ret
+ 362               	.Lscope6:
+ 364               	.Letext0:
+ 365               		.ident	"GCC: (GNU) 4.9.3"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 TWI_Master.c
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:120    .text:0000000000000000 TWIM_Init
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:165    .text:0000000000000032 TWIM_Start
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:240    .text:000000000000007a TWIM_Stop
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:268    .text:000000000000008a TWIM_Write
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:308    .text:00000000000000ac TWIM_ReadAck
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cccE55U6.s:337    .text:00000000000000c0 TWIM_ReadNack
+
+UNDEFINED SYMBOLS
+__udivmodsi4
