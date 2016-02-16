@@ -47,6 +47,13 @@
 #define TWI_NO_STATE				0xF8  // No relevant state information available; TWINT = “0”
 #define TWI_BUS_ERROR				0x00  // Bus error due to an illegal START or STOP condition
 
+
+static volatile uint8_t twi_state;
+static uint8_t twi_slarw;
+static volatile uint8_t twi_error;
+static volatile uint8_t twi_masterBufferIndex;
+static uint8_t twi_masterBufferLength;
+static uint8_t twi_masterBuffer[TWI_BUFFER_LENGTH];
 /*******************************************************
  Public Function: TWIM_Init
  
@@ -209,4 +216,61 @@ uint8_t TWIM_ReadNack (void)
     while(!(TWCR & (1<<TWINT)));
     
     return TWDR;
+}
+/*
+ * Function twi_readFrom
+ * Desc     attempts to become twi bus master and read a
+ *          series of bytes from a device on the bus
+ * Input    address: 7bit i2c device address
+ *          data: pointer to byte array
+ *          length: number of bytes to read into array
+ * Output   number of bytes read
+ */
+uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length)
+{
+    uint8_t i;
+    
+    // ensure data will fit into buffer
+    if(TWI_BUFFER_LENGTH < length){
+        return 0;
+    }
+    
+    // wait until twi is ready, become master receiver
+    while(TWI_READY != twi_state){
+        continue;
+    }
+    twi_state = TWI_MRX;
+    // reset error state (0xFF.. no error occured)
+    twi_error = 0xFF;
+    
+    // initialize buffer iteration vars
+    twi_masterBufferIndex = 0;
+    twi_masterBufferLength = length-1;  // This is not intuitive, read on...
+    // On receive, the previously configured ACK/NACK setting is transmitted in
+    // response to the received byte before the interrupt is signalled.
+    // Therefor we must actually set NACK when the _next_ to last byte is
+    // received, causing that NACK to be sent in response to receiving the last
+    // expected byte of data.
+    
+    // build sla+w, slave device address + w bit
+    //twi_slarw = TW_READ;
+    twi_slarw |= address << 1;
+    
+    // send start condition
+    TWCR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA) | _BV(TWINT) | _BV(TWSTA);
+    
+    // wait for read operation to complete
+    while(TWI_MRX == twi_state){
+        continue;
+    }
+    
+    if (twi_masterBufferIndex < length)
+        length = twi_masterBufferIndex;
+    
+    // copy twi buffer to data
+    for(i = 0; i < length; ++i){
+        data[i] = twi_masterBuffer[i];
+    }
+    
+    return length;
 }

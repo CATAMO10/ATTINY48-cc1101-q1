@@ -1212,27 +1212,27 @@
  996               	.global __do_copy_data
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 cc1101.c
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:2      *ABS*:000000000000003e __SP_H__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:3      *ABS*:000000000000003d __SP_L__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:4      *ABS*:000000000000003f __SREG__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:5      *ABS*:0000000000000000 __tmp_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:6      *ABS*:0000000000000001 __zero_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:118    .text:0000000000000000 SpiInit
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:152    .text:0000000000000014 SpiTransfer
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:180    .text:0000000000000020 GDO_Set
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:197    .text:0000000000000024 Reset
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:272    .text:0000000000000054 SpiWriteReg
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:317    .text:0000000000000074 SpiWriteBurstReg
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:398    .text:00000000000000c8 SpiStrobe
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:428    .text:00000000000000d6 SpiReadReg
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:471    .text:00000000000000ea SpiReadBurstReg
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:553    .text:0000000000000140 SpiReadStatus
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:594    .text:0000000000000154 RegConfigSettings
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:777    .text:0000000000000220 Init
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:982    .data:0000000000000000 PaTabel
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:822    .text:000000000000023c SendData
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:894    .text:0000000000000286 SetReceive
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccvS2Emb.s:912    .text:000000000000028a ReceiveData
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:118    .text:0000000000000000 SpiInit
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:152    .text:0000000000000014 SpiTransfer
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:180    .text:0000000000000020 GDO_Set
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:197    .text:0000000000000024 Reset
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:272    .text:0000000000000054 SpiWriteReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:317    .text:0000000000000074 SpiWriteBurstReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:398    .text:00000000000000c8 SpiStrobe
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:428    .text:00000000000000d6 SpiReadReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:471    .text:00000000000000ea SpiReadBurstReg
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:553    .text:0000000000000140 SpiReadStatus
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:594    .text:0000000000000154 RegConfigSettings
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:777    .text:0000000000000220 Init
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:982    .data:0000000000000000 PaTabel
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:822    .text:000000000000023c SendData
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:894    .text:0000000000000286 SetReceive
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccEjMQUF.s:912    .text:000000000000028a ReceiveData
 
 UNDEFINED SYMBOLS
 __do_copy_data

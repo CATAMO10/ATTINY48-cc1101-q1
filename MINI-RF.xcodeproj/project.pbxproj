@@ -13,6 +13,7 @@
 		6BDC3C8B1C6CD0620028B72B /* transmit.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C891C6CD0620028B72B /* transmit.c */; };
 		6BDC3C8F1C6CF4520028B72B /* ext_interrupt.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C8D1C6CF4520028B72B /* ext_interrupt.c */; };
 		6BDC3C921C6DFFD70028B72B /* receive.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C901C6DFFD70028B72B /* receive.c */; };
+		6BDC3CB71C737FC90028B72B /* TH.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3CB61C737FC90028B72B /* TH.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		6BDC3C8E1C6CF4520028B72B /* ext_interrupt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ext_interrupt.h; sourceTree = "<group>"; };
 		6BDC3C901C6DFFD70028B72B /* receive.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = receive.c; sourceTree = "<group>"; };
 		6BDC3C911C6DFFD70028B72B /* receive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = receive.h; sourceTree = "<group>"; };
+		6BDC3CB61C737FC90028B72B /* TH.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TH.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -67,6 +69,7 @@
 				6BDC3C8E1C6CF4520028B72B /* ext_interrupt.h */,
 				6BDC3C901C6DFFD70028B72B /* receive.c */,
 				6BDC3C911C6DFFD70028B72B /* receive.h */,
+				6BDC3CB61C737FC90028B72B /* TH.c */,
 			);
 			path = "MINI-RF";
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6BDC3CB71C737FC90028B72B /* TH.c in Sources */,
 				6BDC3C841C6CBEA20028B72B /* cc1101.c in Sources */,
 				6BDC3C921C6DFFD70028B72B /* receive.c in Sources */,
 				6BDC3C8B1C6CD0620028B72B /* transmit.c in Sources */,

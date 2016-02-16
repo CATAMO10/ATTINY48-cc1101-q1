@@ -9,6 +9,7 @@
 //#include "ext_interrupt.h"
 #define slaveaddress    0x04
 #define slaveAddress2   0x40
+#define slaveAddress3   0x68
 #define bit(b) (1UL << (b))
 #define tx_size 61
 
@@ -27,7 +28,7 @@ int main(void) {
     byte res;
     uint32_t X0,X1,Y0,Y1,Y2;
     uint32_t X_out,Y_out1,Y_out2;
-    uint32_t X=0, Y=0;
+    
     Init();
     version = SpiReadStatus(CC1101_VERSION);
     SetReceive();
@@ -46,6 +47,8 @@ int main(void) {
      */
     while (1)
     {
+        uint32_t X=0, Y=0;
+        uint16_t AcX = 0;
         if(!TWIM_Start(slaveAddress2, TWIM_WRITE))
         {
             TWIM_Stop();
@@ -53,6 +56,7 @@ int main(void) {
         }
         else{
             TWIM_Write(0xE3);
+            TWIM_Stop();
         }
         if (!TWIM_Start (slaveAddress2, TWIM_READ))
         {
@@ -66,6 +70,9 @@ int main(void) {
             X_out=X0+X1;
             X=(175.72*X_out)/65536;
             X=X-46.85;
+//            AcX = TWIM_ReadAck() <<8 | TWIM_ReadAck();
+//            TX_buffer[1] = AcX;
+//            TX_buffer[2] = AcX <<8;
             TX_buffer[1] = X;
         }
         
@@ -76,7 +83,7 @@ int main(void) {
         else
         {
         //sent = SendData(TX_buffer,size);
-            //byte res;
+          //  byte res;
             TWIM_Write(X);
             TWIM_Write(version);
             marcstate = SpiReadStatus(CC1101_MARCSTATE);
@@ -107,7 +114,7 @@ int main(void) {
             TWIM_Stop ();
         }
         
-        _delay_ms(1000);
+        _delay_ms(1500);
         SetReceive();
         //pciSetup(5);
     }
