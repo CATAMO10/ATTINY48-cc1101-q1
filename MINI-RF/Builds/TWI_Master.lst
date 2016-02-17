@@ -551,23 +551,23 @@
  471               	.global __do_clear_bss
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 TWI_Master.c
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:2      *ABS*:000000000000003e __SP_H__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:3      *ABS*:000000000000003d __SP_L__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:4      *ABS*:000000000000003f __SREG__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:5      *ABS*:0000000000000000 __tmp_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:6      *ABS*:0000000000000001 __zero_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:120    .text:0000000000000000 TWIM_Init
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:165    .text:0000000000000032 TWIM_Start
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:240    .text:000000000000007a TWIM_Stop
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:268    .text:000000000000008a TWIM_Write
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:308    .text:00000000000000ac TWIM_ReadAck
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:337    .text:00000000000000c0 TWIM_ReadNack
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:368    .text:00000000000000d4 twi_readFrom
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:460    .bss:0000000000000004 twi_state
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:456    .bss:0000000000000002 twi_error
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:454    .bss:0000000000000001 twi_masterBufferIndex
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:120    .text:0000000000000000 TWIM_Init
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:165    .text:0000000000000032 TWIM_Start
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:240    .text:000000000000007a TWIM_Stop
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:268    .text:000000000000008a TWIM_Write
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:308    .text:00000000000000ac TWIM_ReadAck
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:337    .text:00000000000000c0 TWIM_ReadNack
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:368    .text:00000000000000d4 twi_readFrom
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:460    .bss:0000000000000004 twi_state
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:456    .bss:0000000000000002 twi_error
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:454    .bss:0000000000000001 twi_masterBufferIndex
                              .bss:0000000000000000 twi_masterBufferLength
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//cclQCrQO.s:458    .bss:0000000000000003 twi_slarw
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccmUXSzP.s:458    .bss:0000000000000003 twi_slarw
 
 UNDEFINED SYMBOLS
 __udivmodsi4

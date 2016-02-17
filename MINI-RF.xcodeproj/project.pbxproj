@@ -11,9 +11,9 @@
 		6BDC3C841C6CBEA20028B72B /* cc1101.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C821C6CBEA20028B72B /* cc1101.c */; };
 		6BDC3C871C6CC5AB0028B72B /* TWI_Master.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C851C6CC5AB0028B72B /* TWI_Master.c */; };
 		6BDC3C8B1C6CD0620028B72B /* transmit.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C891C6CD0620028B72B /* transmit.c */; };
-		6BDC3C8F1C6CF4520028B72B /* ext_interrupt.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C8D1C6CF4520028B72B /* ext_interrupt.c */; };
 		6BDC3C921C6DFFD70028B72B /* receive.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3C901C6DFFD70028B72B /* receive.c */; };
 		6BDC3CB71C737FC90028B72B /* TH.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3CB61C737FC90028B72B /* TH.c */; };
+		6BDC3CB91C74B9880028B72B /* accelerometer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6BDC3CB81C74B9880028B72B /* accelerometer.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,11 +28,10 @@
 		6BDC3C891C6CD0620028B72B /* transmit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = transmit.c; sourceTree = "<group>"; };
 		6BDC3C8A1C6CD0620028B72B /* transmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = transmit.h; sourceTree = "<group>"; };
 		6BDC3C8C1C6CEA040028B72B /* pins_arduino.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pins_arduino.h; sourceTree = "<group>"; };
-		6BDC3C8D1C6CF4520028B72B /* ext_interrupt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ext_interrupt.c; sourceTree = "<group>"; };
-		6BDC3C8E1C6CF4520028B72B /* ext_interrupt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ext_interrupt.h; sourceTree = "<group>"; };
 		6BDC3C901C6DFFD70028B72B /* receive.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = receive.c; sourceTree = "<group>"; };
 		6BDC3C911C6DFFD70028B72B /* receive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = receive.h; sourceTree = "<group>"; };
 		6BDC3CB61C737FC90028B72B /* TH.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TH.c; sourceTree = "<group>"; };
+		6BDC3CB81C74B9880028B72B /* accelerometer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = accelerometer.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -65,11 +64,10 @@
 				6BDC3C891C6CD0620028B72B /* transmit.c */,
 				6BDC3C8A1C6CD0620028B72B /* transmit.h */,
 				6BDC3C8C1C6CEA040028B72B /* pins_arduino.h */,
-				6BDC3C8D1C6CF4520028B72B /* ext_interrupt.c */,
-				6BDC3C8E1C6CF4520028B72B /* ext_interrupt.h */,
 				6BDC3C901C6DFFD70028B72B /* receive.c */,
 				6BDC3C911C6DFFD70028B72B /* receive.h */,
 				6BDC3CB61C737FC90028B72B /* TH.c */,
+				6BDC3CB81C74B9880028B72B /* accelerometer.c */,
 			);
 			path = "MINI-RF";
 			sourceTree = "<group>";
@@ -210,8 +208,8 @@
 				6BDC3CB71C737FC90028B72B /* TH.c in Sources */,
 				6BDC3C841C6CBEA20028B72B /* cc1101.c in Sources */,
 				6BDC3C921C6DFFD70028B72B /* receive.c in Sources */,
+				6BDC3CB91C74B9880028B72B /* accelerometer.c in Sources */,
 				6BDC3C8B1C6CD0620028B72B /* transmit.c in Sources */,
-				6BDC3C8F1C6CF4520028B72B /* ext_interrupt.c in Sources */,
 				6BDC3C871C6CC5AB0028B72B /* TWI_Master.c in Sources */,
 				6BDC3C6D1C6CBE6D0028B72B /* main.c in Sources */,
 			);
@@ -393,6 +391,7 @@
 				6BDC3C741C6CBE6D0028B72B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6BDC3C751C6CBE6D0028B72B /* Build configuration list for PBXLegacyTarget "Build" */ = {
 			isa = XCConfigurationList;
@@ -401,6 +400,7 @@
 				6BDC3C771C6CBE6D0028B72B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6BDC3C781C6CBE6D0028B72B /* Build configuration list for PBXLegacyTarget "Upload" */ = {
 			isa = XCConfigurationList;
@@ -409,6 +409,7 @@
 				6BDC3C7A1C6CBE6D0028B72B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6BDC3C7B1C6CBE6D0028B72B /* Build configuration list for PBXLegacyTarget "Clean" */ = {
 			isa = XCConfigurationList;
@@ -417,6 +418,7 @@
 				6BDC3C7D1C6CBE6D0028B72B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6BDC3C7E1C6CBE6D0028B72B /* Build configuration list for PBXNativeTarget "Index" */ = {
 			isa = XCConfigurationList;
@@ -425,6 +427,7 @@
 				6BDC3C801C6CBE6D0028B72B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

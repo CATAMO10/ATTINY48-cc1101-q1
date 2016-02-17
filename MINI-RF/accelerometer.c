@@ -6,6 +6,7 @@
 //#include "TWI_Master.h"
 //#include "cc1101.h"
 //#include "pins_arduino.h"
+////#include "ext_interrupt.h"
 //#define slaveaddress    0x04
 //#define slaveAddress2   0x40
 //#define slaveAddress3   0x68
@@ -31,7 +32,7 @@
 //    Init();
 //    version = SpiReadStatus(CC1101_VERSION);
 //    SetReceive();
-//    TX_buffer[0] = 0x01;
+//    TX_buffer[0] = 0x02;//Accerometer
 //    for(i=1;i<tx_size;i++)
 //    {
 //        TX_buffer[i]=i*10;
@@ -48,57 +49,47 @@
 //    {
 //        uint32_t X=0, Y=0;
 //        uint16_t AcX = 0;
-//        if(!TWIM_Start(slaveAddress2, TWIM_WRITE))
+//        uint8_t MSB,LSB;
+//        DDRD = (1<<6);
+//        if(!TWIM_Start(slaveAddress3, TWIM_WRITE))
 //        {
 //            TWIM_Stop();
 //            
 //        }
 //        else{
-//            TWIM_Write(0xE3);
+//            TWIM_Write(0x6B);
+//            TWIM_Write(0);
 //            TWIM_Stop();
 //        }
-//        if (!TWIM_Start (slaveAddress2, TWIM_READ))
-//        {
-//            TWIM_Stop ();
-//        }
-//        else
-//        {
-//            X0=TWIM_ReadAck();
-//            X1=TWIM_ReadNack();
-//            X0=X0<<8;
-//            X_out=X0+X1;
-//            X=(175.72*X_out)/65536;
-//            X=X-46.85;
-//            TX_buffer[1] = X;
-//        }
-//        if(!TWIM_Start(slaveAddress2, TWIM_WRITE))
+//        if(!TWIM_Start(slaveAddress3, TWIM_WRITE))
 //        {
 //            TWIM_Stop();
 //            
 //        }
 //        else{
-//            TWIM_Write(0xE5);
+//            TWIM_Write(0x3B);
 //            TWIM_Stop();
 //        }
-//        if (!TWIM_Start (slaveAddress2, TWIM_READ))
+//        if (!TWIM_Start (slaveAddress3, TWIM_READ))
 //        {
 //            TWIM_Stop ();
 //        }
 //        else
 //        {
-//            Y0=TWIM_ReadAck();
-//            Y1=TWIM_ReadNack();
-//            Y2=Y0/100;
-//            Y0=Y0%100;
-//            Y_out1 = Y2*25600;
-//            Y_out2 = Y0*256+Y1;
-//            Y_out1 = (125*Y_out1)/65536;
-//            Y_out2 = (125*Y_out2)/65536;
-//            Y = Y_out1+Y_out2;
-//            Y=Y-6;
-//            TX_buffer[2] = Y;
-//            
-//            
+//            MSB = TWIM_ReadAck();
+//            LSB = TWIM_ReadAck();
+//            AcX = MSB<<8 | LSB;
+//            TX_buffer[1] = MSB;
+//            TX_buffer[2] = LSB;
+//            //TWIM_Stop();
+//            //        }
+//            //
+//            //        if (!TWIM_Start (slaveaddress, TWIM_WRITE))
+//            //        {
+//            //            TWIM_Stop ();
+//            //        }
+//            //        else
+//            //        {
 //            marcstate = SpiReadStatus(CC1101_MARCSTATE);
 //            if(SpiReadStatus(CC1101_MARCSTATE) != 1){
 //                marcstate = SpiReadStatus(CC1101_MARCSTATE);
@@ -107,39 +98,40 @@
 //            size=ReceiveData(RX_buffer);
 //            
 //            if (size>0) {
-//                if(RX_buffer[0] == 0x01){
+//                //TWIM_Write(RX_buffer[8]);
+//                
+//                if(RX_buffer[0] == 0x02){
 //                    SpiWriteReg(CC1101_TXFIFO,tx_size);
 //                    SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,tx_size);      //write data to send
 //                    SpiStrobe(CC1101_STX);                  //start send
+//                    //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
 //                    wait_GDO0_high();
 //                    wait_GDO0_low();
 //                    if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
 //                        res = 1;
+//                    
+//                    //TWIM_Write(res);
+//                    PORTD = (1<<6);
 //                    SpiStrobe(CC1101_SFTX);
 //                }
 //            }
+//            //TWIM_Write(size);
+//            TWIM_Stop ();
 //        }
 //        _delay_ms(1500);
 //        SetReceive();
+//        PORTD &= ~(1<<6);
+//        //pciSetup(5);
 //    }
 //}
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+//void pciSetup(byte pin)
+//{
+//    *digitalPinToPCMSK(pin) |= bit (digitalPinToPCMSKbit(pin));  // enable pin
+//    PCIFR  |= bit (digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
+//    PCICR  |= bit (digitalPinToPCICRbit(pin)); // enable interrupt for the group
+//}
+//ISR (PCINT2_vect) // handle pin change interrupt for D0 to D7 here
+//{
+//    available = true;
+//}
+

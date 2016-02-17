@@ -6,13 +6,9 @@
    6               	__zero_reg__ = 1
    8               		.text
    9               	.Ltext0:
- 111               	.global	__floatunsisf
- 112               	.global	__mulsf3
- 113               	.global	__fixunssfsi
- 114               	.global	__subsf3
- 115               		.section	.text.startup,"ax",@progbits
- 117               	.global	main
- 119               	main:
+ 111               		.section	.text.startup,"ax",@progbits
+ 113               	.global	main
+ 115               	main:
    1:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #include <stdio.h>
    2:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #include <avr/io.h>
    3:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #include <avr/interrupt.h>
@@ -25,179 +21,187 @@
   10:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define slaveaddress    0x04
   11:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define slaveAddress2   0x40
   12:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define slaveAddress3   0x68
-  13:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define bit(b) (1UL << (b))
-  14:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define tx_size 61
-  15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** 
-  16:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte TX_buffer[tx_size]={0};
-  17:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte i;
-  18:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** 
-  19:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte RX_buffer[61]={0};
-  20:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte i;
-  21:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte available=false;
-  22:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** void pciSetup(byte pin);
-  23:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** ISR (PCINT2_vect);
-  24:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** int main(void) {
- 121               	.LM0:
- 122               	.LFBB1:
- 123               	/* prologue: function */
- 124               	/* frame size = 0 */
- 125               	/* stack size = 0 */
- 126               	.L__stack_usage = 0
-  25:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte version;
-  26:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte size = 0x00;
-  27:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte marcstate;
-  28:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte res;
-  29:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     uint32_t X0,X1,Y0,Y1,Y2;
-  30:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     uint32_t X_out,Y_out1,Y_out2;
-  31:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     
-  32:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     Init();
- 128               	.LM1:
- 129 0000 00D0      		rcall Init
-  33:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     version = SpiReadStatus(CC1101_VERSION);
- 131               	.LM2:
- 132 0002 81E3      		ldi r24,lo8(49)
- 133 0004 00D0      		rcall SpiReadStatus
- 134 0006 C82F      		mov r28,r24
-  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     SetReceive();
- 136               	.LM3:
- 137 0008 00D0      		rcall SetReceive
-  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     TX_buffer[0] = 0x01;
- 139               	.LM4:
- 140 000a 81E0      		ldi r24,lo8(1)
- 141 000c 8093 0000 		sts TX_buffer,r24
- 142 0010 91E0      		ldi r25,lo8(1)
- 143 0012 2AE0      		ldi r18,lo8(10)
- 144               	.L2:
-  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     for(i=1;i<tx_size;i++)
-  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             {
-  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 TX_buffer[i]=i*10;
- 146               	.LM5:
- 147 0014 E92F      		mov r30,r25
- 148 0016 F0E0      		ldi r31,0
- 149 0018 E050      		subi r30,lo8(-(TX_buffer))
- 150 001a F040      		sbci r31,hi8(-(TX_buffer))
- 151 001c 2083      		st Z,r18
-  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     for(i=1;i<tx_size;i++)
- 153               	.LM6:
- 154 001e 9F5F      		subi r25,lo8(-(1))
- 155 0020 265F      		subi r18,lo8(-(10))
- 156 0022 9D33      		cpi r25,lo8(61)
- 157 0024 01F4      		brne .L2
- 158 0026 9093 0000 		sts i,r25
-  39:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             }
-  40:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if (!TWIM_Init (100000))
- 160               	.LM7:
- 161 002a 60EA      		ldi r22,lo8(-96)
- 162 002c 76E8      		ldi r23,lo8(-122)
- 163 002e 81E0      		ldi r24,lo8(1)
- 164 0030 90E0      		ldi r25,0
- 165 0032 00D0      		rcall TWIM_Init
- 166 0034 8111      		cpse r24,__zero_reg__
- 167 0036 00C0      		rjmp .L23
- 168               	.L4:
-  41:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
-  42:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     
-  43:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             while (1);
- 170               	.LM8:
- 171 0038 00C0      		rjmp .L4
- 172               	.L26:
- 173               	.LBB7:
+  13:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define slaveAddress4   (0x48>>1)
+  14:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define bit(b) (1UL << (b))
+  15:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** #define tx_size 61
+  16:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** 
+  17:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte TX_buffer[tx_size]={0};
+  18:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte i;
+  19:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** 
+  20:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte RX_buffer[61]={0};
+  21:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte i;
+  22:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** byte available=false;
+  23:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** void pciSetup(byte pin);
+  24:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** ISR (PCINT2_vect);
+  25:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** int main(void) {
+ 117               	.LM0:
+ 118               	.LFBB1:
+ 119               	/* prologue: function */
+ 120               	/* frame size = 0 */
+ 121               	/* stack size = 0 */
+ 122               	.L__stack_usage = 0
+  26:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte version;
+  27:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte size = 0x00;
+  28:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte marcstate;
+  29:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     byte res;
+  30:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     uint32_t X0,X1,Y0,Y1,Y2;
+  31:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     uint32_t X_out,Y_out1,Y_out2;
+  32:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     
+  33:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     Init();
+ 124               	.LM1:
+ 125 0000 00D0      		rcall Init
+  34:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     version = SpiReadStatus(CC1101_VERSION);
+ 127               	.LM2:
+ 128 0002 81E3      		ldi r24,lo8(49)
+ 129 0004 00D0      		rcall SpiReadStatus
+  35:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     SetReceive();
+ 131               	.LM3:
+ 132 0006 00D0      		rcall SetReceive
+  36:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     TX_buffer[0] = 0x02;//Accerometer
+ 134               	.LM4:
+ 135 0008 82E0      		ldi r24,lo8(2)
+ 136 000a 8093 0000 		sts TX_buffer,r24
+ 137 000e 91E0      		ldi r25,lo8(1)
+ 138 0010 2AE0      		ldi r18,lo8(10)
+ 139               	.L2:
+  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     for(i=1;i<tx_size;i++)
+  38:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             {
+  39:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 TX_buffer[i]=i*10;
+ 141               	.LM5:
+ 142 0012 E92F      		mov r30,r25
+ 143 0014 F0E0      		ldi r31,0
+ 144 0016 E050      		subi r30,lo8(-(TX_buffer))
+ 145 0018 F040      		sbci r31,hi8(-(TX_buffer))
+ 146 001a 2083      		st Z,r18
+  37:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     for(i=1;i<tx_size;i++)
+ 148               	.LM6:
+ 149 001c 9F5F      		subi r25,lo8(-(1))
+ 150 001e 265F      		subi r18,lo8(-(10))
+ 151 0020 9D33      		cpi r25,lo8(61)
+ 152 0022 01F4      		brne .L2
+ 153 0024 9093 0000 		sts i,r25
+  40:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             }
+  41:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if (!TWIM_Init (100000))
+ 155               	.LM7:
+ 156 0028 60EA      		ldi r22,lo8(-96)
+ 157 002a 76E8      		ldi r23,lo8(-122)
+ 158 002c 81E0      		ldi r24,lo8(1)
+ 159 002e 90E0      		ldi r25,0
+ 160 0030 00D0      		rcall TWIM_Init
+ 161 0032 8823      		tst r24
+ 162 0034 01F0      		breq .L3
+ 163               	.LBB7:
+  42:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
+  43:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     
+  44:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             while (1);
+  45:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
+  46:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     /*
+  47:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****      ** Endless loop
+  48:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****      */
+  49:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     while (1)
+  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     {
+  51:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         uint32_t X=0, Y=0,respond;
+  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         uint16_t AcX = 0;
+  53:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         uint8_t MSBH,MSBL,LSBH,LSBL;
+  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         DDRD = (1<<6);
+ 165               	.LM8:
+ 166 0036 C0E4      		ldi r28,lo8(64)
+ 167 0038 00C0      		rjmp .L4
+ 168               	.L3:
+ 169               	.LBE7:
   44:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
-  45:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     /*
-  46:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****      ** Endless loop
-  47:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****      */
-  48:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     while (1)
-  49:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     {
-  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         uint32_t X=0, Y=0;
-  51:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         uint16_t AcX = 0;
-  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if(!TWIM_Start(slaveAddress2, TWIM_WRITE))
-  53:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
-  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop();
-  55:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
-  56:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
-  57:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         else{
-  58:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0xE3);
-  59:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop();
- 175               	.LM9:
- 176 003a 00D0      		rcall TWIM_Stop
-  60:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
-  61:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if (!TWIM_Start (slaveAddress2, TWIM_READ))
- 178               	.LM10:
- 179 003c 61E0      		ldi r22,lo8(1)
- 180 003e 80E4      		ldi r24,lo8(64)
- 181 0040 00D0      		rcall TWIM_Start
- 182 0042 8111      		cpse r24,__zero_reg__
- 183 0044 00C0      		rjmp .L7
-  62:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
-  63:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop ();
- 185               	.LM11:
- 186 0046 00D0      		rcall TWIM_Stop
-  50:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         uint16_t AcX = 0;
- 188               	.LM12:
- 189 0048 F12C      		mov r15,__zero_reg__
- 190               	.L8:
-  64:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
-  65:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         else
-  66:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
-  67:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X0=TWIM_ReadAck();
-  68:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X1=TWIM_ReadNack();
-  69:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X0=X0<<8;
-  70:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X_out=X0+X1;
-  71:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X=(175.72*X_out)/65536;
-  72:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X=X-46.85;
-  73:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            AcX = TWIM_ReadAck() <<8 | TWIM_ReadAck();
-  74:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            TX_buffer[1] = AcX;
-  75:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            TX_buffer[2] = AcX <<8;
-  76:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
-  77:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         
-  78:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if (!TWIM_Start (slaveaddress, TWIM_WRITE))
- 192               	.LM13:
- 193 004a 60E0      		ldi r22,0
- 194 004c 84E0      		ldi r24,lo8(4)
- 195 004e 00D0      		rcall TWIM_Start
- 196 0050 8111      		cpse r24,__zero_reg__
- 197 0052 00C0      		rjmp .L9
- 198               	.L27:
+ 171               	.LM9:
+ 172 003a 00C0      		rjmp .L3
+ 173               	.L27:
+ 174               	.LBB12:
+  55:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if(!TWIM_Start(slaveAddress4, TWIM_WRITE))
+  56:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
+  57:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop();
+  58:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
+  59:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
+  60:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         else{
+  61:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x00);
+  62:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x00);
+  63:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0xFF);
+  64:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x02);
+  65:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0xFE);
+  66:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
+  67:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0xD4);
+  68:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x02);//get firmware
+  69:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x2A);
+  70:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x00);
+  71:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             PORTD = (1<<6);
+  72:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop();
+ 176               	.LM10:
+ 177 003c 00D0      		rcall TWIM_Stop
+  73:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
+  74:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if (!TWIM_Start (slaveAddress4, TWIM_READ))
+ 179               	.LM11:
+ 180 003e 61E0      		ldi r22,lo8(1)
+ 181 0040 84E2      		ldi r24,lo8(36)
+ 182 0042 00D0      		rcall TWIM_Start
+ 183 0044 8823      		tst r24
+ 184 0046 01F0      		breq .L28
+  75:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
+  76:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop ();
+  77:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
+  78:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         else
   79:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
-  80:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop ();
-  81:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
-  82:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         else
-  83:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
-  84:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         //sent = SendData(TX_buffer,size);
-  85:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****           //  byte res;
-  86:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(X);
-  87:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(version);
-  88:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             marcstate = SpiReadStatus(CC1101_MARCSTATE);
-  89:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             if(SpiReadStatus(CC1101_MARCSTATE) != 1){
-  90:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 marcstate = SpiReadStatus(CC1101_MARCSTATE);
-  91:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 _delay_ms(1000);
-  92:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             }
-  93:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             size=ReceiveData(RX_buffer);
-  94:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
-  95:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             if (size>0) {
-  96:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 TWIM_Write(RX_buffer[8]);
-  97:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 
-  98:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 if(RX_buffer[0] == 0x01){
-  99:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                     SpiWriteReg(CC1101_TXFIFO,tx_size);
- 100:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,tx_size);      //write data to sen
- 101:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiStrobe(CC1101_STX);                  //start send
- 102:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
- 103:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         wait_GDO0_high();
- 104:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         wait_GDO0_low();
- 105:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
- 106:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                             res = 1;
- 107:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
- 108:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         TWIM_Write(res);
- 109:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiStrobe(CC1101_SFTX);
- 110:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 }
- 111:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             }
- 112:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(size);
- 113:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop ();
- 200               	.LM14:
- 201 0054 00D0      		rcall TWIM_Stop
- 202               	.LBB8:
- 203               	.LBB9:
- 205               	.Ltext1:
+  80:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            TWIM_ReadAck();
+  81:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            TWIM_ReadAck();
+  82:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            TWIM_ReadAck();
+  83:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            TWIM_ReadAck();
+  84:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            TWIM_ReadAck();
+  85:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
+  86:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             MSBH = TWIM_ReadAck();
+ 186               	.LM12:
+ 187 0048 00D0      		rcall TWIM_ReadAck
+ 188 004a D82F      		mov r29,r24
+  87:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             respond = MSBH;
+  88:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             respond <<=8;
+  89:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             MSBL = TWIM_ReadAck();
+ 190               	.LM13:
+ 191 004c 00D0      		rcall TWIM_ReadAck
+ 192 004e 182F      		mov r17,r24
+  90:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             respond|=MSBL;
+  91:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             respond <<=8;
+  92:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             LSBH = TWIM_ReadAck();
+ 194               	.LM14:
+ 195 0050 00D0      		rcall TWIM_ReadAck
+ 196 0052 082F      		mov r16,r24
+  93:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             respond |=LSBH;
+  94:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             respond <<=8;
+  95:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             LSBL = TWIM_ReadAck();
+ 198               	.LM15:
+ 199 0054 00D0      		rcall TWIM_ReadAck
+ 200 0056 F82E      		mov r15,r24
+  96:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             respond |=LSBL;
+  97:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             //TX_buffer[1] = MSB;
+  98:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             //TX_buffer[2] = LSB;
+  99:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             PORTD &= ~(1<<6);
+ 202               	.LM16:
+ 203 0058 5E98      		cbi 0xb,6
+ 204               	.L28:
+ 100:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop();
+ 206               	.LM17:
+ 207 005a 00D0      		rcall TWIM_Stop
+ 101:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
+ 102:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** 
+ 103:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if (!TWIM_Start (slaveaddress, TWIM_WRITE))
+ 209               	.LM18:
+ 210 005c 60E0      		ldi r22,0
+ 211 005e 84E0      		ldi r24,lo8(4)
+ 212 0060 00D0      		rcall TWIM_Start
+ 213 0062 8111      		cpse r24,__zero_reg__
+ 214 0064 00C0      		rjmp .L9
+ 215               	.L13:
+ 104:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
+ 105:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop ();
+ 217               	.LM19:
+ 218 0066 00D0      		rcall TWIM_Stop
+ 219               	.LBB8:
+ 220               	.LBB9:
+ 222               	.Ltext1:
    1:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
    2:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
    3:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
@@ -361,396 +365,409 @@
  161:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	#endif
  162:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 
  163:/usr/local/Cellar/avr-gcc/4.9.3/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 207               	.LM15:
- 208 0056 8FEF      		ldi r24,lo8(2399999)
- 209 0058 9EE9      		ldi r25,hi8(2399999)
- 210 005a 24E2      		ldi r18,hlo8(2399999)
- 211 005c 8150      		1: subi r24,1
- 212 005e 9040      		sbci r25,0
- 213 0060 2040      		sbci r18,0
- 214 0062 01F4      		brne 1b
- 215 0064 00C0      		rjmp .
- 216 0066 0000      		nop
- 217               	.LBE9:
- 218               	.LBE8:
- 220               	.Ltext2:
- 114:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
- 115:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         
- 116:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         _delay_ms(1500);
- 117:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         SetReceive();
- 222               	.LM16:
- 223 0068 00D0      		rcall SetReceive
- 224               	.L23:
-  52:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
- 226               	.LM17:
- 227 006a 60E0      		ldi r22,0
- 228 006c 80E4      		ldi r24,lo8(64)
- 229 006e 00D0      		rcall TWIM_Start
- 230 0070 8823      		tst r24
- 231 0072 01F0      		breq .L26
-  58:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop();
- 233               	.LM18:
- 234 0074 83EE      		ldi r24,lo8(-29)
- 235 0076 00D0      		rcall TWIM_Write
- 236 0078 00C0      		rjmp .L26
- 237               	.L7:
-  67:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X1=TWIM_ReadNack();
- 239               	.LM19:
- 240 007a 00D0      		rcall TWIM_ReadAck
- 241 007c C82E      		mov r12,r24
- 242 007e D12C      		mov r13,__zero_reg__
- 243 0080 E12C      		mov r14,__zero_reg__
- 244 0082 F12C      		mov r15,__zero_reg__
-  68:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X0=X0<<8;
- 246               	.LM20:
- 247 0084 00D0      		rcall TWIM_ReadNack
-  69:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X_out=X0+X1;
- 249               	.LM21:
- 250 0086 FE2C      		mov r15,r14
- 251 0088 ED2C      		mov r14,r13
- 252 008a DC2C      		mov r13,r12
- 253 008c CC24      		clr r12
-  70:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X=(175.72*X_out)/65536;
- 255               	.LM22:
- 256 008e A701      		movw r20,r14
- 257 0090 9601      		movw r18,r12
- 258 0092 280F      		add r18,r24
- 259 0094 311D      		adc r19,__zero_reg__
- 260 0096 411D      		adc r20,__zero_reg__
- 261 0098 511D      		adc r21,__zero_reg__
- 262 009a CA01      		movw r24,r20
- 263 009c B901      		movw r22,r18
-  71:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             X=X-46.85;
- 265               	.LM23:
- 266 009e 00D0      		rcall __floatunsisf
- 267 00a0 22E5      		ldi r18,lo8(82)
- 268 00a2 38EB      		ldi r19,lo8(-72)
- 269 00a4 4FE2      		ldi r20,lo8(47)
- 270 00a6 53E4      		ldi r21,lo8(67)
- 271 00a8 00D0      		rcall __mulsf3
- 272 00aa 20E0      		ldi r18,0
- 273 00ac 30E0      		ldi r19,0
- 274 00ae 40E8      		ldi r20,lo8(-128)
- 275 00b0 57E3      		ldi r21,lo8(55)
- 276 00b2 00D0      		rcall __mulsf3
- 277 00b4 00D0      		rcall __fixunssfsi
-  72:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** //            AcX = TWIM_ReadAck() <<8 | TWIM_ReadAck();
- 279               	.LM24:
- 280 00b6 00D0      		rcall __floatunsisf
- 281 00b8 26E6      		ldi r18,lo8(102)
- 282 00ba 36E6      		ldi r19,lo8(102)
- 283 00bc 4BE3      		ldi r20,lo8(59)
- 284 00be 52E4      		ldi r21,lo8(66)
- 285 00c0 00D0      		rcall __subsf3
- 286 00c2 00D0      		rcall __fixunssfsi
- 287 00c4 F62E      		mov r15,r22
- 288 00c6 00C0      		rjmp .L8
- 289               	.L9:
-  86:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(version);
- 291               	.LM25:
- 292 00c8 8F2D      		mov r24,r15
- 293 00ca 00D0      		rcall TWIM_Write
-  87:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             marcstate = SpiReadStatus(CC1101_MARCSTATE);
- 295               	.LM26:
- 296 00cc 8C2F      		mov r24,r28
- 297 00ce 00D0      		rcall TWIM_Write
-  88:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             if(SpiReadStatus(CC1101_MARCSTATE) != 1){
- 299               	.LM27:
- 300 00d0 85E3      		ldi r24,lo8(53)
- 301 00d2 00D0      		rcall SpiReadStatus
-  89:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 marcstate = SpiReadStatus(CC1101_MARCSTATE);
- 303               	.LM28:
- 304 00d4 85E3      		ldi r24,lo8(53)
- 305 00d6 00D0      		rcall SpiReadStatus
- 306 00d8 8130      		cpi r24,lo8(1)
- 307 00da 01F0      		breq .L11
-  90:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 _delay_ms(1000);
- 309               	.LM29:
- 310 00dc 85E3      		ldi r24,lo8(53)
- 311 00de 00D0      		rcall SpiReadStatus
- 312               	.LBB10:
- 313               	.LBB11:
- 315               	.Ltext3:
- 317               	.LM30:
- 318 00e0 3FEF      		ldi r19,lo8(1599999)
- 319 00e2 49E6      		ldi r20,hi8(1599999)
- 320 00e4 58E1      		ldi r21,hlo8(1599999)
- 321 00e6 3150      		1: subi r19,1
- 322 00e8 4040      		sbci r20,0
- 323 00ea 5040      		sbci r21,0
- 324 00ec 01F4      		brne 1b
- 325 00ee 00C0      		rjmp .
- 326 00f0 0000      		nop
- 327               	.L11:
- 328               	.LBE11:
- 329               	.LBE10:
- 331               	.Ltext4:
-  93:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
- 333               	.LM31:
- 334 00f2 80E0      		ldi r24,lo8(RX_buffer)
- 335 00f4 90E0      		ldi r25,hi8(RX_buffer)
- 336 00f6 00D0      		rcall ReceiveData
- 337 00f8 F82E      		mov r15,r24
-  95:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 TWIM_Write(RX_buffer[8]);
- 339               	.LM32:
- 340 00fa 8823      		tst r24
- 341 00fc 01F0      		breq .L13
-  96:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 
- 343               	.LM33:
- 344 00fe 8091 0000 		lds r24,RX_buffer+8
- 345 0102 00D0      		rcall TWIM_Write
-  98:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                     SpiWriteReg(CC1101_TXFIFO,tx_size);
- 347               	.LM34:
- 348 0104 8091 0000 		lds r24,RX_buffer
- 349 0108 8130      		cpi r24,lo8(1)
- 350 010a 01F4      		brne .L13
-  99:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,tx_size);      //write data to sen
- 352               	.LM35:
- 353 010c 6DE3      		ldi r22,lo8(61)
- 354 010e 8FE3      		ldi r24,lo8(63)
- 355 0110 00D0      		rcall SpiWriteReg
- 100:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiStrobe(CC1101_STX);                  //start send
- 357               	.LM36:
- 358 0112 4DE3      		ldi r20,lo8(61)
- 359 0114 60E0      		ldi r22,lo8(TX_buffer)
- 360 0116 70E0      		ldi r23,hi8(TX_buffer)
- 361 0118 8FE3      		ldi r24,lo8(63)
- 362 011a 00D0      		rcall SpiWriteBurstReg
- 101:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
- 364               	.LM37:
- 365 011c 85E3      		ldi r24,lo8(53)
- 366 011e 00D0      		rcall SpiStrobe
- 102:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         wait_GDO0_high();
- 368               	.LM38:
- 369 0120 85E3      		ldi r24,lo8(53)
- 370 0122 00D0      		rcall SpiReadStatus
- 371 0124 00D0      		rcall TWIM_Write
- 372               	.L15:
- 103:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         wait_GDO0_low();
- 374               	.LM39:
- 375 0126 4D9B      		sbis 0x9,5
- 376 0128 00C0      		rjmp .L15
- 377               	.L20:
- 104:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
- 379               	.LM40:
- 380 012a 4D99      		sbic 0x9,5
- 381 012c 00C0      		rjmp .L20
- 105:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                             res = 1;
- 383               	.LM41:
- 384 012e 8AE3      		ldi r24,lo8(58)
- 385 0130 00D0      		rcall SpiReadStatus
- 108:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiStrobe(CC1101_SFTX);
- 387               	.LM42:
- 388 0132 81E0      		ldi r24,lo8(1)
- 389 0134 00D0      		rcall TWIM_Write
- 109:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 }
- 391               	.LM43:
- 392 0136 8BE3      		ldi r24,lo8(59)
- 393 0138 00D0      		rcall SpiStrobe
- 394               	.L13:
- 112:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop ();
- 396               	.LM44:
- 397 013a 8F2D      		mov r24,r15
- 398 013c 00D0      		rcall TWIM_Write
- 399 013e 00C0      		rjmp .L27
- 400               	.LBE7:
- 406               	.Lscope1:
- 407               		.text
- 410               	.global	pciSetup
- 412               	pciSetup:
- 118:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         //pciSetup(5);
- 119:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     }
- 120:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** }
- 121:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** void pciSetup(byte pin)
- 122:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** {
- 414               	.LM45:
- 415               	.LFBB2:
- 416               	/* prologue: function */
- 417               	/* frame size = 0 */
- 418               	/* stack size = 0 */
- 419               	.L__stack_usage = 0
- 123:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     *digitalPinToPCMSK(pin) |= bit (digitalPinToPCMSKbit(pin));  // enable pin
- 421               	.LM46:
- 422 0000 8830      		cpi r24,lo8(8)
- 423 0002 00F0      		brlo .L33
- 425               	.LM47:
- 426 0004 8E30      		cpi r24,lo8(14)
- 427 0006 00F0      		brlo .L34
- 429               	.LM48:
- 430 0008 8631      		cpi r24,lo8(22)
- 431 000a 00F4      		brsh .L35
- 433               	.LM49:
- 434 000c ECE6      		ldi r30,lo8(108)
- 435 000e F0E0      		ldi r31,0
- 436 0010 00C0      		rjmp .L30
- 437               	.L33:
- 438 0012 EDE6      		ldi r30,lo8(109)
- 439 0014 F0E0      		ldi r31,0
- 440 0016 00C0      		rjmp .L30
- 441               	.L34:
- 442 0018 EBE6      		ldi r30,lo8(107)
- 443 001a F0E0      		ldi r31,0
- 444 001c 00C0      		rjmp .L30
- 445               	.L35:
- 446 001e E0E0      		ldi r30,0
- 447 0020 F0E0      		ldi r31,0
- 448               	.L30:
- 450               	.LM50:
- 451 0022 9081      		ld r25,Z
- 452 0024 282F      		mov r18,r24
- 453 0026 2770      		andi r18,lo8(7)
- 454 0028 41E0      		ldi r20,lo8(1)
- 455 002a 50E0      		ldi r21,0
- 456 002c 60E0      		ldi r22,0
- 457 002e 70E0      		ldi r23,0
- 458 0030 00C0      		rjmp 2f
- 459               		1:
- 460 0032 440F      		lsl r20
- 461 0034 551F      		rol r21
- 462 0036 661F      		rol r22
- 463 0038 771F      		rol r23
- 464               		2:
- 465 003a 2A95      		dec r18
- 466 003c 02F4      		brpl 1b
- 467 003e 492B      		or r20,r25
- 468 0040 4083      		st Z,r20
- 124:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     PCIFR  |= bit (digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
- 470               	.LM51:
- 471 0042 2BB3      		in r18,0x1b
- 472 0044 8830      		cpi r24,lo8(8)
- 473 0046 00F0      		brlo .L36
- 475               	.LM52:
- 476 0048 8031      		cpi r24,lo8(16)
- 477 004a 00F0      		brlo .L37
- 479               	.LM53:
- 480 004c 8831      		cpi r24,lo8(24)
- 481 004e 00F0      		brlo .L38
- 483               	.LM54:
- 484 0050 91E0      		ldi r25,lo8(1)
- 485 0052 00C0      		rjmp .L31
- 486               	.L36:
- 487 0054 92E0      		ldi r25,lo8(2)
- 488 0056 00C0      		rjmp .L31
- 489               	.L37:
- 490 0058 98E0      		ldi r25,lo8(8)
- 491 005a 00C0      		rjmp .L31
- 492               	.L38:
- 493 005c 94E0      		ldi r25,lo8(4)
- 494               	.L31:
- 496               	.LM55:
- 497 005e 922B      		or r25,r18
- 498 0060 9BBB      		out 0x1b,r25
- 125:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     PCICR  |= bit (digitalPinToPCICRbit(pin)); // enable interrupt for the group
- 500               	.LM56:
- 501 0062 9091 6800 		lds r25,104
- 502 0066 8830      		cpi r24,lo8(8)
- 503 0068 00F0      		brlo .L39
- 505               	.LM57:
- 506 006a 8031      		cpi r24,lo8(16)
- 507 006c 00F0      		brlo .L40
- 509               	.LM58:
- 510 006e 8831      		cpi r24,lo8(24)
- 511 0070 00F0      		brlo .L41
- 513               	.LM59:
- 514 0072 81E0      		ldi r24,lo8(1)
- 515 0074 00C0      		rjmp .L32
- 516               	.L39:
- 517 0076 82E0      		ldi r24,lo8(2)
- 518 0078 00C0      		rjmp .L32
- 519               	.L40:
- 520 007a 88E0      		ldi r24,lo8(8)
- 521 007c 00C0      		rjmp .L32
- 522               	.L41:
- 523 007e 84E0      		ldi r24,lo8(4)
- 524               	.L32:
- 526               	.LM60:
- 527 0080 892B      		or r24,r25
- 528 0082 8093 6800 		sts 104,r24
- 529 0086 0895      		ret
- 531               	.Lscope2:
- 533               	.global	__vector_5
- 535               	__vector_5:
- 126:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** }
- 127:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** ISR (PCINT2_vect) // handle pin change interrupt for D0 to D7 here
- 128:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** {
- 537               	.LM61:
- 538               	.LFBB3:
- 539 0088 1F92      		push r1
- 540 008a 0F92      		push r0
- 541 008c 0FB6      		in r0,__SREG__
- 542 008e 0F92      		push r0
- 543 0090 1124      		clr __zero_reg__
- 544 0092 8F93      		push r24
- 545               	/* prologue: Signal */
- 546               	/* frame size = 0 */
- 547               	/* stack size = 4 */
- 548               	.L__stack_usage = 4
- 129:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     available = true;
- 550               	.LM62:
- 551 0094 81E0      		ldi r24,lo8(1)
- 552 0096 8093 0000 		sts available,r24
- 553               	/* epilogue start */
- 130:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** }
- 555               	.LM63:
- 556 009a 8F91      		pop r24
- 557 009c 0F90      		pop r0
- 558 009e 0FBE      		out __SREG__,r0
- 559 00a0 0F90      		pop r0
- 560 00a2 1F90      		pop r1
- 561 00a4 1895      		reti
- 563               	.Lscope3:
- 564               	.global	available
- 565               		.section .bss
- 568               	available:
- 569 0000 00        		.zero	1
- 570               	.global	RX_buffer
- 573               	RX_buffer:
- 574 0001 0000 0000 		.zero	61
- 574      0000 0000 
- 574      0000 0000 
- 574      0000 0000 
- 574      0000 0000 
- 575               		.comm	i,1,1
- 576               	.global	TX_buffer
- 579               	TX_buffer:
- 580 003e 0000 0000 		.zero	61
- 580      0000 0000 
- 580      0000 0000 
- 580      0000 0000 
- 580      0000 0000 
- 599               		.text
- 601               	.Letext0:
- 602               		.ident	"GCC: (GNU) 4.9.3"
- 603               	.global __do_clear_bss
+ 224               	.LM20:
+ 225 0068 2FEF      		ldi r18,lo8(2399999)
+ 226 006a 8EE9      		ldi r24,hi8(2399999)
+ 227 006c 94E2      		ldi r25,hlo8(2399999)
+ 228 006e 2150      		1: subi r18,1
+ 229 0070 8040      		sbci r24,0
+ 230 0072 9040      		sbci r25,0
+ 231 0074 01F4      		brne 1b
+ 232 0076 00C0      		rjmp .
+ 233 0078 0000      		nop
+ 234               	.LBE9:
+ 235               	.LBE8:
+ 237               	.Ltext2:
+ 106:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         }
+ 107:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         else
+ 108:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
+ 109:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             marcstate = SpiReadStatus(CC1101_MARCSTATE);
+ 110:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             if(SpiReadStatus(CC1101_MARCSTATE) != 1){
+ 111:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 marcstate = SpiReadStatus(CC1101_MARCSTATE);
+ 112:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 _delay_ms(1000);
+ 113:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             }
+ 114:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             size=ReceiveData(RX_buffer);
+ 115:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(MSBH);
+ 116:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(MSBL);
+ 117:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(LSBH);
+ 118:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(LSBL);
+ 119:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
+ 120:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             if (size>0) {
+ 121:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 TWIM_Write(RX_buffer[8]);
+ 122:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 
+ 123:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 if(RX_buffer[0] == 0x02){
+ 124:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                     SpiWriteReg(CC1101_TXFIFO,tx_size);
+ 125:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,tx_size);      //write data to sen
+ 126:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiStrobe(CC1101_STX);                  //start send
+ 127:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+ 128:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         wait_GDO0_high();
+ 129:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         wait_GDO0_low();
+ 130:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
+ 131:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                             res = 1;
+ 132:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
+ 133:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         //TWIM_Write(res);
+ 134:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                     //PORTD = (1<<6);
+ 135:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiStrobe(CC1101_SFTX);
+ 136:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 }
+ 137:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             }
+ 138:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             //TWIM_Write(size);
+ 139:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****            TWIM_Stop ();
+ 140:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****        }
+ 141:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         _delay_ms(1500);
+ 142:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         SetReceive();
+ 239               	.LM21:
+ 240 007a 00D0      		rcall SetReceive
+ 143:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         PORTD &= ~(1<<6);
+ 242               	.LM22:
+ 243 007c 5E98      		cbi 0xb,6
+ 244               	.L4:
+  54:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         if(!TWIM_Start(slaveAddress4, TWIM_WRITE))
+ 246               	.LM23:
+ 247 007e CAB9      		out 0xa,r28
+  55:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         {
+ 249               	.LM24:
+ 250 0080 60E0      		ldi r22,0
+ 251 0082 84E2      		ldi r24,lo8(36)
+ 252 0084 00D0      		rcall TWIM_Start
+ 253 0086 8823      		tst r24
+ 254 0088 01F0      		breq .L27
+  61:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x00);
+ 256               	.LM25:
+ 257 008a 80E0      		ldi r24,0
+ 258 008c 00D0      		rcall TWIM_Write
+  62:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0xFF);
+ 260               	.LM26:
+ 261 008e 80E0      		ldi r24,0
+ 262 0090 00D0      		rcall TWIM_Write
+  63:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x02);
+ 264               	.LM27:
+ 265 0092 8FEF      		ldi r24,lo8(-1)
+ 266 0094 00D0      		rcall TWIM_Write
+  64:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0xFE);
+ 268               	.LM28:
+ 269 0096 82E0      		ldi r24,lo8(2)
+ 270 0098 00D0      		rcall TWIM_Write
+  65:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
+ 272               	.LM29:
+ 273 009a 8EEF      		ldi r24,lo8(-2)
+ 274 009c 00D0      		rcall TWIM_Write
+  67:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x02);//get firmware
+ 276               	.LM30:
+ 277 009e 84ED      		ldi r24,lo8(-44)
+ 278 00a0 00D0      		rcall TWIM_Write
+  68:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x2A);
+ 280               	.LM31:
+ 281 00a2 82E0      		ldi r24,lo8(2)
+ 282 00a4 00D0      		rcall TWIM_Write
+  69:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(0x00);
+ 284               	.LM32:
+ 285 00a6 8AE2      		ldi r24,lo8(42)
+ 286 00a8 00D0      		rcall TWIM_Write
+  70:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             PORTD = (1<<6);
+ 288               	.LM33:
+ 289 00aa 80E0      		ldi r24,0
+ 290 00ac 00D0      		rcall TWIM_Write
+  71:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Stop();
+ 292               	.LM34:
+ 293 00ae CBB9      		out 0xb,r28
+ 294 00b0 00C0      		rjmp .L27
+ 295               	.L9:
+ 109:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             if(SpiReadStatus(CC1101_MARCSTATE) != 1){
+ 297               	.LM35:
+ 298 00b2 85E3      		ldi r24,lo8(53)
+ 299 00b4 00D0      		rcall SpiReadStatus
+ 110:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 marcstate = SpiReadStatus(CC1101_MARCSTATE);
+ 301               	.LM36:
+ 302 00b6 85E3      		ldi r24,lo8(53)
+ 303 00b8 00D0      		rcall SpiReadStatus
+ 304 00ba 8130      		cpi r24,lo8(1)
+ 305 00bc 01F0      		breq .L11
+ 111:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 _delay_ms(1000);
+ 307               	.LM37:
+ 308 00be 85E3      		ldi r24,lo8(53)
+ 309 00c0 00D0      		rcall SpiReadStatus
+ 310               	.LBB10:
+ 311               	.LBB11:
+ 313               	.Ltext3:
+ 315               	.LM38:
+ 316 00c2 2FEF      		ldi r18,lo8(1599999)
+ 317 00c4 89E6      		ldi r24,hi8(1599999)
+ 318 00c6 98E1      		ldi r25,hlo8(1599999)
+ 319 00c8 2150      		1: subi r18,1
+ 320 00ca 8040      		sbci r24,0
+ 321 00cc 9040      		sbci r25,0
+ 322 00ce 01F4      		brne 1b
+ 323 00d0 00C0      		rjmp .
+ 324 00d2 0000      		nop
+ 325               	.L11:
+ 326               	.LBE11:
+ 327               	.LBE10:
+ 329               	.Ltext4:
+ 114:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(MSBH);
+ 331               	.LM39:
+ 332 00d4 80E0      		ldi r24,lo8(RX_buffer)
+ 333 00d6 90E0      		ldi r25,hi8(RX_buffer)
+ 334 00d8 00D0      		rcall ReceiveData
+ 335 00da E82E      		mov r14,r24
+ 115:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(MSBL);
+ 337               	.LM40:
+ 338 00dc 8D2F      		mov r24,r29
+ 339 00de 00D0      		rcall TWIM_Write
+ 116:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(LSBH);
+ 341               	.LM41:
+ 342 00e0 812F      		mov r24,r17
+ 343 00e2 00D0      		rcall TWIM_Write
+ 117:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             TWIM_Write(LSBL);
+ 345               	.LM42:
+ 346 00e4 802F      		mov r24,r16
+ 347 00e6 00D0      		rcall TWIM_Write
+ 118:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****             
+ 349               	.LM43:
+ 350 00e8 8F2D      		mov r24,r15
+ 351 00ea 00D0      		rcall TWIM_Write
+ 120:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 TWIM_Write(RX_buffer[8]);
+ 353               	.LM44:
+ 354 00ec EE20      		tst r14
+ 355 00ee 01F4      		brne .+2
+ 356 00f0 00C0      		rjmp .L13
+ 121:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 
+ 358               	.LM45:
+ 359 00f2 8091 0000 		lds r24,RX_buffer+8
+ 360 00f6 00D0      		rcall TWIM_Write
+ 123:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                     SpiWriteReg(CC1101_TXFIFO,tx_size);
+ 362               	.LM46:
+ 363 00f8 8091 0000 		lds r24,RX_buffer
+ 364 00fc 8230      		cpi r24,lo8(2)
+ 365 00fe 01F0      		breq .+2
+ 366 0100 00C0      		rjmp .L13
+ 124:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiWriteBurstReg(CC1101_TXFIFO,TX_buffer,tx_size);      //write data to sen
+ 368               	.LM47:
+ 369 0102 6DE3      		ldi r22,lo8(61)
+ 370 0104 8FE3      		ldi r24,lo8(63)
+ 371 0106 00D0      		rcall SpiWriteReg
+ 125:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         SpiStrobe(CC1101_STX);                  //start send
+ 373               	.LM48:
+ 374 0108 4DE3      		ldi r20,lo8(61)
+ 375 010a 60E0      		ldi r22,lo8(TX_buffer)
+ 376 010c 70E0      		ldi r23,hi8(TX_buffer)
+ 377 010e 8FE3      		ldi r24,lo8(63)
+ 378 0110 00D0      		rcall SpiWriteBurstReg
+ 126:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         //TWIM_Write(SpiReadStatus(CC1101_MARCSTATE));
+ 380               	.LM49:
+ 381 0112 85E3      		ldi r24,lo8(53)
+ 382 0114 00D0      		rcall SpiStrobe
+ 383               	.L15:
+ 128:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         wait_GDO0_low();
+ 385               	.LM50:
+ 386 0116 4D9B      		sbis 0x9,5
+ 387 0118 00C0      		rjmp .L15
+ 388               	.L21:
+ 129:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                         if((SpiReadStatus(CC1101_TXBYTES) & 0x7F) == 0)
+ 390               	.LM51:
+ 391 011a 4D99      		sbic 0x9,5
+ 392 011c 00C0      		rjmp .L21
+ 130:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                             res = 1;
+ 394               	.LM52:
+ 395 011e 8AE3      		ldi r24,lo8(58)
+ 396 0120 00D0      		rcall SpiReadStatus
+ 135:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****                 }
+ 398               	.LM53:
+ 399 0122 8BE3      		ldi r24,lo8(59)
+ 400 0124 00D0      		rcall SpiStrobe
+ 401 0126 00C0      		rjmp .L13
+ 402               	.LBE12:
+ 419               	.Lscope1:
+ 420               		.text
+ 423               	.global	pciSetup
+ 425               	pciSetup:
+ 144:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****         //pciSetup(5);
+ 145:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     }
+ 146:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** }
+ 147:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** void pciSetup(byte pin)
+ 148:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** {
+ 427               	.LM54:
+ 428               	.LFBB2:
+ 429               	/* prologue: function */
+ 430               	/* frame size = 0 */
+ 431               	/* stack size = 0 */
+ 432               	.L__stack_usage = 0
+ 149:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     *digitalPinToPCMSK(pin) |= bit (digitalPinToPCMSKbit(pin));  // enable pin
+ 434               	.LM55:
+ 435 0000 8830      		cpi r24,lo8(8)
+ 436 0002 00F0      		brlo .L34
+ 438               	.LM56:
+ 439 0004 8E30      		cpi r24,lo8(14)
+ 440 0006 00F0      		brlo .L35
+ 442               	.LM57:
+ 443 0008 8631      		cpi r24,lo8(22)
+ 444 000a 00F4      		brsh .L36
+ 446               	.LM58:
+ 447 000c ECE6      		ldi r30,lo8(108)
+ 448 000e F0E0      		ldi r31,0
+ 449 0010 00C0      		rjmp .L31
+ 450               	.L34:
+ 451 0012 EDE6      		ldi r30,lo8(109)
+ 452 0014 F0E0      		ldi r31,0
+ 453 0016 00C0      		rjmp .L31
+ 454               	.L35:
+ 455 0018 EBE6      		ldi r30,lo8(107)
+ 456 001a F0E0      		ldi r31,0
+ 457 001c 00C0      		rjmp .L31
+ 458               	.L36:
+ 459 001e E0E0      		ldi r30,0
+ 460 0020 F0E0      		ldi r31,0
+ 461               	.L31:
+ 463               	.LM59:
+ 464 0022 9081      		ld r25,Z
+ 465 0024 282F      		mov r18,r24
+ 466 0026 2770      		andi r18,lo8(7)
+ 467 0028 41E0      		ldi r20,lo8(1)
+ 468 002a 50E0      		ldi r21,0
+ 469 002c 60E0      		ldi r22,0
+ 470 002e 70E0      		ldi r23,0
+ 471 0030 00C0      		rjmp 2f
+ 472               		1:
+ 473 0032 440F      		lsl r20
+ 474 0034 551F      		rol r21
+ 475 0036 661F      		rol r22
+ 476 0038 771F      		rol r23
+ 477               		2:
+ 478 003a 2A95      		dec r18
+ 479 003c 02F4      		brpl 1b
+ 480 003e 492B      		or r20,r25
+ 481 0040 4083      		st Z,r20
+ 150:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     PCIFR  |= bit (digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
+ 483               	.LM60:
+ 484 0042 2BB3      		in r18,0x1b
+ 485 0044 8830      		cpi r24,lo8(8)
+ 486 0046 00F0      		brlo .L37
+ 488               	.LM61:
+ 489 0048 8031      		cpi r24,lo8(16)
+ 490 004a 00F0      		brlo .L38
+ 492               	.LM62:
+ 493 004c 8831      		cpi r24,lo8(24)
+ 494 004e 00F0      		brlo .L39
+ 496               	.LM63:
+ 497 0050 91E0      		ldi r25,lo8(1)
+ 498 0052 00C0      		rjmp .L32
+ 499               	.L37:
+ 500 0054 92E0      		ldi r25,lo8(2)
+ 501 0056 00C0      		rjmp .L32
+ 502               	.L38:
+ 503 0058 98E0      		ldi r25,lo8(8)
+ 504 005a 00C0      		rjmp .L32
+ 505               	.L39:
+ 506 005c 94E0      		ldi r25,lo8(4)
+ 507               	.L32:
+ 509               	.LM64:
+ 510 005e 922B      		or r25,r18
+ 511 0060 9BBB      		out 0x1b,r25
+ 151:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     PCICR  |= bit (digitalPinToPCICRbit(pin)); // enable interrupt for the group
+ 513               	.LM65:
+ 514 0062 9091 6800 		lds r25,104
+ 515 0066 8830      		cpi r24,lo8(8)
+ 516 0068 00F0      		brlo .L40
+ 518               	.LM66:
+ 519 006a 8031      		cpi r24,lo8(16)
+ 520 006c 00F0      		brlo .L41
+ 522               	.LM67:
+ 523 006e 8831      		cpi r24,lo8(24)
+ 524 0070 00F0      		brlo .L42
+ 526               	.LM68:
+ 527 0072 81E0      		ldi r24,lo8(1)
+ 528 0074 00C0      		rjmp .L33
+ 529               	.L40:
+ 530 0076 82E0      		ldi r24,lo8(2)
+ 531 0078 00C0      		rjmp .L33
+ 532               	.L41:
+ 533 007a 88E0      		ldi r24,lo8(8)
+ 534 007c 00C0      		rjmp .L33
+ 535               	.L42:
+ 536 007e 84E0      		ldi r24,lo8(4)
+ 537               	.L33:
+ 539               	.LM69:
+ 540 0080 892B      		or r24,r25
+ 541 0082 8093 6800 		sts 104,r24
+ 542 0086 0895      		ret
+ 544               	.Lscope2:
+ 546               	.global	__vector_5
+ 548               	__vector_5:
+ 152:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** }
+ 153:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** ISR (PCINT2_vect) // handle pin change interrupt for D0 to D7 here
+ 154:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** {
+ 550               	.LM70:
+ 551               	.LFBB3:
+ 552 0088 1F92      		push r1
+ 553 008a 0F92      		push r0
+ 554 008c 0FB6      		in r0,__SREG__
+ 555 008e 0F92      		push r0
+ 556 0090 1124      		clr __zero_reg__
+ 557 0092 8F93      		push r24
+ 558               	/* prologue: Signal */
+ 559               	/* frame size = 0 */
+ 560               	/* stack size = 4 */
+ 561               	.L__stack_usage = 4
+ 155:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c ****     available = true;
+ 563               	.LM71:
+ 564 0094 81E0      		ldi r24,lo8(1)
+ 565 0096 8093 0000 		sts available,r24
+ 566               	/* epilogue start */
+ 156:/Users/davide/Documents/NQM_WORK/MinimizedBoard/Attiny48/i2ctest/MINI-RF/MINI-RF/main.c **** }
+ 568               	.LM72:
+ 569 009a 8F91      		pop r24
+ 570 009c 0F90      		pop r0
+ 571 009e 0FBE      		out __SREG__,r0
+ 572 00a0 0F90      		pop r0
+ 573 00a2 1F90      		pop r1
+ 574 00a4 1895      		reti
+ 576               	.Lscope3:
+ 577               	.global	available
+ 578               		.section .bss
+ 581               	available:
+ 582 0000 00        		.zero	1
+ 583               	.global	RX_buffer
+ 586               	RX_buffer:
+ 587 0001 0000 0000 		.zero	61
+ 587      0000 0000 
+ 587      0000 0000 
+ 587      0000 0000 
+ 587      0000 0000 
+ 588               		.comm	i,1,1
+ 589               	.global	TX_buffer
+ 592               	TX_buffer:
+ 593 003e 0000 0000 		.zero	61
+ 593      0000 0000 
+ 593      0000 0000 
+ 593      0000 0000 
+ 593      0000 0000 
+ 612               		.text
+ 614               	.Letext0:
+ 615               		.ident	"GCC: (GNU) 4.9.3"
+ 616               	.global __do_clear_bss
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 main.c
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:2      *ABS*:000000000000003e __SP_H__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:3      *ABS*:000000000000003d __SP_L__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:4      *ABS*:000000000000003f __SREG__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:5      *ABS*:0000000000000000 __tmp_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:6      *ABS*:0000000000000001 __zero_reg__
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:119    .text.startup:0000000000000000 main
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:579    .bss:000000000000003e TX_buffer
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:115    .text.startup:0000000000000000 main
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:592    .bss:000000000000003e TX_buffer
                             *COM*:0000000000000001 i
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:573    .bss:0000000000000001 RX_buffer
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:412    .text:0000000000000000 pciSetup
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:535    .text:0000000000000088 __vector_5
-/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccOTpAu8.s:568    .bss:0000000000000000 available
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:586    .bss:0000000000000001 RX_buffer
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:425    .text:0000000000000000 pciSetup
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:548    .text:0000000000000088 __vector_5
+/var/folders/fc/8p1lqrrj7p3f4bt9djyny4yh0000gn/T//ccQwi8MO.s:581    .bss:0000000000000000 available
 
 UNDEFINED SYMBOLS
-__floatunsisf
-__mulsf3
-__fixunssfsi
-__subsf3
 Init
 SpiReadStatus
 SetReceive
 TWIM_Init
 TWIM_Stop
 TWIM_Start
-TWIM_Write
 TWIM_ReadAck
-TWIM_ReadNack
+TWIM_Write
 ReceiveData
 SpiWriteReg
 SpiWriteBurstReg
